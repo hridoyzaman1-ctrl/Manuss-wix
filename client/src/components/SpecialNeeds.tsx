@@ -78,6 +78,7 @@ export default function SpecialNeeds() {
               <img 
                 src="https://images.unsplash.com/photo-1555819206-7b30da4f1506?q=80&w=2071&auto=format&fit=crop" 
                 alt="Child learning with sensory toys" 
+                loading="lazy"
                 className="w-full h-full object-cover"
               />
               

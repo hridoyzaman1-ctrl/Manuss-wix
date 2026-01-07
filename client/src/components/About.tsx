@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import { Video, Baby, HeartHandshake, Brain, Rocket, Hammer, Bot, Accessibility } from "lucide-react";
 
 export default function About() {
   const { t } = useLanguage();
@@ -37,6 +38,7 @@ export default function About() {
             <img 
               src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070&auto=format&fit=crop" 
               alt="Modern Learning Environment" 
+              loading="lazy"
               className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
             />
           </div>
@@ -57,14 +59,14 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16">
             {[
-              { title: t("about.features.liveClasses"), desc: t("about.features.liveClasses.desc"), number: "01" },
-              { title: t("about.features.tinyExplorers"), desc: t("about.features.tinyExplorers.desc"), number: "02" },
-              { title: t("about.features.specialNeeds"), desc: t("about.features.specialNeeds.desc"), number: "03" },
-              { title: t("about.features.mentalHealth"), desc: t("about.features.mentalHealth.desc"), number: "04" },
-              { title: t("about.features.aimVerse"), desc: t("about.features.aimVerse.desc"), number: "05" },
-              { title: t("about.features.skillBased"), desc: t("about.features.skillBased.desc"), number: "06" },
-              { title: t("about.features.aimBot"), desc: t("about.features.aimBot.desc"), number: "07" },
-              { title: t("about.features.accessibility"), desc: t("about.features.accessibility.desc"), number: "08" }
+              { title: t("about.features.liveClasses"), desc: t("about.features.liveClasses.desc"), number: "01", icon: Video },
+              { title: t("about.features.tinyExplorers"), desc: t("about.features.tinyExplorers.desc"), number: "02", icon: Baby },
+              { title: t("about.features.specialNeeds"), desc: t("about.features.specialNeeds.desc"), number: "03", icon: HeartHandshake },
+              { title: t("about.features.mentalHealth"), desc: t("about.features.mentalHealth.desc"), number: "04", icon: Brain },
+              { title: t("about.features.aimVerse"), desc: t("about.features.aimVerse.desc"), number: "05", icon: Rocket },
+              { title: t("about.features.skillBased"), desc: t("about.features.skillBased.desc"), number: "06", icon: Hammer },
+              { title: t("about.features.aimBot"), desc: t("about.features.aimBot.desc"), number: "07", icon: Bot },
+              { title: t("about.features.accessibility"), desc: t("about.features.accessibility.desc"), number: "08", icon: Accessibility }
             ].map((feature, index) => (
               <motion.div 
                 key={index}
@@ -74,7 +76,15 @@ export default function About() {
                 transition={{ duration: 0.8, delay: index * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
                 className="group flex flex-col items-start hover-trigger"
               >
-                <span className="text-xs font-bold text-muted-foreground/50 mb-6 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>
+                <div className="flex items-center justify-between w-full mb-6">
+                  <span className="text-xs font-bold text-muted-foreground/50 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>
+                  <motion.div
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <feature.icon className="h-8 w-8 text-muted-foreground/30 group-hover:text-primary transition-colors duration-500" strokeWidth={1.5} />
+                  </motion.div>
+                </div>
                 <h4 className="font-serif text-2xl font-bold mb-4 text-foreground group-hover:translate-x-2 transition-transform duration-500">{feature.title}</h4>
                 <div className="w-12 h-[1px] bg-border mb-4 group-hover:w-full group-hover:bg-primary transition-all duration-700 ease-in-out"></div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
