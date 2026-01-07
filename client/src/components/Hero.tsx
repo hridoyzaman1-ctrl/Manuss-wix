@@ -37,7 +37,7 @@ export default function Hero() {
       className="relative w-full overflow-hidden bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-1 h-[800px] bg-white">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-4 h-[800px] bg-white">
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
@@ -59,18 +59,32 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="font-serif text-5xl md:text-7xl font-bold leading-[1.1] text-black tracking-tight"
+              className="font-serif text-5xl md:text-7xl font-bold leading-[1.1] text-black tracking-tight cursor-default"
             >
-              Aim High,<br />
+              <motion.span 
+                whileHover={{ scale: 1.05, x: 10 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="inline-block"
+              >
+                Aim High,
+              </motion.span>
+              <br />
               <motion.span 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.1, rotate: -2, color: "#333" }}
                 transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="italic font-light text-6xl md:text-8xl block my-2"
+                className="italic font-light text-6xl md:text-8xl block my-2 origin-center"
               >
                 Achieve
               </motion.span>
-              Infinity!
+              <motion.span 
+                whileHover={{ scale: 1.05, x: -10 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="inline-block"
+              >
+                Infinity!
+              </motion.span>
             </motion.h2>
           </motion.div>
         </motion.div>
@@ -102,11 +116,16 @@ export default function Hero() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col items-center gap-12"
           >
-            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9]">
+            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9] cursor-default perspective-1000">
               <motion.span
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  textShadow: "0px 10px 20px rgba(0,0,0,0.1)",
+                  y: -5
+                }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="block"
               >
                 AIM Centre
@@ -114,8 +133,13 @@ export default function Hero() {
               <motion.span 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="text-8xl md:text-[10rem] font-light block mt-2"
+                whileHover={{ 
+                  scale: 1.1, 
+                  rotateX: 10,
+                  color: "#1a1a1a"
+                }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="text-8xl md:text-[10rem] font-light block mt-2 origin-bottom"
               >
                 360
               </motion.span>
