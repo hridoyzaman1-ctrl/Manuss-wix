@@ -29,7 +29,7 @@ export default function MentalHealth() {
             </p>
 
             <div className="space-y-6 mb-8">
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift">
                 <div className="p-3 bg-secondary rounded-full">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
@@ -39,7 +39,7 @@ export default function MentalHealth() {
                 </div>
               </div>
               
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift">
                 <div className="p-3 bg-secondary rounded-full">
                   <User className="h-6 w-6 text-primary" />
                 </div>

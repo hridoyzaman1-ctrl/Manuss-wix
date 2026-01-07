@@ -36,25 +36,25 @@ export default function SpecialNeeds() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
+              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.sensory")}</h3>
                 <p className="text-sm text-muted-foreground">Tailored environments that respect sensory sensitivities while promoting engagement through tactile, visual, and auditory stimuli.</p>
               </div>
               
-              <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
+              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
                 <Heart className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.emotional")}</h3>
                 <p className="text-sm text-muted-foreground">Building confidence and emotional resilience through positive reinforcement, social stories, and guided interaction.</p>
               </div>
               
-              <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
+              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
                 <Sparkles className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.individualized")}</h3>
                 <p className="text-sm text-muted-foreground">Customized Individualized Education Programs (IEPs) that evolve with your child's growth and milestones.</p>
               </div>
 
-              <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
+              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.lifeSkills")}</h3>
                 <p className="text-sm text-muted-foreground">Practical training in daily living skills, communication, and social interaction to foster independence.</p>

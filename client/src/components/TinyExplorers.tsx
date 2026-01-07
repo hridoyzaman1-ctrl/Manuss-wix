@@ -57,7 +57,7 @@ export default function TinyExplorers() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
-              className="group relative h-[400px] overflow-hidden border border-border"
+              className="group relative h-[400px] overflow-hidden border border-border hover-lift cursor-pointer"
             >
               <img 
                 src={item.image} 
