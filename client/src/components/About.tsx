@@ -1,6 +1,8 @@
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function About() {
+  const { t } = useLanguage();
   return (
     <section className="w-full bg-background py-24">
       <div className="container mx-auto px-4 md:px-12">
@@ -10,21 +12,13 @@ export default function About() {
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <h2 className="font-serif text-5xl md:text-6xl font-bold tracking-tight text-foreground uppercase leading-[0.9]">
-                About AIM Centre<br />360
+                {t("about.title")}
               </h2>
               <div className="text-6xl font-serif">*</div>
             </div>
             
             <div className="space-y-6 text-lg leading-relaxed text-muted-foreground max-w-xl text-justify">
-              <p>
-                AIM Centre 360 is an innovative e-learning platform offering a wide range of academic courses, live classes, and skill-based programs for students of all ages.
-              </p>
-              <p>
-                We are dedicated to providing a unique and effective learning experience for children with special needs, tailoring our approach to each individual based on their Autism Level 1, 2, 3 categories.
-              </p>
-              <p>
-                Our exclusive mental health counseling services are designed to support both students and parents, ensuring a holistic approach to education and well-being.
-              </p>
+              <p>{t("about.desc")}</p>
             </div>
 
             <div className="pt-4">
@@ -62,14 +56,14 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16">
             {[
-              { title: "Live Classes & Academics", desc: "Interactive real-time learning with comprehensive academic curriculum.", number: "01" },
-              { title: "Tiny Explorers", desc: "Curiosity-driven early childhood education for our youngest learners.", number: "02" },
-              { title: "Special Needs Innovation", desc: "Sensory-induced teaching tailored for Autism Levels 1-3 & developmental needs.", number: "03" },
-              { title: "Mental Health Support", desc: "Professional counseling for both students and parents for holistic well-being.", number: "04" },
-              { title: "AIMVerse & Gamification", desc: "Animated educational episodes and fun, gamified learning elements.", number: "05" },
-              { title: "Skill-Based Learning", desc: "Practical skills development with quizzes and real-time progress tracking.", number: "06" },
-              { title: "AIMbot: AI Tutor", desc: "Smart 24/7 AI companion for personalized guidance and instant doubts resolution.", number: "07" },
-              { title: "Accessibility First", desc: "Customizable interface options to suit every learner's unique needs.", number: "08" }
+              { title: t("about.features.liveClasses"), desc: t("about.features.liveClasses.desc"), number: "01" },
+              { title: t("about.features.tinyExplorers"), desc: t("about.features.tinyExplorers.desc"), number: "02" },
+              { title: t("about.features.specialNeeds"), desc: t("about.features.specialNeeds.desc"), number: "03" },
+              { title: t("about.features.mentalHealth"), desc: t("about.features.mentalHealth.desc"), number: "04" },
+              { title: t("about.features.aimVerse"), desc: t("about.features.aimVerse.desc"), number: "05" },
+              { title: t("about.features.skillBased"), desc: t("about.features.skillBased.desc"), number: "06" },
+              { title: t("about.features.aimBot"), desc: t("about.features.aimBot.desc"), number: "07" },
+              { title: t("about.features.accessibility"), desc: t("about.features.accessibility.desc"), number: "08" }
             ].map((feature, index) => (
               <div 
                 key={index}

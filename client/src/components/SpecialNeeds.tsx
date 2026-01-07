@@ -1,8 +1,20 @@
 import { motion } from "framer-motion";
-import { Brain, Heart, Sparkles } from "lucide-react";
+import { Brain, Heart, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { Button } from "./ui/button";
+import { useState, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SpecialNeeds() {
+  const { t } = useLanguage();
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(!isMuted);
+    }
+  };
   return (
     <section className="py-24 bg-secondary/30 relative overflow-hidden">
       <div className="container">
@@ -14,38 +26,37 @@ export default function SpecialNeeds() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-primary font-medium tracking-widest uppercase text-sm">Inclusive Education</span>
+            <span className="text-primary font-medium tracking-widest uppercase text-sm">{t("special.tag")}</span>
             <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">
-              Children with <br />
-              <span className="italic text-primary">Special Needs</span>
+              {t("special.title")}
             </h2>
             
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed text-justify">
-              Our innovative sensory-induced teaching method ensures that each lesson is customized and tailored for every unique individual. We believe in unlocking the potential within every child through understanding and specialized care. Our curriculum is meticulously designed to address the specific needs of children across the autism spectrum (Level 1, 2, 3) and other developmental challenges.
+              {t("special.desc")}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-serif text-xl font-bold mb-2">Sensory Learning</h3>
+                <h3 className="font-serif text-xl font-bold mb-2">{t("special.sensory")}</h3>
                 <p className="text-sm text-muted-foreground">Tailored environments that respect sensory sensitivities while promoting engagement through tactile, visual, and auditory stimuli.</p>
               </div>
               
               <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
                 <Heart className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-serif text-xl font-bold mb-2">Emotional Support</h3>
+                <h3 className="font-serif text-xl font-bold mb-2">{t("special.emotional")}</h3>
                 <p className="text-sm text-muted-foreground">Building confidence and emotional resilience through positive reinforcement, social stories, and guided interaction.</p>
               </div>
               
               <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
                 <Sparkles className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-serif text-xl font-bold mb-2">Individualized Plans</h3>
+                <h3 className="font-serif text-xl font-bold mb-2">{t("special.individualized")}</h3>
                 <p className="text-sm text-muted-foreground">Customized Individualized Education Programs (IEPs) that evolve with your child's growth and milestones.</p>
               </div>
 
               <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="font-serif text-xl font-bold mb-2">Life Skills</h3>
+                <h3 className="font-serif text-xl font-bold mb-2">{t("special.lifeSkills")}</h3>
                 <p className="text-sm text-muted-foreground">Practical training in daily living skills, communication, and social interaction to foster independence.</p>
               </div>
             </div>
@@ -99,40 +110,51 @@ export default function SpecialNeeds() {
       <div className="container mt-32">
         <div className="text-center mb-16">
           <span className="text-primary font-medium tracking-widest uppercase text-sm">Support & Community</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">Parents Resources</h2>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">{t("special.resources")}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Empowering parents with knowledge, tools, and inspiring stories to navigate the journey of raising a child with special needs.
+            {t("special.resourcesDesc")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Video Section */}
-          <div className="relative group cursor-pointer">
-            <div className="aspect-video bg-black relative overflow-hidden border border-border">
+          <div className="relative group">
+            <div className="aspect-video bg-black relative overflow-hidden border border-border shadow-2xl">
               <video 
+                ref={videoRef}
                 width="100%" 
                 height="100%" 
                 autoPlay 
-                muted 
+                muted={isMuted}
                 loop 
                 playsInline
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
               >
-                <source src="/videos/autism-awareness.mp4" type="video/mp4" />
+                <source src="/videos/special-needs-long.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
               
               {/* Custom Overlay for Premium Feel */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
               
-              {/* Play Button Overlay (Optional, for manual control indication) */}
-              <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/20">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              {/* Sound Control */}
+              <button 
+                onClick={toggleMute}
+                className="absolute bottom-6 right-6 bg-black/40 hover:bg-black/60 backdrop-blur-md p-3 rounded-full border border-white/20 text-white transition-all duration-300 z-20"
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+              </button>
+
+              {/* Live Indicator */}
+              <div className="absolute top-6 left-6 bg-red-500/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span className="text-white text-xs font-bold uppercase tracking-wider">Live Session</span>
               </div>
             </div>
-            <div className="mt-4">
-              <h3 className="font-serif text-2xl font-bold mb-2">Inspiration: A Life of Autism</h3>
-              <p className="text-muted-foreground">A heartwarming story of struggle, focus, and success that proves diagnosis is not a limitation.</p>
+            <div className="mt-6">
+              <h3 className="font-serif text-2xl font-bold mb-2">{t("special.classroom")}</h3>
+              <p className="text-muted-foreground">{t("special.classroomDesc")}</p>
             </div>
           </div>
 

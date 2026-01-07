@@ -4,8 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function FAQ() {
+  const { t } = useLanguage();
   const faqs = [
     {
       question: "How do I enroll in a course?",
@@ -37,10 +39,10 @@ export default function FAQ() {
     <section className="py-24 bg-background">
       <div className="container max-w-3xl">
         <div className="text-center mb-16">
-          <span className="text-primary font-medium tracking-widest uppercase text-sm">Common Questions</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">Frequently Asked Questions</h2>
+          <span className="text-primary font-medium tracking-widest uppercase text-sm">{t("faq.title")}</span>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">{t("faq.title")}</h2>
           <p className="text-lg text-muted-foreground">
-            Find answers to common questions about our programs, admissions, and support services.
+            {t("faq.subtitle")}
           </p>
         </div>
 

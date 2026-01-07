@@ -185,3 +185,7 @@
     @apply transition-colors duration-300 hover:text-primary;
   }
 }
+
+.font-bengali {
+  font-family: 'Hind Siliguri', sans-serif;
+}

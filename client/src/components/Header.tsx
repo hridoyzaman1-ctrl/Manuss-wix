@@ -1,6 +1,7 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Moon, ShoppingCart, Sun, X } from "lucide-react";
+import { Menu, Moon, ShoppingCart, Sun, X, Globe } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "./ui/button";
@@ -9,6 +10,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage, t } = useLanguage();
   const [location] = useLocation();
 
   useEffect(() => {
@@ -20,14 +22,14 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Courses", href: "/courses" },
-    { name: "Special Needs", href: "/special-needs" },
-    { name: "Tiny Explorers", href: "/tiny-explorers" },
-    { name: "Mental Health", href: "/mental-health" },
-    { name: "AIMVerse", href: "/aimverse" },
-    { name: "Gallery", href: "/gallery" },
-    { name: "About", href: "/about" },
+    { name: t("nav.home"), href: "/" },
+    { name: t("nav.courses"), href: "/courses" },
+    { name: t("nav.specialNeeds"), href: "/special-needs" },
+    { name: t("nav.tinyExplorers"), href: "/tiny-explorers" },
+    { name: t("nav.mentalHealth"), href: "/mental-health" },
+    { name: t("nav.aimVerse"), href: "/aimverse" },
+    { name: t("nav.gallery"), href: "/gallery" },
+    { name: t("nav.about"), href: "/about" },
   ];
 
   return (
@@ -73,6 +75,16 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-4">
           <Button
             variant="ghost"
+            size="sm"
+            onClick={toggleLanguage}
+            className="rounded-full hover:bg-muted transition-colors font-bold gap-2"
+          >
+            <Globe className="h-4 w-4" />
+            {language === 'en' ? 'BN' : 'EN'}
+          </Button>
+
+          <Button
+            variant="ghost"
             size="icon"
             onClick={toggleTheme}
             className="rounded-full hover:bg-muted transition-colors"
@@ -105,10 +117,10 @@ export default function Header() {
           <div className="h-6 w-[1px] bg-border mx-2"></div>
 
           <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-black">
-            Log In
+            {t("nav.login")}
           </Button>
           <Button className="rounded-full bg-black text-white hover:bg-black/80 px-6">
-            Sign Up
+            {t("nav.signup")}
           </Button>
         </div>
 
@@ -148,18 +160,21 @@ export default function Header() {
               
               <div className="flex flex-col gap-4 mt-4">
                 <Button className="w-full rounded-full bg-black text-white py-6 text-lg">
-                  Sign Up
+                  {t("nav.signup")}
                 </Button>
                 <Button variant="outline" className="w-full rounded-full border-black text-black py-6 text-lg">
-                  Log In
+                  {t("nav.login")}
                 </Button>
               </div>
 
               <div className="flex items-center justify-center gap-8 mt-8 pt-8 border-t border-gray-100">
+                <Button variant="ghost" size="lg" onClick={toggleLanguage} className="rounded-full h-12 px-6 bg-gray-100 font-bold gap-2">
+                  <Globe className="h-5 w-5" />
+                  {language === 'en' ? 'বাংলা' : 'English'}
+                </Button>
                 <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-12 w-12 bg-gray-100">
                   {theme === "dark" ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
                 </Button>
-
               </div>
             </div>
           </motion.div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Quote, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const testimonials = [
   {
@@ -55,6 +56,7 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -100,10 +102,10 @@ export default function Testimonials() {
 
       <div className="container relative z-10">
         <div className="text-center mb-16">
-          <span className="text-primary font-medium tracking-widest uppercase text-sm">Community Voices</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">What People Say</h2>
+          <span className="text-primary font-medium tracking-widest uppercase text-sm">{t("testimonials.title")}</span>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">{t("testimonials.title")}</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Hear from our community of parents, students, and learners who have experienced the AIM Centre difference.
+            {t("testimonials.subtitle")}
           </p>
         </div>
 

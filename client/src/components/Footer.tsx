@@ -2,8 +2,10 @@ import { Facebook, Instagram, Youtube } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
   return (
     <footer className="bg-secondary/50 pt-24 pb-12 border-t border-border">
       <div className="container">
@@ -41,11 +43,18 @@ export default function Footer() {
           <div>
             <h3 className="font-serif text-lg font-bold mb-6">Quick Links</h3>
             <ul className="space-y-4">
-              {["About Us", "Our Courses", "Special Needs", "Mental Health", "AIMVerse", "Contact"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
+              {[
+                { name: t("nav.about"), href: "/about" },
+                { name: t("nav.courses"), href: "/courses" },
+                { name: t("nav.specialNeeds"), href: "/special-needs" },
+                { name: t("nav.mentalHealth"), href: "/mental-health" },
+                { name: t("nav.aimVerse"), href: "/aimverse" },
+                { name: t("footer.contact"), href: "/contact" }
+              ].map((item) => (
+                <li key={item.name}>
+                  <a href={item.href} className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
                     <span className="h-px w-4 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-                    {item}
+                    {item.name}
                   </a>
                 </li>
               ))}
@@ -54,7 +63,7 @@ export default function Footer() {
 
           {/* Contact Info (Simplified) */}
           <div>
-            <h3 className="font-serif text-lg font-bold mb-6">Contact Us</h3>
+            <h3 className="font-serif text-lg font-bold mb-6">{t("footer.contact")}</h3>
             <ul className="space-y-4 text-muted-foreground">
               <li>
                 <strong className="block text-foreground mb-1">Email:</strong>
@@ -74,11 +83,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>&copy; 2026 AIM Centre 360. All rights reserved.</p>
+          <p>&copy; 2026 AIM Centre 360. {t("footer.rights")}</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms & Conditions</a>
-            <a href="#" className="hover:text-primary transition-colors">Refund Policy</a>
+            <a href="#" className="hover:text-primary transition-colors">{t("footer.privacy")}</a>
+            <a href="#" className="hover:text-primary transition-colors">{t("footer.terms")}</a>
           </div>
         </div>
       </div>

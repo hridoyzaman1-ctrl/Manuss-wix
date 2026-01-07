@@ -2,8 +2,10 @@ import { motion } from "framer-motion";
 import { Play, Timer } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AIMVerse() {
+  const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -47,12 +49,12 @@ export default function AIMVerse() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">The Animated Universe</span>
+            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.tag")}</span>
             <h2 className="text-4xl md:text-7xl font-serif font-bold mt-4 mb-6 text-black">
-              AIMVerse
+              {t("aimverse.title")}
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed">
-              Where complex scientific topics come alive through superheroes and supervillains. Join us for weekly episodic releases, quizzes, and prize giveaways!
+              {t("aimverse.desc")}
             </p>
           </motion.div>
         </div>
@@ -88,13 +90,13 @@ export default function AIMVerse() {
           <div>
             <h3 className="text-3xl font-serif font-bold mb-4 flex items-center gap-3 text-black">
               <Timer className="h-8 w-8" />
-              Next Episode Release
+              {t("aimverse.nextEpisode")}
             </h3>
             <p className="text-gray-600 mb-8">
-              Get ready for an epic journey into the world of physics. Don't miss the premiere and the chance to win exclusive merchandise!
+              {t("aimverse.nextEpisodeDesc")}
             </p>
             <Button className="bg-black hover:bg-gray-800 text-white rounded-none px-10 py-7 text-lg uppercase tracking-widest">
-              Set Reminder
+              {t("aimverse.reminder")}
             </Button>
           </div>
 
@@ -118,10 +120,10 @@ export default function AIMVerse() {
         {/* Power Glossary Section */}
         <div className="mt-32 max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">Classified Archives</span>
-            <h3 className="text-3xl md:text-5xl font-serif font-bold mt-2 text-black">Power Glossary</h3>
+            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.glossaryTag")}</span>
+            <h3 className="text-3xl md:text-5xl font-serif font-bold mt-2 text-black">{t("aimverse.glossaryTitle")}</h3>
             <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Declassified files on the scientific principles behind our heroes and villains.
+              {t("aimverse.glossaryDesc")}
             </p>
           </div>
 

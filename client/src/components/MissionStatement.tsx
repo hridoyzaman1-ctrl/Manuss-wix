@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MissionStatement() {
+  const { t } = useLanguage();
   return (
     <section className="py-32 bg-[#1A1A1A] text-[#EAEAEA] relative overflow-hidden">
       {/* Abstract Background Pattern */}
@@ -18,8 +20,7 @@ export default function MissionStatement() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-3xl md:text-5xl lg:text-7xl font-serif font-bold leading-tight tracking-tight drop-shadow-2xl">
-              "Knowledge for <span className="italic text-[#D4AF37]">anybody</span>, <br className="hidden md:block" />
-              <span className="italic text-[#D4AF37]">anywhere</span>, <span className="italic text-[#D4AF37]">anytime</span>."
+              "{t("mission.text")}"
             </h2>
             
             <div className="mt-12 flex justify-center">

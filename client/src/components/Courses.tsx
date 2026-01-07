@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const categories = [
   "All",
@@ -66,6 +67,7 @@ const courses = [
 ];
 
 export default function Courses() {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -109,7 +111,7 @@ export default function Courses() {
               viewport={{ once: true }}
               className="text-primary font-medium tracking-widest uppercase text-sm"
             >
-              Diverse Learning Opportunities
+              {t("courses.subtitle")}
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
@@ -118,7 +120,7 @@ export default function Courses() {
               transition={{ delay: 0.1 }}
               className="text-4xl md:text-5xl font-serif font-bold mt-2"
             >
-              Our Courses
+              {t("courses.title")}
             </motion.h2>
           </div>
 
@@ -210,7 +212,7 @@ export default function Courses() {
                       </div>
                       
                       <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium tracking-wide">
-                        Enroll Now
+                        {t("courses.enroll")}
                       </Button>
                     </div>
                   </div>
@@ -276,7 +278,7 @@ export default function Courses() {
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-grow">{course.description}</p>
                           <Button size="sm" className="w-full mt-auto bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium tracking-wide">
-                            Enroll Now
+                            {t("courses.enroll")}
                           </Button>
                         </div>
                       </div>

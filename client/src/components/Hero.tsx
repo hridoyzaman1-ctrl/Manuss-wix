@@ -2,8 +2,10 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue } from "fram
 import { ArrowRight } from "lucide-react";
 import { useRef, useEffect } from "react";
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Hero() {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -122,13 +124,13 @@ export default function Hero() {
           >
             {/* Option B: Minimalist Luxury (Refined) */}
             <h1 className="font-sans text-center text-foreground cursor-default flex flex-col items-center gap-2">
-              <motion.span
+              <motion.span 
                 initial={{ opacity: 0, letterSpacing: "0.5em" }}
                 animate={{ opacity: 1, letterSpacing: "0.8em" }}
                 transition={{ duration: 1.5, ease: "easeOut" }}
                 className="text-xs md:text-sm uppercase font-medium tracking-[0.8em] block text-muted-foreground ml-2"
               >
-                EST. 2026
+                {t("hero.est")}
               </motion.span>
               <div className="flex flex-col items-center relative py-6">
                 <motion.span
@@ -136,7 +138,7 @@ export default function Hero() {
                   animate={{ y: 0, opacity: 1 }}
                   className="text-5xl md:text-7xl font-light tracking-[0.2em] uppercase block"
                 >
-                  AIM
+                  {t("hero.title1")}
                 </motion.span>
                 <motion.span
                   initial={{ scaleX: 0 }}
@@ -150,7 +152,7 @@ export default function Hero() {
                   transition={{ delay: 0.2 }}
                   className="text-3xl md:text-5xl font-light tracking-[0.3em] uppercase block text-muted-foreground"
                 >
-                  Centre
+                  {t("hero.title2")}
                 </motion.span>
               </div>
               <motion.span 
@@ -159,7 +161,7 @@ export default function Hero() {
                 transition={{ delay: 0.4, duration: 1 }}
                 className="text-[5rem] md:text-[7rem] font-thin tracking-tighter leading-none block text-primary font-serif -mt-4"
               >
-                360
+                {t("hero.title3")}
               </motion.span>
             </h1>
             
@@ -167,7 +169,7 @@ export default function Hero() {
               variant="outline"
               className="rounded-none border-foreground bg-transparent px-10 py-7 text-lg uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
             >
-              Enroll Now <ArrowRight className="ml-2 h-5 w-5" />
+              {t("hero.cta")} <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
         </motion.div>
