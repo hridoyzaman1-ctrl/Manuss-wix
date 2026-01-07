@@ -3,14 +3,16 @@ import { Button } from "./ui/button";
 export default function NewArrivals() {
   const products = [
     {
-      title: "Poetry Collection First Edition",
-      price: "180.00৳",
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop"
+      title: "Professional Spoken English",
+      price: "2,200৳",
+      image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop",
+      type: "course"
     },
     {
-      title: "Famous Novel Illustrated Edition",
-      price: "275.00৳",
-      image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop"
+      title: "New Gamified Elements",
+      price: null,
+      image: "https://images.unsplash.com/photo-1556438064-2d7646166914?q=80&w=800&auto=format&fit=crop",
+      type: "feature"
     }
   ];
 
@@ -36,14 +38,16 @@ export default function NewArrivals() {
                   {product.title}
                 </h3>
                 <div className="w-8 h-[1px] bg-black/20"></div>
-                <p className="font-sans text-lg text-gray-600">
-                  {product.price}
-                </p>
+                {product.price && (
+                  <p className="font-sans text-lg text-gray-600">
+                    {product.price}
+                  </p>
+                )}
                 <Button 
                   variant="outline"
                   className="rounded-none border-black text-black hover:bg-black hover:text-white px-8 py-6 text-xs uppercase tracking-widest mt-4 transition-all duration-300 hover-magnetic"
                 >
-                  View Details
+                  {product.type === 'course' ? 'View Details' : 'Explore Feature'}
                 </Button>
               </div>
 

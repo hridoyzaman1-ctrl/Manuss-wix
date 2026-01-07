@@ -91,29 +91,32 @@ export default function CreativeGallery() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {galleryItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              layoutId={`card-${item.id}`}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => setSelectedId(item.id)}
-              className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg"
-            >
-              <img 
-                src={item.image} 
-                alt={item.title} 
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-                <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-10 w-10" />
+            <div key={item.id} className="flex flex-col gap-3">
+              <motion.div
+                layoutId={`card-${item.id}`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => setSelectedId(item.id)}
+                className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg hover-lift"
+              >
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
+                  <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-10 w-10" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <h3 className="text-white font-bold">{item.title}</h3>
+                </div>
+              </motion.div>
+              <div className="text-center">
+                <span className="text-xs font-bold uppercase tracking-widest text-primary border-b border-primary/20 pb-1">{item.category}</span>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h3 className="text-white font-bold">{item.title}</h3>
-                <p className="text-white/80 text-sm">{item.category}</p>
-              </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 

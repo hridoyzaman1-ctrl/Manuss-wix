@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Heart, Search } from "lucide-react";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, BookOpen, Heart, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -68,12 +68,32 @@ const courses = [
 export default function Courses() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const filteredCourses = courses.filter(course => {
     const matchesCategory = activeCategory === "All" || course.category === activeCategory;
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  // Auto-swipe functionality
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (filteredCourses.length > 3) {
+        setCarouselIndex((prev) => (prev + 1) % (filteredCourses.length - 2));
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [filteredCourses.length]);
+
+  const handlePrev = () => {
+    setCarouselIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    setCarouselIndex((prev) => Math.min(filteredCourses.length - 3, prev + 1));
+  };
 
   return (
     <section className="py-24 bg-background relative overflow-hidden">
@@ -132,65 +152,149 @@ export default function Courses() {
           </TabsList>
 
           <TabsContent value={activeCategory} className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredCourses.map((course, index) => (
-                <motion.div
-                  key={course.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500"
+            {/* Desktop Carousel View */}
+            <div className="hidden md:block relative">
+              <div className="overflow-hidden" ref={carouselRef}>
+                <motion.div 
+                  className="flex gap-8"
+                  animate={{ x: `-${carouselIndex * 33.33}%` }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
-                    <img 
-                      src={course.image} 
-                      alt={course.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-                    
-                    {/* Category Badge */}
-                    <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
-                      {course.category}
+                  {filteredCourses.map((course) => (
+                    <div key={course.id} className="min-w-[calc(33.33%-1.33rem)] w-[calc(33.33%-1.33rem)]">
+                      <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full">
+                        {/* Image Container */}
+                        <div className="relative h-64 overflow-hidden">
+                          <img 
+                            src={course.image} 
+                            alt={course.title} 
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+                          
+                          {/* Category Badge */}
+                          <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
+                            {course.category}
+                          </div>
+
+                          {/* Wishlist Button */}
+                          <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
+                            <Heart className="h-4 w-4" />
+                          </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 relative">
+                          <div className="flex justify-between items-start mb-4">
+                            <h3 className="font-serif text-xl font-bold text-premium-hover">
+                              {course.title}
+                            </h3>
+                            <span className="font-bold text-primary">{course.price}</span>
+                          </div>
+                          
+                          <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
+                            {course.description}
+                          </p>
+
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <BookOpen className="h-4 w-4" />
+                              <span>12 Lessons</span>
+                            </div>
+                            
+                            <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
+                              View Details 
+                              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Hover Border Effect */}
+                        <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* Manual Navigation Controls */}
+              <div className="flex justify-center gap-4 mt-8">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={handlePrev} 
+                  disabled={carouselIndex === 0}
+                  className="rounded-full hover:bg-primary hover:text-white transition-colors"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={handleNext} 
+                  disabled={carouselIndex >= filteredCourses.length - 3}
+                  className="rounded-full hover:bg-primary hover:text-white transition-colors"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Mobile Stack View (Touch Swipe Enabled via CSS Scroll Snap) */}
+            <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 scrollbar-hide">
+              {filteredCourses.map((course) => (
+                <div key={course.id} className="min-w-[85vw] snap-center">
+                  <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full">
+                    {/* Image Container */}
+                    <div className="relative h-64 overflow-hidden">
+                      <img 
+                        src={course.image} 
+                        alt={course.title} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+                      
+                      {/* Category Badge */}
+                      <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
+                        {course.category}
+                      </div>
+
+                      {/* Wishlist Button */}
+                      <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
+                        <Heart className="h-4 w-4" />
+                      </button>
                     </div>
 
-                    {/* Wishlist Button */}
-                    <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
-                      <Heart className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 relative">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="font-serif text-xl font-bold text-premium-hover">
-                        {course.title}
-                      </h3>
-                      <span className="font-bold text-primary">{course.price}</span>
-                    </div>
-                    
-                    <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
-                      {course.description}
-                    </p>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <BookOpen className="h-4 w-4" />
-                        <span>12 Lessons</span>
+                    {/* Content */}
+                    <div className="p-6 relative">
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="font-serif text-xl font-bold text-premium-hover">
+                          {course.title}
+                        </h3>
+                        <span className="font-bold text-primary">{course.price}</span>
                       </div>
                       
-                      <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
-                        View Details 
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                      </Button>
-                    </div>
-                  </div>
+                      <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
+                        {course.description}
+                      </p>
 
-                  {/* Hover Border Effect */}
-                  <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                </motion.div>
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <BookOpen className="h-4 w-4" />
+                          <span>12 Lessons</span>
+                        </div>
+                        
+                        <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
+                          View Details 
+                          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Hover Border Effect */}
+                    <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                  </div>
+                </div>
               ))}
             </div>
           </TabsContent>
