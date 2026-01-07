@@ -120,14 +120,7 @@ export default function Header() {
             <Button className="rounded-none bg-[#0A1A2F] text-white hover:bg-[#112240] font-medium px-8 h-12 z-0">
               Sign Up
             </Button>
-            {/* Yellow Badge - Positioned to the RIGHT of the button, hanging from top */}
-            <div className="absolute -top-6 -right-6 z-10 bg-[#FFEB3B] text-black font-bold w-8 h-20 shadow-lg flex flex-col items-center justify-start pt-2">
-              <span className="mb-1 font-serif text-xs">A</span>
-              <span className="mb-1 font-serif text-xs">I</span>
-              <span className="font-serif text-xs">M</span>
-              {/* Triangle cut at bottom */}
-              <div className="absolute bottom-0 left-0 w-0 h-0 border-l-[16px] border-r-[16px] border-b-[12px] border-l-transparent border-r-transparent border-b-white transform rotate-180 translate-y-[1px]"></div>
-            </div>
+
           </div>
         </div>
 

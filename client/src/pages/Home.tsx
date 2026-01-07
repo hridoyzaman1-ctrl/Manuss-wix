@@ -19,17 +19,17 @@ export default function Home() {
       <ScrollProgress />
       <Header />
       <main>
-      <Hero />
-      <About />
-      <NewArrivals />
-      <Courses />
-      <LearningHours />
-      <SpecialNeeds />
-      <TinyExplorers />
-      <MentalHealth />
-      <AIMVerse />
-      <CreativeGallery />
-      <Contact />
+      <div className="bg-white"><Hero /></div>
+      <div className="bg-[#FAFAFA]"><About /></div>
+      <div className="bg-white"><NewArrivals /></div>
+      <div className="bg-[#FAFAFA]"><Courses /></div>
+      <div className="bg-white"><LearningHours /></div>
+      <div className="bg-[#FAFAFA]"><SpecialNeeds /></div>
+      <div className="bg-white"><TinyExplorers /></div>
+      <div className="bg-[#FAFAFA]"><MentalHealth /></div>
+      <div className="bg-white"><AIMVerse /></div>
+      <div className="bg-[#FAFAFA]"><CreativeGallery /></div>
+      <div className="bg-white"><Contact /></div>
       </main>
       <Footer />
     </div>

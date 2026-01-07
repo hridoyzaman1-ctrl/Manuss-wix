@@ -37,7 +37,7 @@ export default function Hero() {
       className="relative w-full overflow-hidden bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-0 h-[800px]">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-1 h-[800px] bg-white">
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
