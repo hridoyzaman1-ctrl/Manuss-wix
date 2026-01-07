@@ -74,7 +74,7 @@ export default function Hero() {
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.1, rotate: -2, color: "#333" }}
                 transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="italic font-light text-6xl md:text-8xl block my-2 origin-center"
+                className="block my-2 origin-center"
               >
                 Achieve
               </motion.span>
@@ -116,7 +116,7 @@ export default function Hero() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col items-center gap-12"
           >
-            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9] cursor-default perspective-1000">
+            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9] cursor-default perspective-1000 flex flex-col items-center">
               <motion.span
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -128,7 +128,20 @@ export default function Hero() {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="block"
               >
-                AIM Centre
+                AIM
+              </motion.span>
+              <motion.span
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  textShadow: "0px 10px 20px rgba(0,0,0,0.1)",
+                  y: -5
+                }}
+                transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+                className="block"
+              >
+                Centre
               </motion.span>
               <motion.span 
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -139,7 +152,7 @@ export default function Hero() {
                   color: "#1a1a1a"
                 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="text-8xl md:text-[10rem] font-light block mt-2 origin-bottom"
+                className="text-[10rem] md:text-[12rem] font-light block mt-[-1rem] origin-bottom"
               >
                 360
               </motion.span>
