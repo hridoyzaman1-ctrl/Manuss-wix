@@ -59,29 +59,29 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="font-serif text-4xl md:text-7xl font-bold leading-[1.1] text-black tracking-tight cursor-default"
+              className="font-serif text-4xl md:text-6xl font-black leading-[1.1] text-foreground tracking-tighter cursor-default relative z-20"
             >
               <motion.span 
                 whileHover={{ scale: 1.05, x: 10 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="inline-block"
+                className="inline-block mix-blend-multiply dark:mix-blend-normal text-primary"
               >
                 Aim High,
               </motion.span>
               <br />
               <motion.span 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.1, rotate: -2, color: "#333" }}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                whileHover={{ scale: 1.1, rotate: -2 }}
                 transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="block my-2 origin-center"
+                className="block my-2 origin-center font-light italic tracking-widest text-muted-foreground"
               >
                 Achieve
               </motion.span>
               <motion.span 
                 whileHover={{ scale: 1.05, x: -10 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="inline-block"
+                className="inline-block font-black text-foreground"
               >
                 Infinity!
               </motion.span>
@@ -116,46 +116,33 @@ export default function Hero() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col items-center gap-12"
           >
-            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9] cursor-default perspective-1000 flex flex-col items-center">
+            {/* Option C: Avant-Garde (Refined) */}
+            <h1 className="font-serif text-center text-foreground cursor-default flex flex-col items-center relative">
               <motion.span
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                whileHover={{ 
-                  scale: 1.05, 
-                  textShadow: "0px 10px 20px rgba(0,0,0,0.1)",
-                  y: -5
-                }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="block"
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="text-7xl md:text-9xl font-black tracking-tighter leading-none block relative z-10 mix-blend-difference text-primary"
               >
                 AIM
               </motion.span>
               <motion.span
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                whileHover={{ 
-                  scale: 1.05, 
-                  textShadow: "0px 10px 20px rgba(0,0,0,0.1)",
-                  y: -5
-                }}
-                transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-                className="block"
+                initial={{ x: 50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl md:text-6xl font-light italic tracking-widest leading-none block -mt-4 md:-mt-8 text-muted-foreground"
               >
                 Centre
               </motion.span>
-              <motion.span 
-                initial={{ scale: 0.8, opacity: 0 }}
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                whileHover={{ 
-                  scale: 1.1, 
-                  rotateX: 10,
-                  color: "#1a1a1a"
-                }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="text-[8rem] md:text-[12rem] font-light block mt-[-0.5rem] md:mt-[-1rem] origin-bottom"
+                transition={{ delay: 0.2 }}
+                className="relative mt-2"
               >
-                360
-              </motion.span>
+                <span className="text-[6rem] md:text-[9rem] font-bold leading-none block text-foreground">
+                  360
+                </span>
+              </motion.div>
             </h1>
             
             <Button 
