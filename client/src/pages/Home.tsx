@@ -15,6 +15,7 @@ import Contact from "@/components/Contact";
 import PreFooter from "@/components/PreFooter";
 import MissionStatement from "@/components/MissionStatement";
 import Testimonials from "@/components/Testimonials";
+import FAQ from "@/components/FAQ";
 
 export default function Home() {
   return (
@@ -35,6 +36,7 @@ export default function Home() {
       <div className="bg-[#FAFAFA]"><CreativeGallery /></div>
       <div className="bg-white"><Contact /></div>
       <div className="bg-[#FAFAFA]"><Testimonials /></div>
+      <div className="bg-white"><FAQ /></div>
       <PreFooter />
       </main>
       <Footer />

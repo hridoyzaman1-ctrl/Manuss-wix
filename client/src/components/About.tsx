@@ -47,6 +47,36 @@ export default function About() {
           </div>
 
         </div>
+
+        {/* Standout Features Grid */}
+        <div className="mt-24">
+          <div className="text-center mb-16">
+            <span className="text-primary font-medium tracking-widest uppercase text-sm">Why Choose Us</span>
+            <h3 className="text-3xl md:text-4xl font-serif font-bold mt-2">The AIM Advantage</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "Live Classes & Academics", desc: "Interactive real-time learning with comprehensive academic curriculum.", icon: "🎓" },
+              { title: "Tiny Explorers", desc: "Curiosity-driven early childhood education for our youngest learners.", icon: "🌱" },
+              { title: "Special Needs Innovation", desc: "Sensory-induced teaching tailored for Autism Levels 1-3 & developmental needs.", icon: "🧩" },
+              { title: "Mental Health Support", desc: "Professional counseling for both students and parents for holistic well-being.", icon: "🧠" },
+              { title: "AIMVerse & Gamification", desc: "Animated educational episodes and fun, gamified learning elements.", icon: "🎮" },
+              { title: "Skill-Based Learning", desc: "Practical skills development with quizzes and real-time progress tracking.", icon: "⚡" },
+              { title: "AIMbot: AI Tutor", desc: "Smart 24/7 AI companion for personalized guidance and instant doubts resolution.", icon: "🤖" },
+              { title: "Accessibility First", desc: "Customizable interface options to suit every learner's unique needs.", icon: "♿" }
+            ].map((feature, index) => (
+              <div 
+                key={index}
+                className="group p-6 border border-border bg-card hover:border-primary/50 transition-all duration-500 hover:-translate-y-1"
+              >
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
+                <h4 className="font-serif text-lg font-bold mb-2 group-hover:text-primary transition-colors">{feature.title}</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
