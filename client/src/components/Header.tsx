@@ -21,10 +21,13 @@ export default function Header() {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
     { name: "Courses", href: "/courses" },
-    { name: "Services", href: "/services" },
-    { name: "Contact", href: "/contact" },
+    { name: "Special Needs", href: "/special-needs" },
+    { name: "Tiny Explorers", href: "/tiny-explorers" },
+    { name: "Mental Health", href: "/mental-health" },
+    { name: "AIMVerse", href: "/aimverse" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "About", href: "/about" },
   ];
 
   return (

@@ -140,7 +140,7 @@ export default function Courses() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group relative bg-card border border-border overflow-hidden hover:shadow-xl transition-all duration-500"
+                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500"
                 >
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
@@ -165,7 +165,7 @@ export default function Courses() {
                   {/* Content */}
                   <div className="p-6 relative">
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="font-serif text-xl font-bold group-hover:text-primary transition-colors">
+                      <h3 className="font-serif text-xl font-bold text-premium-hover">
                         {course.title}
                       </h3>
                       <span className="font-bold text-primary">{course.price}</span>
@@ -181,7 +181,7 @@ export default function Courses() {
                         <span>12 Lessons</span>
                       </div>
                       
-                      <Button variant="ghost" className="group/btn p-0 hover:bg-transparent hover:text-primary">
+                      <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
                         View Details 
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                       </Button>

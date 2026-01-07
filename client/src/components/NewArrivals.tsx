@@ -29,7 +29,7 @@ export default function NewArrivals() {
 
         <div className="flex flex-col gap-8">
           {products.map((product, index) => (
-            <div key={index} className="bg-white p-0 flex flex-col md:flex-row h-auto md:h-[400px] group overflow-hidden">
+            <div key={index} className="bg-white p-0 flex flex-col md:flex-row h-auto md:h-[400px] group overflow-hidden hover-lift">
               {/* Content Left */}
               <div className="flex-1 p-12 flex flex-col items-center justify-center text-center gap-6">
                 <h3 className="font-serif text-2xl font-bold text-black">
@@ -41,7 +41,7 @@ export default function NewArrivals() {
                 </p>
                 <Button 
                   variant="outline"
-                  className="rounded-none border-black text-black hover:bg-black hover:text-white px-8 py-6 text-xs uppercase tracking-widest mt-4 transition-all duration-300"
+                  className="rounded-none border-black text-black hover:bg-black hover:text-white px-8 py-6 text-xs uppercase tracking-widest mt-4 transition-all duration-300 hover-magnetic"
                 >
                   View Details
                 </Button>
@@ -62,7 +62,7 @@ export default function NewArrivals() {
         <div className="flex justify-end mt-12">
           <Button 
             variant="outline"
-            className="rounded-none border-black bg-transparent text-black hover:bg-black hover:text-white px-10 py-6 text-xs uppercase tracking-widest"
+            className="rounded-none border-black bg-transparent text-black hover:bg-black hover:text-white px-10 py-6 text-xs uppercase tracking-widest hover-magnetic"
           >
             Browse All
           </Button>
