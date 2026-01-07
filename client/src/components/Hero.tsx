@@ -59,7 +59,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="font-sans text-3xl md:text-5xl font-light leading-tight text-foreground tracking-[0.15em] uppercase cursor-default relative z-20 flex flex-col gap-4"
+              className="font-serif text-4xl md:text-6xl font-bold leading-tight text-foreground tracking-normal cursor-default relative z-20 flex flex-col gap-2"
             >
               <motion.span 
                 whileHover={{ scale: 1.05, x: 10 }}
@@ -68,25 +68,19 @@ export default function Hero() {
               >
                 Aim High,
               </motion.span>
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.5, duration: 1 }}
-                className="w-12 h-[1px] bg-muted-foreground self-center"
-              ></motion.div>
               <motion.span 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 1.2, delay: 0.2 }}
-                className="block text-muted-foreground tracking-[0.25em]"
+                className="block text-muted-foreground italic"
               >
                 Achieve
               </motion.span>
               <motion.span 
                 whileHover={{ scale: 1.05, x: -10 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="inline-block font-normal text-foreground tracking-[0.2em]"
+                className="inline-block font-bold text-foreground"
               >
                 Infinity!
               </motion.span>
