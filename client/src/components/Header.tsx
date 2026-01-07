@@ -32,11 +32,7 @@ export default function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-background/80 backdrop-blur-md border-b border-border py-4 shadow-sm" 
-          : "bg-transparent py-6"
-      }`}
+      className="relative top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 py-4"
     >
       <div className="container flex items-center justify-between">
         {/* Logo */}
@@ -113,15 +109,9 @@ export default function Header() {
 
           <div className="h-6 w-[1px] bg-border mx-2"></div>
 
-          <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary">
+          <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-black">
             Log In
           </Button>
-          <div className="relative flex items-center">
-            <Button className="rounded-none bg-[#0A1A2F] text-white hover:bg-[#112240] font-medium px-8 h-12 z-0">
-              Sign Up
-            </Button>
-
-          </div>
         </div>
 
         {/* Mobile Menu Toggle */}
