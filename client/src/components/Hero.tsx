@@ -165,8 +165,8 @@ export default function Hero() {
             className="h-full w-full object-cover"
           />
           
-          {/* Yellow Bookmark */}
-          <div className="absolute right-12 top-0 h-48 w-16 bg-[#FFEB3B] shadow-xl flex flex-col items-center pt-8 pb-4">
+          {/* Yellow Bookmark - Positioned relative to the panel content to avoid clipping */}
+          <div className="absolute right-12 top-[10%] h-48 w-16 bg-[#FFEB3B] shadow-xl flex flex-col items-center pt-8 pb-4 z-20">
             <div className="flex flex-col gap-4 font-serif text-2xl font-bold text-black">
               <span>A</span>
               <span>I</span>

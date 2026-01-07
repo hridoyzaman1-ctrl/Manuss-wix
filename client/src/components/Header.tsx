@@ -112,6 +112,9 @@ export default function Header() {
           <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-black">
             Log In
           </Button>
+          <Button className="rounded-full bg-black text-white hover:bg-black/80 px-6">
+            Sign Up
+          </Button>
         </div>
 
         {/* Mobile Menu Toggle */}
