@@ -13,6 +13,8 @@ import NewArrivals from "@/components/NewArrivals";
 import LearningHours from "@/components/LearningHours";
 import Contact from "@/components/Contact";
 import PreFooter from "@/components/PreFooter";
+import MissionStatement from "@/components/MissionStatement";
+import Testimonials from "@/components/Testimonials";
 
 export default function Home() {
   return (
@@ -25,12 +27,14 @@ export default function Home() {
       <div className="bg-white"><NewArrivals /></div>
       <div className="bg-[#FAFAFA]"><Courses /></div>
       <div className="bg-white"><LearningHours /></div>
+      <MissionStatement />
       <div className="bg-[#FAFAFA]"><SpecialNeeds /></div>
       <div className="bg-white"><TinyExplorers /></div>
       <div className="bg-[#FAFAFA]"><MentalHealth /></div>
       <div className="bg-white"><AIMVerse /></div>
       <div className="bg-[#FAFAFA]"><CreativeGallery /></div>
       <div className="bg-white"><Contact /></div>
+      <div className="bg-[#FAFAFA]"><Testimonials /></div>
       <PreFooter />
       </main>
       <Footer />
