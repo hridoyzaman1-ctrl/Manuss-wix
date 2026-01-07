@@ -52,7 +52,7 @@ export default function Hero() {
           <div className="absolute inset-0">
             <motion.img 
               style={{ scale: 1.1, x: xMove, y: yMove }}
-              src="/images/hero/panel-1-texture.jpg" 
+              src="/images/hero/panel-1-texture.webp" 
               alt="Paper Texture" 
               className="h-full w-full object-cover"
             />
@@ -180,7 +180,7 @@ export default function Hero() {
           className="relative h-[300px] md:h-[120%] md:-top-[10%] overflow-hidden"
         >
           <img 
-            src="/images/hero/panel-4-books.jpg" 
+            src="/images/hero/panel-4-books.webp" 
             alt="Stacked Books" 
             className="h-full w-full object-cover"
           />
