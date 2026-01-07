@@ -80,26 +80,26 @@
 }
 
 .dark {
-  /* Dark Mode: Deep Void Black & Warm Gold */
-  --background: oklch(0.13 0.028 261.692); /* #050505 Deep Void */
-  --foreground: oklch(0.985 0 0); /* Soft White */
-  --card: oklch(0.17 0.03 261.692);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.13 0.028 261.692);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.795 0.141 80.966); /* Warm Gold #D4AF37 */
-  --primary-foreground: oklch(0.13 0.028 261.692);
-  --secondary: oklch(0.21 0.034 264.665);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.21 0.034 264.665);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.21 0.034 264.665);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 15%);
-  --input: oklch(1 0 0 / 20%);
-  --ring: oklch(0.795 0.141 80.966);
+  /* Premium Dark Mode: Deep Charcoal & Silver/Gold Accents */
+  --background: oklch(0.12 0.01 260); /* Deep Charcoal #121212 */
+  --foreground: oklch(0.92 0.01 260); /* Soft Silver-White */
+  --card: oklch(0.16 0.01 260); /* Slightly lighter charcoal for cards */
+  --card-foreground: oklch(0.92 0.01 260);
+  --popover: oklch(0.14 0.01 260);
+  --popover-foreground: oklch(0.92 0.01 260);
+  --primary: oklch(0.85 0.12 85); /* Elegant Gold */
+  --primary-foreground: oklch(0.12 0.01 260);
+  --secondary: oklch(0.25 0.02 260); /* Muted Charcoal */
+  --secondary-foreground: oklch(0.92 0.01 260);
+  --muted: oklch(0.20 0.01 260);
+  --muted-foreground: oklch(0.65 0.01 260); /* Muted Silver */
+  --accent: oklch(0.22 0.01 260);
+  --accent-foreground: oklch(0.95 0.01 260);
+  --destructive: oklch(0.6 0.2 25);
+  --destructive-foreground: oklch(0.95 0.01 260);
+  --border: oklch(0.3 0.01 260); /* Subtle border */
+  --input: oklch(0.25 0.01 260);
+  --ring: oklch(0.85 0.12 85);
 }
 
 @layer base {
