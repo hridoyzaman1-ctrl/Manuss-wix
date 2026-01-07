@@ -178,13 +178,13 @@ export default function Courses() {
                     </div>
 
                     {/* Wishlist Button */}
-                    <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
+                    <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500 z-20">
                       <Heart className="h-4 w-4" />
                     </button>
                   </div>
 
                   {/* Content */}
-                  <div className="p-6 relative">
+                  <div className="p-6 relative flex flex-col h-full">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="font-serif text-xl font-bold text-premium-hover">
                         {course.title}
@@ -196,15 +196,21 @@ export default function Courses() {
                       {course.description}
                     </p>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <BookOpen className="h-4 w-4" />
-                        <span>12 Lessons</span>
+                    <div className="mt-auto space-y-4">
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <BookOpen className="h-4 w-4" />
+                          <span>12 Lessons</span>
+                        </div>
+                        
+                        <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover text-xs">
+                          View Details 
+                          <ArrowRight className="ml-2 h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
+                        </Button>
                       </div>
                       
-                      <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
-                        View Details 
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium tracking-wide">
+                        Enroll Now
                       </Button>
                     </div>
                   </div>
@@ -258,10 +264,20 @@ export default function Courses() {
                           <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm px-2 py-1 text-[10px] font-medium uppercase tracking-wider">
                             {course.category}
                           </div>
+                          {/* Wishlist Button for Carousel */}
+                          <button className="absolute top-3 right-3 p-1.5 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500 z-20">
+                            <Heart className="h-3.5 w-3.5" />
+                          </button>
                         </div>
-                        <div className="p-4">
-                          <h4 className="font-serif text-lg font-bold mb-2 line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h4>
-                          <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+                        <div className="p-4 flex flex-col h-[180px]">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-serif text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h4>
+                            <span className="text-sm font-bold text-primary">{course.price}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-grow">{course.description}</p>
+                          <Button size="sm" className="w-full mt-auto bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium tracking-wide">
+                            Enroll Now
+                          </Button>
                         </div>
                       </div>
                     </div>

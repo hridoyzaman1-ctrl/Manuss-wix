@@ -109,16 +109,26 @@ export default function SpecialNeeds() {
           {/* Video Section */}
           <div className="relative group cursor-pointer">
             <div className="aspect-video bg-black relative overflow-hidden border border-border">
-              <iframe 
+              <video 
                 width="100%" 
                 height="100%" 
-                src="https://www.youtube.com/embed/mY8swJHZuuo?si=premium_video_player" 
-                title="Autism Success Story" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowFullScreen
-                className="opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-              ></iframe>
+                autoPlay 
+                muted 
+                loop 
+                playsInline
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+              >
+                <source src="/videos/autism-awareness.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              
+              {/* Custom Overlay for Premium Feel */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+              
+              {/* Play Button Overlay (Optional, for manual control indication) */}
+              <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/20">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
             </div>
             <div className="mt-4">
               <h3 className="font-serif text-2xl font-bold mb-2">Inspiration: A Life of Autism</h3>

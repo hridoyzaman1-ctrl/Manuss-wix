@@ -75,10 +75,18 @@ export default function Footer() {
           <div>
             <h3 className="font-serif text-lg font-bold mb-6">Newsletter</h3>
             <p className="text-muted-foreground mb-4">Subscribe to get updates on new courses and events.</p>
-            <div className="flex gap-2">
-              <Input placeholder="Your email" className="bg-background" />
-              <Button>Join</Button>
-            </div>
+            <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
+              <Input 
+                placeholder="Your email address" 
+                className="bg-background border-border/50 focus:border-primary transition-colors" 
+                type="email"
+                required
+              />
+              <Button type="submit" className="w-full group">
+                Subscribe Now
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </Button>
+            </form>
             
             {/* Antique Books Image from original site */}
             <div className="mt-8 relative h-12 overflow-hidden rounded opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
