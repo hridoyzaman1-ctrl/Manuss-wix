@@ -224,7 +224,7 @@ export default function Courses() {
                         </Button>
                       </div>
                       
-                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium tracking-wide">
+                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
                         {t("courses.enroll")}
                       </Button>
                     </div>
@@ -268,7 +268,7 @@ export default function Courses() {
                 >
                   {[...courses, ...courses].map((course, idx) => (
                     <div key={`${course.id}-${idx}`} className="min-w-[300px] w-[300px]">
-                      <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full">
+                      <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full hover:shadow-xl dark:hover:shadow-primary/10">
                         <div className="relative h-48 overflow-hidden">
                           <img 
                             src={course.image} 

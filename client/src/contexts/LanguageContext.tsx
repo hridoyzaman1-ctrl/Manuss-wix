@@ -74,6 +74,9 @@ export const translations = {
     "aimverse.plausibility": "PLAUSIBILITY",
     "aimverse.mechanism": "MECHANISM",
     "aimverse.future": "FUTURE POSSIBILITY",
+    "aimverse.nextEpisode": "Next Episode",
+    "aimverse.nextEpisodeDesc": "Discover the secrets of subatomic particles with Captain Quantum.",
+    "aimverse.reminder": "Set Reminder",
 
     // Courses
     "courses.title": "Our Learning Paths",
@@ -171,6 +174,9 @@ export const translations = {
     "aimverse.plausibility": "সম্ভাব্যতা",
     "aimverse.mechanism": "মেকানিজম",
     "aimverse.future": "ভবিষ্যতের সম্ভাবনা",
+    "aimverse.nextEpisode": "পরবর্তী এপিসোড",
+    "aimverse.nextEpisodeDesc": "ক্যাপ্টেন কোয়ান্টামের সাথে সাবঅ্যাটমিক কণার রহস্য আবিষ্কার করুন।",
+    "aimverse.reminder": "রিমাইন্ডার সেট করুন",
 
     // Courses
     "courses.title": "আমাদের লার্নিং পাথ",

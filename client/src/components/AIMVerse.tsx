@@ -36,10 +36,10 @@ export default function AIMVerse() {
   }, []);
 
   return (
-    <section className="py-24 bg-[#FAFAFA] text-black relative overflow-hidden">
+    <section className="py-24 bg-background text-foreground relative overflow-hidden">
       {/* Subtle Texture Background */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] dark:invert dark:opacity-10"></div>
       </div>
 
       <div className="container relative z-10">
@@ -49,11 +49,11 @@ export default function AIMVerse() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.tag")}</span>
-            <h2 className="text-4xl md:text-7xl font-serif font-bold mt-4 mb-6 text-black">
+            <span className="text-muted-foreground font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.tag")}</span>
+            <h2 className="text-4xl md:text-7xl font-serif font-bold mt-4 mb-6 text-foreground">
               {t("aimverse.title")}
             </h2>
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-muted-foreground leading-relaxed">
               {t("aimverse.desc")}
             </p>
           </motion.div>
@@ -88,14 +88,14 @@ export default function AIMVerse() {
         {/* Countdown Timer */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
           <div>
-            <h3 className="text-3xl font-serif font-bold mb-4 flex items-center gap-3 text-black">
+            <h3 className="text-3xl font-serif font-bold mb-4 flex items-center gap-3 text-foreground">
               <Timer className="h-8 w-8" />
               {t("aimverse.nextEpisode")}
             </h3>
-            <p className="text-gray-600 mb-8">
+            <p className="text-muted-foreground mb-8">
               {t("aimverse.nextEpisodeDesc")}
             </p>
-            <Button className="bg-black hover:bg-gray-800 text-white rounded-none px-10 py-7 text-lg uppercase tracking-widest">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none px-10 py-7 text-lg uppercase tracking-widest transition-all duration-300 hover:scale-105">
               {t("aimverse.reminder")}
             </Button>
           </div>
@@ -107,11 +107,11 @@ export default function AIMVerse() {
               { label: "Minutes", value: timeLeft.minutes },
               { label: "Seconds", value: timeLeft.seconds }
             ].map((item, index) => (
-              <div key={index} className="bg-white border border-gray-200 p-4 text-center shadow-sm">
-                <div className="text-3xl md:text-4xl font-bold font-serif text-black mb-2">
+              <div key={index} className="bg-card border border-border p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className="text-3xl md:text-4xl font-bold font-serif text-foreground mb-2">
                   {item.value.toString().padStart(2, '0')}
                 </div>
-                <div className="text-xs uppercase tracking-wider text-gray-500">{item.label}</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">{item.label}</div>
               </div>
             ))}
           </div>
@@ -120,9 +120,9 @@ export default function AIMVerse() {
         {/* Power Glossary Section */}
         <div className="mt-32 max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.glossaryTag")}</span>
-            <h3 className="text-3xl md:text-5xl font-serif font-bold mt-2 text-black">{t("aimverse.glossaryTitle")}</h3>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+            <span className="text-muted-foreground font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.glossaryTag")}</span>
+            <h3 className="text-3xl md:text-5xl font-serif font-bold mt-2 text-foreground">{t("aimverse.glossaryTitle")}</h3>
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
               {t("aimverse.glossaryDesc")}
             </p>
           </div>
@@ -133,49 +133,49 @@ export default function AIMVerse() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white border border-gray-200 p-8 shadow-lg relative overflow-hidden group hover:border-black/20 transition-colors duration-300"
+              className="bg-card border border-border p-8 shadow-lg relative overflow-hidden group hover:border-primary/20 transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="absolute top-0 right-0 bg-black text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">Hero</div>
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 uppercase tracking-widest">Hero</div>
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h4 className="text-3xl font-serif font-bold text-black">Photon</h4>
-                  <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">Episode 04: "Light Speed"</p>
+                  <h4 className="text-3xl font-serif font-bold text-foreground">Photon</h4>
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider mt-1">Episode 04: "Light Speed"</p>
                 </div>
                 <div className="text-4xl">⚡</div>
               </div>
               
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-sm font-bold uppercase tracking-wide text-black mb-2 border-b border-gray-100 pb-1">Power: Light Manipulation</h5>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <h5 className="text-sm font-bold uppercase tracking-wide text-foreground mb-2 border-b border-border pb-1">Power: Light Manipulation</h5>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     Ability to control and solidify photons, creating hard-light constructs and moving at relativistic speeds.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Scientific Theory</h5>
-                    <p className="text-sm font-medium text-black">Wave-Particle Duality</p>
+                    <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Scientific Theory</h5>
+                    <p className="text-sm font-medium text-foreground">Wave-Particle Duality</p>
                   </div>
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Plausibility</h5>
+                    <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Plausibility</h5>
                     <div className="w-full bg-gray-100 h-2 rounded-full mt-1">
                       <div className="bg-green-500 h-2 rounded-full w-[40%]"></div>
                     </div>
-                    <p className="text-xs text-right mt-1 text-gray-500">Theoretical</p>
+                    <p className="text-xs text-right mt-1 text-muted-foreground">Theoretical</p>
                   </div>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Mechanism</h5>
-                  <p className="text-sm text-gray-600">
+                  <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Mechanism</h5>
+                  <p className="text-sm text-muted-foreground">
                     Utilizes a quantum field generator to collapse the wave function of light into tangible matter (Bose-Einstein Condensates).
                   </p>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Future Possibility</h5>
-                  <p className="text-sm text-gray-600 italic">
+                  <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Future Possibility</h5>
+                  <p className="text-sm text-muted-foreground italic">
                     "Photonics computing and laser cooling are early steps toward controlling light as matter."
                   </p>
                 </div>
@@ -187,9 +187,9 @@ export default function AIMVerse() {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-black text-white border border-gray-800 p-8 shadow-lg relative overflow-hidden group"
+              className="bg-secondary text-secondary-foreground border border-border p-8 shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 bg-white text-black text-xs font-bold px-3 py-1 uppercase tracking-widest">Villain</div>
+              <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-bold px-3 py-1 uppercase tracking-widest">Villain</div>
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <h4 className="text-3xl font-serif font-bold">Entropy</h4>
@@ -200,36 +200,36 @@ export default function AIMVerse() {
               
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-sm font-bold uppercase tracking-wide text-gray-200 mb-2 border-b border-gray-800 pb-1">Power: Decay Acceleration</h5>
-                  <p className="text-gray-400 text-sm leading-relaxed">
+                  <h5 className="text-sm font-bold uppercase tracking-wide text-secondary-foreground mb-2 border-b border-border pb-1">Power: Decay Acceleration</h5>
+                  <p className="text-secondary-foreground/80 text-sm leading-relaxed">
                     Can instantly increase the disorder (entropy) of any closed system, causing structures to crumble and energy to dissipate.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Scientific Theory</h5>
-                    <p className="text-sm font-medium text-white">Second Law of Thermodynamics</p>
+                    <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Scientific Theory</h5>
+                    <p className="text-sm font-medium text-secondary-foreground">Second Law of Thermodynamics</p>
                   </div>
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Plausibility</h5>
+                    <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Plausibility</h5>
                     <div className="w-full bg-gray-800 h-2 rounded-full mt-1">
                       <div className="bg-red-500 h-2 rounded-full w-[85%]"></div>
                     </div>
-                    <p className="text-xs text-right mt-1 text-gray-500">High (Natural Law)</p>
+                    <p className="text-xs text-right mt-1 text-secondary-foreground/60">High (Natural Law)</p>
                   </div>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Mechanism</h5>
-                  <p className="text-sm text-gray-400">
+                  <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Mechanism</h5>
+                  <p className="text-sm text-secondary-foreground/80">
                     Acts as a catalyst for thermodynamic equilibrium, bypassing activation energy barriers to speed up natural decay.
                   </p>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Future Possibility</h5>
-                  <p className="text-sm text-gray-400 italic">
+                  <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Future Possibility</h5>
+                  <p className="text-sm text-secondary-foreground/80 italic">
                     "Understanding entropy is key to energy efficiency, but weaponizing it remains pure sci-fi... for now."
                   </p>
                 </div>
