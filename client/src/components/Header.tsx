@@ -56,14 +56,14 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link key={link.name} href={link.href}>
-              <a className={`relative text-sm font-medium tracking-wide transition-colors hover:text-primary ${
-                location === link.href ? "text-primary" : "text-foreground/80"
+              <a className={`relative text-sm font-bold tracking-wide transition-colors hover:text-black ${
+                location === link.href ? "text-black" : "text-black/70"
               }`}>
                 {link.name}
                 {location === link.href && (
                   <motion.div
                     layoutId="underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black"
                   />
                 )}
               </a>
@@ -120,13 +120,13 @@ export default function Header() {
             <Button className="rounded-none bg-[#0A1A2F] text-white hover:bg-[#112240] font-medium px-8 h-12 z-0">
               Sign Up
             </Button>
-            {/* Yellow Badge - Positioned to hang off the button/header without overlapping text */}
-            <div className="absolute -bottom-16 right-4 z-10 bg-[#FFEB3B] text-black font-bold w-10 h-24 shadow-lg flex flex-col items-center justify-start pt-2 clip-path-bookmark">
-              <span className="mb-1 font-serif">A</span>
-              <span className="mb-1 font-serif">I</span>
-              <span className="font-serif">M</span>
-              {/* Triangle cut at bottom simulated with clip-path in CSS or SVG if needed, but simple div for now */}
-              <div className="absolute bottom-0 left-0 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[15px] border-l-transparent border-r-transparent border-b-white transform rotate-180 translate-y-[1px]"></div>
+            {/* Yellow Badge - Positioned to the RIGHT of the button, hanging from top */}
+            <div className="absolute -top-2 -right-6 z-10 bg-[#FFEB3B] text-black font-bold w-8 h-20 shadow-lg flex flex-col items-center justify-start pt-2">
+              <span className="mb-1 font-serif text-xs">A</span>
+              <span className="mb-1 font-serif text-xs">I</span>
+              <span className="font-serif text-xs">M</span>
+              {/* Triangle cut at bottom */}
+              <div className="absolute bottom-0 left-0 w-0 h-0 border-l-[16px] border-r-[16px] border-b-[12px] border-l-transparent border-r-transparent border-b-white transform rotate-180 translate-y-[1px]"></div>
             </div>
           </div>
         </div>
