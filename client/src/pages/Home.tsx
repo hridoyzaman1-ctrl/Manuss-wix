@@ -8,6 +8,7 @@ import MentalHealth from "@/components/MentalHealth";
 import SpecialNeeds from "@/components/SpecialNeeds";
 import TinyExplorers from "@/components/TinyExplorers";
 import Hero from "@/components/Hero";
+import About from "@/components/About";
 
 export default function Home() {
   return (
@@ -15,8 +16,9 @@ export default function Home() {
       <ScrollProgress />
       <Header />
       <main>
-        <Hero />
-        <Courses />
+      <Hero />
+      <About />
+      <Courses />
         <SpecialNeeds />
         <TinyExplorers />
         <MentalHealth />

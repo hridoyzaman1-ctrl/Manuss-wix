@@ -34,15 +34,15 @@ export default function Hero() {
   return (
     <div 
       ref={containerRef} 
-      className="relative h-screen w-full overflow-hidden bg-background"
+      className="relative w-full overflow-hidden bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid h-full w-full grid-cols-1 md:grid-cols-4 gap-0">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-0 h-[800px]">
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
           style={{ y: y1 }}
-          className="relative h-[120%] -top-[10%] flex flex-col items-center justify-center overflow-hidden"
+          className="relative h-[120%] -top-[10%] flex flex-col items-center justify-center overflow-hidden border-r border-gray-200"
         >
           <div className="absolute inset-0">
             <img 
@@ -94,7 +94,7 @@ export default function Hero() {
         {/* Panel 3: White Background + Title + CTA */}
         <motion.div 
           style={{ y: y3 }}
-          className="relative h-[120%] -top-[10%] flex flex-col items-center justify-center bg-[#F4F4F4] text-center px-4"
+          className="relative h-[120%] -top-[10%] flex flex-col items-center justify-center bg-[#F4F4F4] text-center px-4 border-r border-gray-200"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
