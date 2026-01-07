@@ -178,15 +178,7 @@ export default function Hero() {
             className="h-full w-full object-cover"
           />
           
-          {/* Yellow Bookmark - Positioned relative to the panel content to avoid clipping */}
-          <div className="absolute right-12 top-[10%] h-48 w-16 bg-[#FFEB3B] shadow-xl flex flex-col items-center pt-8 pb-4 z-20">
-            <div className="flex flex-col gap-4 font-serif text-2xl font-bold text-black">
-              <span>A</span>
-              <span>I</span>
-              <span>M</span>
-            </div>
-            <div className="absolute bottom-0 left-0 w-0 h-0 border-l-[32px] border-r-[32px] border-b-[20px] border-l-transparent border-r-transparent border-b-[#F4F4F4] transform translate-y-[1px]"></div>
-          </div>
+
         </motion.div>
 
       </div>
