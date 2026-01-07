@@ -36,13 +36,13 @@ export default function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="relative top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 py-4"
+      className="relative top-0 left-0 right-0 z-50 bg-background border-b border-border py-4"
     >
       <div className="container flex items-center justify-between">
         {/* Logo */}
         <Link href="/">
           <a className="flex items-center gap-2 group">
-            <div className="relative h-10 w-10 overflow-hidden bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-serif font-bold text-xl transition-transform duration-500 group-hover:rotate-180">
+            <div className="relative h-10 w-10 overflow-hidden bg-foreground text-background flex items-center justify-center font-serif font-bold text-xl transition-transform duration-500 group-hover:rotate-180">
               <span>A</span>
             </div>
             <div className="flex items-baseline gap-1">
@@ -58,15 +58,15 @@ export default function Header() {
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative text-sm font-bold tracking-wide transition-colors hover:text-black whitespace-nowrap cursor-pointer hover-trigger px-2 py-1 ${
-                  location === link.href ? "text-black" : "text-black/70"
+                className={`relative text-sm font-bold tracking-wide transition-colors hover:text-foreground whitespace-nowrap cursor-pointer hover-trigger px-2 py-1 ${
+                  location === link.href ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
                 {link.name}
                 {location === link.href && (
                   <motion.div
                     layoutId="underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-foreground"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
@@ -125,10 +125,10 @@ export default function Header() {
 
           {/* Auth Buttons (Hidden on Mobile) */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-black">
+            <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground">
               {t("nav.login")}
             </Button>
-            <Button className="rounded-full bg-black text-white hover:bg-black/80 px-6">
+            <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-6">
               {t("nav.signup")}
             </Button>
           </div>
@@ -152,14 +152,14 @@ export default function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed inset-0 top-[73px] z-40 bg-white md:hidden overflow-y-auto"
+            className="fixed inset-0 top-[73px] z-40 bg-background md:hidden overflow-y-auto"
           >
             <div className="container py-8 flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link key={link.name} href={link.href}>
                     <a 
-                      className="text-2xl font-serif font-bold py-3 border-b border-gray-100 text-black hover:text-primary transition-colors"
+                      className="text-2xl font-serif font-bold py-3 border-b border-border text-foreground hover:text-primary transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {link.name}
@@ -169,10 +169,10 @@ export default function Header() {
               </div>
               
               <div className="flex flex-col gap-4 mt-4">
-                <Button className="w-full rounded-full bg-black text-white py-6 text-lg">
+                <Button className="w-full rounded-full bg-foreground text-background py-6 text-lg">
                   {t("nav.signup")}
                 </Button>
-                <Button variant="outline" className="w-full rounded-full border-black text-black py-6 text-lg">
+                <Button variant="outline" className="w-full rounded-full border-foreground text-foreground py-6 text-lg">
                   {t("nav.login")}
                 </Button>
               </div>
