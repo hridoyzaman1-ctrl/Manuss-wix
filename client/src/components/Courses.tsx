@@ -152,150 +152,122 @@ export default function Courses() {
           </TabsList>
 
           <TabsContent value={activeCategory} className="mt-0">
-            {/* Desktop Carousel View */}
-            <div className="hidden md:block relative">
+            {/* Main Course Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+              {filteredCourses.map((course, index) => (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500"
+                >
+                  {/* Image Container */}
+                  <div className="relative h-64 overflow-hidden">
+                    <img 
+                      src={course.image} 
+                      alt={course.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
+                    
+                    {/* Category Badge */}
+                    <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
+                      {course.category}
+                    </div>
+
+                    {/* Wishlist Button */}
+                    <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
+                      <Heart className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 relative">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-serif text-xl font-bold text-premium-hover">
+                        {course.title}
+                      </h3>
+                      <span className="font-bold text-primary">{course.price}</span>
+                    </div>
+                    
+                    <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
+                      {course.description}
+                    </p>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-border">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <BookOpen className="h-4 w-4" />
+                        <span>12 Lessons</span>
+                      </div>
+                      
+                      <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
+                        View Details 
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Hover Border Effect */}
+                  <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Extra Courses Carousel Section */}
+            <div className="border-t border-border pt-16">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-2xl font-serif font-bold">More to Explore</h3>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={handlePrev} 
+                    className="rounded-full hover:bg-primary hover:text-white transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={handleNext} 
+                    className="rounded-full hover:bg-primary hover:text-white transition-colors"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
               <div className="overflow-hidden" ref={carouselRef}>
                 <motion.div 
-                  className="flex gap-8"
-                  animate={{ x: `-${carouselIndex * 33.33}%` }}
+                  className="flex gap-6"
+                  animate={{ x: `-${carouselIndex * 320}px` }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  {filteredCourses.map((course) => (
-                    <div key={course.id} className="min-w-[calc(33.33%-1.33rem)] w-[calc(33.33%-1.33rem)]">
+                  {[...courses, ...courses].map((course, idx) => (
+                    <div key={`${course.id}-${idx}`} className="min-w-[300px] w-[300px]">
                       <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full">
-                        {/* Image Container */}
-                        <div className="relative h-64 overflow-hidden">
+                        <div className="relative h-48 overflow-hidden">
                           <img 
                             src={course.image} 
                             alt={course.title} 
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
                           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-                          
-                          {/* Category Badge */}
-                          <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
+                          <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm px-2 py-1 text-[10px] font-medium uppercase tracking-wider">
                             {course.category}
                           </div>
-
-                          {/* Wishlist Button */}
-                          <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
-                            <Heart className="h-4 w-4" />
-                          </button>
                         </div>
-
-                        {/* Content */}
-                        <div className="p-6 relative">
-                          <div className="flex justify-between items-start mb-4">
-                            <h3 className="font-serif text-xl font-bold text-premium-hover">
-                              {course.title}
-                            </h3>
-                            <span className="font-bold text-primary">{course.price}</span>
-                          </div>
-                          
-                          <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
-                            {course.description}
-                          </p>
-
-                          <div className="flex items-center justify-between pt-4 border-t border-border">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <BookOpen className="h-4 w-4" />
-                              <span>12 Lessons</span>
-                            </div>
-                            
-                            <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
-                              View Details 
-                              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                            </Button>
-                          </div>
+                        <div className="p-4">
+                          <h4 className="font-serif text-lg font-bold mb-2 line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h4>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
                         </div>
-
-                        {/* Hover Border Effect */}
-                        <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                       </div>
                     </div>
                   ))}
                 </motion.div>
               </div>
-
-              {/* Manual Navigation Controls */}
-              <div className="flex justify-center gap-4 mt-8">
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  onClick={handlePrev} 
-                  disabled={carouselIndex === 0}
-                  className="rounded-full hover:bg-primary hover:text-white transition-colors"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  onClick={handleNext} 
-                  disabled={carouselIndex >= filteredCourses.length - 3}
-                  className="rounded-full hover:bg-primary hover:text-white transition-colors"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Mobile Stack View (Touch Swipe Enabled via CSS Scroll Snap) */}
-            <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 scrollbar-hide">
-              {filteredCourses.map((course) => (
-                <div key={course.id} className="min-w-[85vw] snap-center">
-                  <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full">
-                    {/* Image Container */}
-                    <div className="relative h-64 overflow-hidden">
-                      <img 
-                        src={course.image} 
-                        alt={course.title} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-                      
-                      {/* Category Badge */}
-                      <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
-                        {course.category}
-                      </div>
-
-                      {/* Wishlist Button */}
-                      <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500">
-                        <Heart className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6 relative">
-                      <div className="flex justify-between items-start mb-4">
-                        <h3 className="font-serif text-xl font-bold text-premium-hover">
-                          {course.title}
-                        </h3>
-                        <span className="font-bold text-primary">{course.price}</span>
-                      </div>
-                      
-                      <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
-                        {course.description}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-border">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <BookOpen className="h-4 w-4" />
-                          <span>12 Lessons</span>
-                        </div>
-                        
-                        <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover">
-                          View Details 
-                          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Hover Border Effect */}
-                    <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                  </div>
-                </div>
-              ))}
             </div>
           </TabsContent>
         </Tabs>
