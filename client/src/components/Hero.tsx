@@ -37,7 +37,7 @@ export default function Hero() {
       className="relative w-full overflow-hidden bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-[20px] h-auto md:h-[800px] bg-white">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-[20px] h-auto md:h-[800px] bg-background">
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
@@ -113,7 +113,7 @@ export default function Hero() {
         {/* Panel 3: White Background + Title + CTA */}
         <motion.div 
           style={{ y: y3 }}
-          className="relative h-[600px] md:h-[120%] md:-top-[10%] flex flex-col items-center justify-center bg-[#F4F4F4] text-center px-4 border-r border-gray-200 py-12 md:py-0"
+          className="relative h-[600px] md:h-[120%] md:-top-[10%] flex flex-col items-center justify-center bg-card text-center px-4 border-r border-border py-12 md:py-0"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -166,7 +166,7 @@ export default function Hero() {
             
             <Button 
               variant="outline"
-              className="rounded-none border-black bg-transparent px-10 py-7 text-lg uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all duration-300"
+              className="rounded-none border-foreground bg-transparent px-10 py-7 text-lg uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
             >
               Enroll Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
