@@ -54,11 +54,11 @@
   --chart-4: var(--color-blue-700);
   --chart-5: var(--color-blue-800);
   --radius: 0.65rem;
-  /* Light Mode: Porcelain White & Sharp Charcoal */
-  --background: oklch(0.98 0.002 247.839); /* #FAFAFA */
-  --foreground: oklch(0.141 0.005 285.823); /* #1A1A1A */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
+  /* Light Mode: Cream/Beige & Sharp Charcoal */
+  --background: oklch(0.96 0.01 95); /* Cream/Beige background */
+  --foreground: oklch(0.15 0.02 85); /* Darker text for contrast */
+  --card: oklch(0.98 0.005 95);
+  --card-foreground: oklch(0.15 0.02 85);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
   --primary: oklch(0.21 0.034 264.665); /* Deep Navy */

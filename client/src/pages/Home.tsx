@@ -9,6 +9,9 @@ import SpecialNeeds from "@/components/SpecialNeeds";
 import TinyExplorers from "@/components/TinyExplorers";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
+import NewArrivals from "@/components/NewArrivals";
+import LearningHours from "@/components/LearningHours";
+import Contact from "@/components/Contact";
 
 export default function Home() {
   return (
@@ -18,14 +21,17 @@ export default function Home() {
       <main>
       <Hero />
       <About />
+      <NewArrivals />
       <Courses />
-        <SpecialNeeds />
-        <TinyExplorers />
-        <MentalHealth />
-        <AIMVerse />
-        <CreativeGallery />
-        <Footer />
+      <LearningHours />
+      <SpecialNeeds />
+      <TinyExplorers />
+      <MentalHealth />
+      <AIMVerse />
+      <CreativeGallery />
+      <Contact />
       </main>
+      <Footer />
     </div>
   );
 }

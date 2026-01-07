@@ -113,12 +113,22 @@ export default function Header() {
 
           <div className="h-6 w-[1px] bg-border mx-2"></div>
 
-          <Button variant="ghost" className="font-medium hover:bg-muted">
+          <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary">
             Log In
           </Button>
-          <Button className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6">
-            Sign Up
-          </Button>
+          <div className="relative flex items-center">
+            <Button className="rounded-none bg-[#0A1A2F] text-white hover:bg-[#112240] font-medium px-8 h-12 z-0">
+              Sign Up
+            </Button>
+            {/* Yellow Badge - Positioned to hang off the button/header without overlapping text */}
+            <div className="absolute -bottom-16 right-4 z-10 bg-[#FFEB3B] text-black font-bold w-10 h-24 shadow-lg flex flex-col items-center justify-start pt-2 clip-path-bookmark">
+              <span className="mb-1 font-serif">A</span>
+              <span className="mb-1 font-serif">I</span>
+              <span className="font-serif">M</span>
+              {/* Triangle cut at bottom simulated with clip-path in CSS or SVG if needed, but simple div for now */}
+              <div className="absolute bottom-0 left-0 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[15px] border-l-transparent border-r-transparent border-b-white transform rotate-180 translate-y-[1px]"></div>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Menu Toggle */}
