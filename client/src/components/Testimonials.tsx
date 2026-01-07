@@ -8,7 +8,7 @@ const testimonials = [
     id: 1,
     name: "Tahmina Akhter",
     role: "Parent",
-    image: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?q=80&w=1974&auto=format&fit=crop",
+    image: "/images/tahmina-akhter.jpg",
     content: "The progress my son has made in the Special Needs program is miraculous. The teachers are so caring and the sensory learning approach has truly unlocked his potential.",
     rating: 5
   },
@@ -16,7 +16,7 @@ const testimonials = [
     id: 2,
     name: "Rafiqul Islam",
     role: "Spoken English Student",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop",
+    image: "/images/rafiqul-islam.jpg",
     content: "I was hesitant at first, but the Spoken English course helped me gain the confidence I needed. I recently secured my dream job thanks to the communication skills I learned here.",
     rating: 5
   },
