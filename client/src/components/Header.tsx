@@ -44,18 +44,17 @@ export default function Header() {
             <div className="relative h-10 w-10 overflow-hidden bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-serif font-bold text-xl transition-transform duration-500 group-hover:rotate-180">
               <span>A</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-serif text-lg font-bold leading-none tracking-tight">AIM Centre</span>
-              <span className="text-xs font-medium tracking-[0.2em] text-muted-foreground">360</span>
+            <div className="flex items-baseline gap-1">
+              <span className="font-serif text-lg font-bold leading-none tracking-tight">AIM Centre 360</span>
             </div>
           </a>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden xl:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link key={link.name} href={link.href}>
-              <a className={`relative text-sm font-bold tracking-wide transition-colors hover:text-black ${
+              <a className={`relative text-sm font-bold tracking-wide transition-colors hover:text-black whitespace-nowrap ${
                 location === link.href ? "text-black" : "text-black/70"
               }`}>
                 {link.name}
@@ -101,13 +100,6 @@ export default function Header() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </Button>
-
-          <Button variant="ghost" size="icon" className="relative rounded-full hover:bg-muted">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-              0
-            </span>
           </Button>
 
           <div className="h-6 w-[1px] bg-border mx-2"></div>
@@ -167,12 +159,7 @@ export default function Header() {
                 <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-12 w-12 bg-gray-100">
                   {theme === "dark" ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
                 </Button>
-                <Button variant="ghost" size="icon" className="rounded-full h-12 w-12 bg-gray-100 relative">
-                  <ShoppingCart className="h-6 w-6" />
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-                    0
-                  </span>
-                </Button>
+
               </div>
             </div>
           </motion.div>
