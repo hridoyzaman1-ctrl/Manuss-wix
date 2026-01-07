@@ -54,7 +54,13 @@ export default function Hero() {
               style={{ scale: 1.1, x: xMove, y: yMove }}
               src="/images/hero/panel-1-texture.webp" 
               alt="Paper Texture" 
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover dark:hidden"
+            />
+            <motion.img 
+              style={{ scale: 1.1, x: xMove, y: yMove }}
+              src="/images/hero/panel-1-texture-dark.webp" 
+              alt="Dark Paper Texture" 
+              className="h-full w-full object-cover hidden dark:block"
             />
           </div>
           <motion.div 
