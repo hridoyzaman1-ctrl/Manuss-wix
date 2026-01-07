@@ -23,20 +23,20 @@ export default function Home() {
       <ScrollProgress />
       <Header />
       <main>
-      <div className="bg-white"><Hero /></div>
-      <div className="bg-[#FAFAFA]"><About /></div>
-      <div className="bg-white"><NewArrivals /></div>
-      <div className="bg-[#FAFAFA]"><Courses /></div>
-      <div className="bg-white"><LearningHours /></div>
+      <div className="bg-background"><Hero /></div>
+      <div className="bg-muted/30 dark:bg-card/30"><About /></div>
+      <div className="bg-background"><NewArrivals /></div>
+      <div className="bg-muted/30 dark:bg-card/30"><Courses /></div>
+      <div className="bg-background"><LearningHours /></div>
       <MissionStatement />
-      <div className="bg-[#FAFAFA]"><SpecialNeeds /></div>
-      <div className="bg-white"><TinyExplorers /></div>
-      <div className="bg-[#FAFAFA]"><MentalHealth /></div>
-      <div className="bg-white"><AIMVerse /></div>
-      <div className="bg-[#FAFAFA]"><CreativeGallery /></div>
-      <div className="bg-white"><Contact /></div>
-      <div className="bg-[#FAFAFA]"><Testimonials /></div>
-      <div className="bg-white"><FAQ /></div>
+      <div className="bg-muted/30 dark:bg-card/30"><SpecialNeeds /></div>
+      <div className="bg-background"><TinyExplorers /></div>
+      <div className="bg-muted/30 dark:bg-card/30"><MentalHealth /></div>
+      <div className="bg-background"><AIMVerse /></div>
+      <div className="bg-muted/30 dark:bg-card/30"><CreativeGallery /></div>
+      <div className="bg-background"><Contact /></div>
+      <div className="bg-muted/30 dark:bg-card/30"><Testimonials /></div>
+      <div className="bg-background"><FAQ /></div>
       <PreFooter />
       </main>
       <Footer />

@@ -81,48 +81,48 @@
 
 .dark {
   /* Premium Dark Mode: Deep Midnight & Luminous Gold */
-  /* Background: Deepest Navy/Charcoal (almost black but richer) */
-  --background: oklch(0.12 0.03 260); 
+  /* Background: Deepest Navy/Charcoal (Base Dark) */
+  --background: oklch(0.10 0.02 260); 
   
   /* Foreground: Soft Platinum White (not harsh pure white) */
-  --foreground: oklch(0.92 0.01 260); 
+  --foreground: oklch(0.94 0.01 260); 
   
-  /* Card: Slightly lighter midnight for depth */
-  --card: oklch(0.16 0.03 260); 
-  --card-foreground: oklch(0.92 0.01 260);
+  /* Card: Slightly lighter midnight for depth (Layer 1) */
+  --card: oklch(0.14 0.03 260); 
+  --card-foreground: oklch(0.94 0.01 260);
   
   /* Popover: Matches card for consistency */
-  --popover: oklch(0.16 0.03 260);
-  --popover-foreground: oklch(0.92 0.01 260);
+  --popover: oklch(0.14 0.03 260);
+  --popover-foreground: oklch(0.94 0.01 260);
   
   /* Primary: Luxurious Gold/Amber */
-  --primary: oklch(0.75 0.15 75); 
-  --primary-foreground: oklch(0.12 0.03 260); /* Dark text on gold */
+  --primary: oklch(0.78 0.16 75); 
+  --primary-foreground: oklch(0.10 0.02 260); /* Dark text on gold */
   
-  /* Secondary: Rich Navy Slate */
-  --secondary: oklch(0.22 0.04 260); 
-  --secondary-foreground: oklch(0.92 0.01 260);
+  /* Secondary: Rich Navy Slate (Layer 2) */
+  --secondary: oklch(0.18 0.04 260); 
+  --secondary-foreground: oklch(0.94 0.01 260);
   
-  /* Muted: Subtle Navy Grey */
-  --muted: oklch(0.22 0.04 260);
-  --muted-foreground: oklch(0.65 0.02 260); /* Muted Platinum */
+  /* Muted: Subtle Navy Grey (Layer 3 - for alternating sections) */
+  --muted: oklch(0.12 0.025 260);
+  --muted-foreground: oklch(0.70 0.02 260); /* Muted Platinum */
   
   /* Accent: Deep Indigo Glow */
-  --accent: oklch(0.25 0.05 260);
-  --accent-foreground: oklch(0.92 0.01 260);
+  --accent: oklch(0.20 0.05 260);
+  --accent-foreground: oklch(0.94 0.01 260);
   
   /* Destructive: Muted Crimson */
   --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(0.92 0.01 260);
+  --destructive-foreground: oklch(0.94 0.01 260);
   
   /* Border: Low contrast Navy line */
-  --border: oklch(0.25 0.03 260);
+  --border: oklch(0.20 0.03 260);
   
   /* Input: Matches secondary background */
-  --input: oklch(0.22 0.04 260);
+  --input: oklch(0.18 0.04 260);
   
   /* Ring: Gold glow for focus */
-  --ring: oklch(0.75 0.15 75);
+  --ring: oklch(0.78 0.16 75);
 }
 
 @layer base {
