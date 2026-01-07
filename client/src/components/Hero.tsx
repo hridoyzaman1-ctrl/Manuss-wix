@@ -72,7 +72,7 @@ export default function Hero() {
                 transition={{ type: "spring", stiffness: 300 }}
                 className="inline-block text-primary"
               >
-                Aim High,
+                {t("hero.subtitle").split(',')[0]},
               </motion.span>
               <motion.span 
                 initial={{ opacity: 0 }}
@@ -81,14 +81,14 @@ export default function Hero() {
                 transition={{ duration: 1.2, delay: 0.2 }}
                 className="block text-muted-foreground italic"
               >
-                Achieve
+                {t("hero.subtitle").split(',')[1] ? t("hero.subtitle").split(',')[1].trim().split(' ')[0] : ''}
               </motion.span>
               <motion.span 
                 whileHover={{ scale: 1.05, x: -10 }}
                 transition={{ type: "spring", stiffness: 300 }}
                 className="inline-block font-bold text-foreground"
               >
-                Infinity!
+                {t("hero.subtitle").split(',')[1] ? t("hero.subtitle").split(',')[1].trim().split(' ').slice(1).join(' ') : ''}
               </motion.span>
             </motion.h2>
           </motion.div>
