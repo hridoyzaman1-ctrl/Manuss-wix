@@ -77,67 +77,73 @@ export default function Header() {
         </nav>
 
         {/* Actions */}
-        <div className="hidden md:flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleLanguage}
-            className="rounded-full hover:bg-muted transition-colors font-bold gap-2"
-          >
-            <Globe className="h-4 w-4" />
-            {language === 'en' ? 'BN' : 'EN'}
-          </Button>
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Language & Theme Toggles (Visible on Mobile) */}
+          <div className="flex items-center gap-1 md:gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleLanguage}
+              className="rounded-full hover:bg-muted transition-colors font-bold gap-2 px-2 md:px-4"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="text-xs md:text-sm">{language === 'en' ? 'BN' : 'EN'}</span>
+            </Button>
 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="rounded-full hover:bg-muted transition-colors h-8 w-8 md:h-10 md:w-10"
+            >
+              <AnimatePresence mode="wait">
+                {theme === "dark" ? (
+                  <motion.div
+                    key="sun"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Sun className="h-4 w-4 md:h-5 md:w-5" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Moon className="h-4 w-4 md:h-5 md:w-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </div>
+
+          <div className="hidden md:block h-6 w-[1px] bg-border mx-2"></div>
+
+          {/* Auth Buttons (Hidden on Mobile) */}
+          <div className="hidden md:flex items-center gap-4">
+            <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-black">
+              {t("nav.login")}
+            </Button>
+            <Button className="rounded-full bg-black text-white hover:bg-black/80 px-6">
+              {t("nav.signup")}
+            </Button>
+          </div>
+
+          {/* Mobile Menu Toggle */}
           <Button
             variant="ghost"
             size="icon"
-            onClick={toggleTheme}
-            className="rounded-full hover:bg-muted transition-colors"
+            className="xl:hidden ml-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <AnimatePresence mode="wait">
-              {theme === "dark" ? (
-                <motion.div
-                  key="sun"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Sun className="h-5 w-5" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="moon"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Moon className="h-5 w-5" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Button>
-
-          <div className="h-6 w-[1px] bg-border mx-2"></div>
-
-          <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-black">
-            {t("nav.login")}
-          </Button>
-          <Button className="rounded-full bg-black text-white hover:bg-black/80 px-6">
-            {t("nav.signup")}
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
-
-        {/* Mobile Menu Toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </Button>
       </div>
 
       {/* Mobile Menu */}
@@ -172,15 +178,7 @@ export default function Header() {
                 </Button>
               </div>
 
-              <div className="flex items-center justify-center gap-8 mt-8 pt-8 border-t border-gray-100">
-                <Button variant="ghost" size="lg" onClick={toggleLanguage} className="rounded-full h-12 px-6 bg-gray-100 font-bold gap-2">
-                  <Globe className="h-5 w-5" />
-                  {language === 'en' ? 'বাংলা' : 'English'}
-                </Button>
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-12 w-12 bg-gray-100">
-                  {theme === "dark" ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
-                </Button>
-              </div>
+              {/* Toggles removed from here as they are now in the top bar */}
             </div>
           </motion.div>
         )}
