@@ -100,7 +100,13 @@ export default function Courses() {
   return (
     <section className="py-24 bg-background relative overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/4 pointer-events-none"></div>
+      <motion.div 
+        initial={{ opacity: 0, x: 100 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/4 pointer-events-none"
+      ></motion.div>
       
       <div className="container relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
@@ -143,13 +149,20 @@ export default function Courses() {
         <Tabs defaultValue="All" className="w-full" onValueChange={setActiveCategory}>
           <TabsList className="flex flex-wrap justify-start gap-2 bg-transparent p-0 mb-12 h-auto">
             {categories.map((category, index) => (
-              <TabsTrigger 
-                key={category} 
-                value={category}
-                className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all hover:text-primary/80"
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 + index * 0.05 }}
               >
-                {category}
-              </TabsTrigger>
+                <TabsTrigger 
+                  value={category}
+                  className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all hover:text-primary/80"
+                >
+                  {category}
+                </TabsTrigger>
+              </motion.div>
             ))}
           </TabsList>
 

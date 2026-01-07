@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -11,7 +12,13 @@ export default function Footer() {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand Column */}
-          <div className="space-y-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="space-y-6"
+          >
             <Link href="/">
               <a className="flex items-center gap-2 group">
                 <div className="relative h-10 w-10 overflow-hidden bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-serif font-bold text-xl">
@@ -37,10 +44,15 @@ export default function Footer() {
                 <Youtube className="h-5 w-5" />
               </Button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Quick Links */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
             <h3 className="font-serif text-lg font-bold mb-6">Quick Links</h3>
             <ul className="space-y-4">
               {[
@@ -59,10 +71,15 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Contact Info (Simplified) */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
             <h3 className="font-serif text-lg font-bold mb-6">{t("footer.contact")}</h3>
             <ul className="space-y-4 text-muted-foreground">
               <li>
@@ -74,7 +91,7 @@ export default function Footer() {
                 +880 1234 567890
               </li>
             </ul>
-          </div>
+          </motion.div>
 
           {/* Empty Column for Balance or Additional Links if needed */}
           <div>

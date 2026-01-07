@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import { useEffect } from "react";
 import Lenis from "@studio-freight/lenis";
+import CustomCursor from "./components/CustomCursor";
 
 
 function Router() {
@@ -56,6 +57,7 @@ function App() {
         switchable
       >
         <TooltipProvider>
+          <CustomCursor />
           <Toaster />
           <Router />
         </TooltipProvider>

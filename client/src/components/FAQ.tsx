@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 export default function FAQ() {
   const { t } = useLanguage();
@@ -39,23 +40,37 @@ export default function FAQ() {
     <section className="py-24 bg-background">
       <div className="container max-w-3xl">
         <div className="text-center mb-16">
-          <span className="text-primary font-medium tracking-widest uppercase text-sm">{t("faq.title")}</span>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">{t("faq.title")}</h2>
-          <p className="text-lg text-muted-foreground">
-            {t("faq.subtitle")}
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-primary font-medium tracking-widest uppercase text-sm">{t("faq.title")}</span>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">{t("faq.title")}</h2>
+            <p className="text-lg text-muted-foreground">
+              {t("faq.subtitle")}
+            </p>
+          </motion.div>
         </div>
 
         <Accordion type="single" collapsible className="w-full space-y-4">
           {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="border border-border px-6 rounded-lg data-[state=open]:border-primary/50 transition-colors duration-300">
-              <AccordionTrigger className="text-lg font-serif font-medium hover:text-primary hover:no-underline py-6">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed pb-6 text-base">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <AccordionItem value={`item-${index}`} className="border border-border px-6 rounded-lg data-[state=open]:border-primary/50 transition-colors duration-300">
+                <AccordionTrigger className="text-lg font-serif font-medium hover:text-primary hover:no-underline py-6">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-relaxed pb-6 text-base">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
           ))}
         </Accordion>
       </div>

@@ -56,17 +56,22 @@ export default function Header() {
         <nav className="hidden xl:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link key={link.name} href={link.href}>
-              <a className={`relative text-sm font-bold tracking-wide transition-colors hover:text-black whitespace-nowrap ${
-                location === link.href ? "text-black" : "text-black/70"
-              }`}>
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`relative text-sm font-bold tracking-wide transition-colors hover:text-black whitespace-nowrap cursor-pointer hover-trigger px-2 py-1 ${
+                  location === link.href ? "text-black" : "text-black/70"
+                }`}
+              >
                 {link.name}
                 {location === link.href && (
                   <motion.div
                     layoutId="underline"
                     className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
-              </a>
+              </motion.a>
             </Link>
           ))}
         </nav>

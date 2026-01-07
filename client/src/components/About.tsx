@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 export default function About() {
   const { t } = useLanguage();
@@ -65,15 +66,19 @@ export default function About() {
               { title: t("about.features.aimBot"), desc: t("about.features.aimBot.desc"), number: "07" },
               { title: t("about.features.accessibility"), desc: t("about.features.accessibility.desc"), number: "08" }
             ].map((feature, index) => (
-              <div 
+              <motion.div 
                 key={index}
-                className="group flex flex-col items-start"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, delay: index * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
+                className="group flex flex-col items-start hover-trigger"
               >
                 <span className="text-xs font-bold text-muted-foreground/50 mb-6 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>
                 <h4 className="font-serif text-2xl font-bold mb-4 text-foreground group-hover:translate-x-2 transition-transform duration-500">{feature.title}</h4>
                 <div className="w-12 h-[1px] bg-border mb-4 group-hover:w-full group-hover:bg-primary transition-all duration-700 ease-in-out"></div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
