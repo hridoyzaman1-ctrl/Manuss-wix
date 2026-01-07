@@ -130,7 +130,7 @@ export default function SpecialNeeds() {
                 playsInline
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
               >
-                <source src="/videos/special-needs-long.mp4" type="video/mp4" />
+                <source src="/videos/autism-child.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
               
@@ -147,9 +147,9 @@ export default function SpecialNeeds() {
               </button>
 
               {/* Live Indicator */}
-              <div className="absolute top-6 left-6 bg-red-500/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
+              <div className="absolute top-6 left-6 bg-primary/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="text-white text-xs font-bold uppercase tracking-wider">Live Session</span>
+                <span className="text-white text-xs font-bold uppercase tracking-wider">Therapy Session</span>
               </div>
             </div>
             <div className="mt-6">

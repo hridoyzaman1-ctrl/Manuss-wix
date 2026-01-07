@@ -23,6 +23,7 @@ export const translations = {
     "nav.about": "About",
     "nav.login": "Log In",
     "nav.signup": "Sign Up",
+    "nav.bookAppointment": "Book Appointment",
 
     // Hero
     "hero.est": "E S T .   2 0 2 6",
@@ -60,6 +61,19 @@ export const translations = {
     "about.features.aimBot.desc": "Smart AI assistance for 24/7 learning support.",
     "about.features.accessibility": "Accessibility",
     "about.features.accessibility.desc": "Customizable options to suit every learner's needs.",
+
+    // AIMVerse
+    "aimverse.tag": "AIMVERSE",
+    "aimverse.title": "The Future of Learning",
+    "aimverse.desc": "Immerse yourself in our animated universe where education meets entertainment. Join our heroes on epic quests for knowledge.",
+    "aimverse.watch": "Watch Episode",
+    "aimverse.glossaryTag": "CLASSIFIED ARCHIVES",
+    "aimverse.glossaryTitle": "Power Glossary",
+    "aimverse.glossaryDesc": "Explore the scientific basis behind our heroes' and villains' abilities.",
+    "aimverse.theory": "THEORY",
+    "aimverse.plausibility": "PLAUSIBILITY",
+    "aimverse.mechanism": "MECHANISM",
+    "aimverse.future": "FUTURE POSSIBILITY",
 
     // Courses
     "courses.title": "Our Learning Paths",
@@ -106,6 +120,7 @@ export const translations = {
     "nav.about": "আমাদের সম্পর্কে",
     "nav.login": "লগ ইন",
     "nav.signup": "সাইন আপ",
+    "nav.bookAppointment": "অ্যাপয়েন্টমেন্ট বুক করুন",
 
     // Hero
     "hero.est": "স্থাপিত  ২০২৬",
@@ -143,6 +158,19 @@ export const translations = {
     "about.features.aimBot.desc": "২৪/৭ শেখার সহায়তার জন্য স্মার্ট এআই।",
     "about.features.accessibility": "অ্যাক্সেসিবিলিটি",
     "about.features.accessibility.desc": "প্রতিটি শিক্ষার্থীর প্রয়োজন অনুসারে কাস্টমাইজযোগ্য বিকল্প।",
+
+    // AIMVerse
+    "aimverse.tag": "এইমভার্স",
+    "aimverse.title": "শিক্ষার ভবিষ্যৎ",
+    "aimverse.desc": "আমাদের অ্যানিমেটেড ইউনিভার্সে নিজেকে নিমজ্জিত করুন যেখানে শিক্ষা বিনোদনের সাথে মিলিত হয়। জ্ঞানের জন্য মহাকাব্যিক অভিযানে আমাদের নায়কদের সাথে যোগ দিন।",
+    "aimverse.watch": "এপিসোড দেখুন",
+    "aimverse.glossaryTag": "ক্লাসিফাইড আর্কাইভস",
+    "aimverse.glossaryTitle": "পাওয়ার গ্লসারি",
+    "aimverse.glossaryDesc": "আমাদের নায়ক এবং খলনায়কদের ক্ষমতার পিছনের বৈজ্ঞানিক ভিত্তি অন্বেষণ করুন।",
+    "aimverse.theory": "তত্ত্ব",
+    "aimverse.plausibility": "সম্ভাব্যতা",
+    "aimverse.mechanism": "মেকানিজম",
+    "aimverse.future": "ভবিষ্যতের সম্ভাবনা",
 
     // Courses
     "courses.title": "আমাদের লার্নিং পাথ",
