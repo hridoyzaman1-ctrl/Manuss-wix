@@ -114,6 +114,127 @@ export default function AIMVerse() {
             ))}
           </div>
         </div>
+
+        {/* Power Glossary Section */}
+        <div className="mt-32 max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">Classified Archives</span>
+            <h3 className="text-3xl md:text-5xl font-serif font-bold mt-2 text-black">Power Glossary</h3>
+            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+              Declassified files on the scientific principles behind our heroes and villains.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Hero Profile */}
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white border border-gray-200 p-8 shadow-lg relative overflow-hidden group hover:border-black/20 transition-colors duration-300"
+            >
+              <div className="absolute top-0 right-0 bg-black text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">Hero</div>
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h4 className="text-3xl font-serif font-bold text-black">Photon</h4>
+                  <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">Episode 04: "Light Speed"</p>
+                </div>
+                <div className="text-4xl">⚡</div>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <h5 className="text-sm font-bold uppercase tracking-wide text-black mb-2 border-b border-gray-100 pb-1">Power: Light Manipulation</h5>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Ability to control and solidify photons, creating hard-light constructs and moving at relativistic speeds.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Scientific Theory</h5>
+                    <p className="text-sm font-medium text-black">Wave-Particle Duality</p>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Plausibility</h5>
+                    <div className="w-full bg-gray-100 h-2 rounded-full mt-1">
+                      <div className="bg-green-500 h-2 rounded-full w-[40%]"></div>
+                    </div>
+                    <p className="text-xs text-right mt-1 text-gray-500">Theoretical</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Mechanism</h5>
+                  <p className="text-sm text-gray-600">
+                    Utilizes a quantum field generator to collapse the wave function of light into tangible matter (Bose-Einstein Condensates).
+                  </p>
+                </div>
+
+                <div>
+                  <h5 className="text-xs font-bold uppercase text-gray-400 mb-1">Future Possibility</h5>
+                  <p className="text-sm text-gray-600 italic">
+                    "Photonics computing and laser cooling are early steps toward controlling light as matter."
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Villain Profile */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-black text-white border border-gray-800 p-8 shadow-lg relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 bg-white text-black text-xs font-bold px-3 py-1 uppercase tracking-widest">Villain</div>
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h4 className="text-3xl font-serif font-bold">Entropy</h4>
+                  <p className="text-sm text-gray-400 uppercase tracking-wider mt-1">Episode 07: "Heat Death"</p>
+                </div>
+                <div className="text-4xl">🌀</div>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <h5 className="text-sm font-bold uppercase tracking-wide text-gray-200 mb-2 border-b border-gray-800 pb-1">Power: Decay Acceleration</h5>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Can instantly increase the disorder (entropy) of any closed system, causing structures to crumble and energy to dissipate.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Scientific Theory</h5>
+                    <p className="text-sm font-medium text-white">Second Law of Thermodynamics</p>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Plausibility</h5>
+                    <div className="w-full bg-gray-800 h-2 rounded-full mt-1">
+                      <div className="bg-red-500 h-2 rounded-full w-[85%]"></div>
+                    </div>
+                    <p className="text-xs text-right mt-1 text-gray-500">High (Natural Law)</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Mechanism</h5>
+                  <p className="text-sm text-gray-400">
+                    Acts as a catalyst for thermodynamic equilibrium, bypassing activation energy barriers to speed up natural decay.
+                  </p>
+                </div>
+
+                <div>
+                  <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Future Possibility</h5>
+                  <p className="text-sm text-gray-400 italic">
+                    "Understanding entropy is key to energy efficiency, but weaponizing it remains pure sci-fi... for now."
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
