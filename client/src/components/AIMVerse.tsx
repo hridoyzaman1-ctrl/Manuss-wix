@@ -48,7 +48,7 @@ export default function AIMVerse() {
             viewport={{ once: true }}
           >
             <span className="text-black/60 font-medium tracking-[0.3em] uppercase text-sm">The Animated Universe</span>
-            <h2 className="text-5xl md:text-7xl font-serif font-bold mt-4 mb-6 text-black">
+            <h2 className="text-4xl md:text-7xl font-serif font-bold mt-4 mb-6 text-black">
               AIMVerse
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed">
@@ -98,7 +98,7 @@ export default function AIMVerse() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "Days", value: timeLeft.days },
               { label: "Hours", value: timeLeft.hours },

@@ -37,12 +37,12 @@ export default function Hero() {
       className="relative w-full overflow-hidden bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-[20px] h-[800px] bg-white">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-[20px] h-auto md:h-[800px] bg-white">
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
           style={{ y: y1 }}
-          className="relative h-[120%] -top-[10%] flex flex-col items-center justify-center overflow-hidden border-r border-gray-200"
+          className="relative h-[500px] md:h-[120%] md:-top-[10%] flex flex-col items-center justify-center overflow-hidden border-r border-gray-200"
         >
           <div className="absolute inset-0">
             <img 
@@ -59,7 +59,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="font-serif text-5xl md:text-7xl font-bold leading-[1.1] text-black tracking-tight cursor-default"
+              className="font-serif text-4xl md:text-7xl font-bold leading-[1.1] text-black tracking-tight cursor-default"
             >
               <motion.span 
                 whileHover={{ scale: 1.05, x: 10 }}
@@ -92,7 +92,7 @@ export default function Hero() {
         {/* Panel 2: Video Background (Hands on Book) */}
         <motion.div 
           style={{ y: y2 }}
-          className="relative h-[120%] -top-[10%] overflow-hidden"
+          className="relative h-[300px] md:h-[120%] md:-top-[10%] overflow-hidden"
         >
           <video
             autoPlay
@@ -108,7 +108,7 @@ export default function Hero() {
         {/* Panel 3: White Background + Title + CTA */}
         <motion.div 
           style={{ y: y3 }}
-          className="relative h-[120%] -top-[10%] flex flex-col items-center justify-center bg-[#F4F4F4] text-center px-4 border-r border-gray-200"
+          className="relative h-[600px] md:h-[120%] md:-top-[10%] flex flex-col items-center justify-center bg-[#F4F4F4] text-center px-4 border-r border-gray-200 py-12 md:py-0"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -116,7 +116,7 @@ export default function Hero() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col items-center gap-12"
           >
-            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9] cursor-default perspective-1000 flex flex-col items-center">
+            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tighter text-black leading-[0.9] cursor-default perspective-1000 flex flex-col items-center">
               <motion.span
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -152,7 +152,7 @@ export default function Hero() {
                   color: "#1a1a1a"
                 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="text-[10rem] md:text-[12rem] font-light block mt-[-1rem] origin-bottom"
+                className="text-[8rem] md:text-[12rem] font-light block mt-[-0.5rem] md:mt-[-1rem] origin-bottom"
               >
                 360
               </motion.span>
@@ -170,7 +170,7 @@ export default function Hero() {
         {/* Panel 4: Stacked Books Image + Bookmark */}
         <motion.div 
           style={{ y: y4 }}
-          className="relative h-[120%] -top-[10%] overflow-hidden"
+          className="relative h-[300px] md:h-[120%] md:-top-[10%] overflow-hidden"
         >
           <img 
             src="/images/hero/panel-4-books.jpg" 

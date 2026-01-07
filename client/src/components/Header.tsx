@@ -136,34 +136,43 @@ export default function Header() {
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden bg-background border-b border-border"
+            className="fixed inset-0 top-[73px] z-40 bg-white md:hidden overflow-y-auto"
           >
-            <div className="container py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link key={link.name} href={link.href}>
-                  <a 
-                    className="text-lg font-medium py-2 border-b border-border/50"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </a>
-                </Link>
-              ))}
-              <div className="flex items-center justify-between pt-4">
-                <div className="flex items-center gap-4">
-                  <Button variant="ghost" size="icon" onClick={toggleTheme}>
-                    {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <ShoppingCart className="h-5 w-5" />
-                  </Button>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="sm">Log In</Button>
-                  <Button size="sm">Sign Up</Button>
-                </div>
+            <div className="container py-8 flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                {navLinks.map((link) => (
+                  <Link key={link.name} href={link.href}>
+                    <a 
+                      className="text-2xl font-serif font-bold py-3 border-b border-gray-100 text-black hover:text-primary transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.name}
+                    </a>
+                  </Link>
+                ))}
+              </div>
+              
+              <div className="flex flex-col gap-4 mt-4">
+                <Button className="w-full rounded-full bg-black text-white py-6 text-lg">
+                  Sign Up
+                </Button>
+                <Button variant="outline" className="w-full rounded-full border-black text-black py-6 text-lg">
+                  Log In
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-center gap-8 mt-8 pt-8 border-t border-gray-100">
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-12 w-12 bg-gray-100">
+                  {theme === "dark" ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+                </Button>
+                <Button variant="ghost" size="icon" className="rounded-full h-12 w-12 bg-gray-100 relative">
+                  <ShoppingCart className="h-6 w-6" />
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+                    0
+                  </span>
+                </Button>
               </div>
             </div>
           </motion.div>
