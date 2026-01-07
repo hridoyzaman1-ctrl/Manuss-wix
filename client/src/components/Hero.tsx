@@ -27,9 +27,12 @@ export default function Hero() {
   const y3 = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
   const y4 = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
 
-  // Mouse parallax transforms
-  const xMove = useTransform(mouseX, [-0.5, 0.5], ["-2%", "2%"]);
-  const yMove = useTransform(mouseY, [-0.5, 0.5], ["-2%", "2%"]);
+  // Enhanced Mouse parallax transforms
+  const xMove = useTransform(mouseX, [-0.5, 0.5], ["-3%", "3%"]);
+  const yMove = useTransform(mouseY, [-0.5, 0.5], ["-3%", "3%"]);
+  const xMoveReverse = useTransform(mouseX, [-0.5, 0.5], ["2%", "-2%"]);
+  const yMoveReverse = useTransform(mouseY, [-0.5, 0.5], ["2%", "-2%"]);
+  const rotateMove = useTransform(mouseX, [-0.5, 0.5], ["-2deg", "2deg"]);
 
   return (
     <div 
@@ -41,18 +44,19 @@ export default function Hero() {
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
-          style={{ y: y1 }}
+          style={{ y: y1, x: xMoveReverse }}
           className="relative h-[500px] md:h-[120%] md:-top-[10%] flex flex-col items-center justify-center overflow-hidden border-r border-gray-200"
         >
           <div className="absolute inset-0">
-            <img 
+            <motion.img 
+              style={{ scale: 1.1, x: xMove, y: yMove }}
               src="/images/hero/panel-1-texture.jpg" 
               alt="Paper Texture" 
               className="h-full w-full object-cover"
             />
           </div>
           <motion.div 
-            style={{ x: xMove, y: yMove }}
+            style={{ x: xMove, y: yMove, rotate: rotateMove }}
             className="relative z-10 text-center px-6"
           >
             <motion.h2 
@@ -106,10 +110,11 @@ export default function Hero() {
 
         {/* Panel 3: White Background + Title + CTA */}
         <motion.div 
-          style={{ y: y3 }}
+          style={{ y: y3, x: xMoveReverse }}
           className="relative h-[600px] md:h-[120%] md:-top-[10%] flex flex-col items-center justify-center bg-card text-center px-4 border-r border-border py-12 md:py-0"
         >
           <motion.div
+            style={{ x: xMove, y: yMove }}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
