@@ -121,7 +121,7 @@ export default function Header() {
               Sign Up
             </Button>
             {/* Yellow Badge - Positioned to the RIGHT of the button, hanging from top */}
-            <div className="absolute -top-2 -right-6 z-10 bg-[#FFEB3B] text-black font-bold w-8 h-20 shadow-lg flex flex-col items-center justify-start pt-2">
+            <div className="absolute -top-6 -right-6 z-10 bg-[#FFEB3B] text-black font-bold w-8 h-20 shadow-lg flex flex-col items-center justify-start pt-2">
               <span className="mb-1 font-serif text-xs">A</span>
               <span className="mb-1 font-serif text-xs">I</span>
               <span className="font-serif text-xs">M</span>
