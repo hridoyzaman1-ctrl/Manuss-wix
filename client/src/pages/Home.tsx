@@ -12,6 +12,7 @@ import About from "@/components/About";
 import NewArrivals from "@/components/NewArrivals";
 import LearningHours from "@/components/LearningHours";
 import Contact from "@/components/Contact";
+import PreFooter from "@/components/PreFooter";
 
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
       <div className="bg-white"><AIMVerse /></div>
       <div className="bg-[#FAFAFA]"><CreativeGallery /></div>
       <div className="bg-white"><Contact /></div>
+      <PreFooter />
       </main>
       <Footer />
     </div>
