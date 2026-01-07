@@ -20,21 +20,33 @@ export default function SpecialNeeds() {
               <span className="italic text-primary">Special Needs</span>
             </h2>
             
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              Our innovative sensory-induced teaching method ensures that each lesson is customized and tailored for every unique individual. We believe in unlocking the potential within every child through understanding and specialized care.
+            <p className="text-lg text-muted-foreground mb-8 leading-relaxed text-justify">
+              Our innovative sensory-induced teaching method ensures that each lesson is customized and tailored for every unique individual. We believe in unlocking the potential within every child through understanding and specialized care. Our curriculum is meticulously designed to address the specific needs of children across the autism spectrum (Level 1, 2, 3) and other developmental challenges.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">Sensory Learning</h3>
-                <p className="text-sm text-muted-foreground">Tailored environments that respect sensory sensitivities while promoting engagement.</p>
+                <p className="text-sm text-muted-foreground">Tailored environments that respect sensory sensitivities while promoting engagement through tactile, visual, and auditory stimuli.</p>
               </div>
               
               <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
                 <Heart className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">Emotional Support</h3>
-                <p className="text-sm text-muted-foreground">Building confidence and emotional resilience through positive reinforcement.</p>
+                <p className="text-sm text-muted-foreground">Building confidence and emotional resilience through positive reinforcement, social stories, and guided interaction.</p>
+              </div>
+              
+              <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
+                <Sparkles className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="font-serif text-xl font-bold mb-2">Individualized Plans</h3>
+                <p className="text-sm text-muted-foreground">Customized Individualized Education Programs (IEPs) that evolve with your child's growth and milestones.</p>
+              </div>
+
+              <div className="bg-background p-6 border border-border hover:border-primary transition-colors duration-300 group">
+                <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="font-serif text-xl font-bold mb-2">Life Skills</h3>
+                <p className="text-sm text-muted-foreground">Practical training in daily living skills, communication, and social interaction to foster independence.</p>
               </div>
             </div>
 
@@ -80,6 +92,74 @@ export default function SpecialNeeds() {
             <div className="absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 border-primary/30"></div>
             <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 border-primary/30"></div>
           </motion.div>
+        </div>
+      </div>
+
+      {/* Parents Resources Section */}
+      <div className="container mt-32">
+        <div className="text-center mb-16">
+          <span className="text-primary font-medium tracking-widest uppercase text-sm">Support & Community</span>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">Parents Resources</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Empowering parents with knowledge, tools, and inspiring stories to navigate the journey of raising a child with special needs.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          {/* Video Section */}
+          <div className="relative group cursor-pointer">
+            <div className="aspect-video bg-black relative overflow-hidden border border-border">
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src="https://www.youtube.com/embed/mY8swJHZuuo?si=premium_video_player" 
+                title="Autism Success Story" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen
+                className="opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+              ></iframe>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-serif text-2xl font-bold mb-2">Inspiration: A Life of Autism</h3>
+              <p className="text-muted-foreground">A heartwarming story of struggle, focus, and success that proves diagnosis is not a limitation.</p>
+            </div>
+          </div>
+
+          {/* Resources List */}
+          <div className="space-y-8">
+            <div className="border-l-2 border-primary pl-6 py-2">
+              <h3 className="font-serif text-2xl font-bold mb-2">Recommended Reading</h3>
+              <ul className="space-y-4 text-muted-foreground">
+                <li className="hover:text-primary transition-colors cursor-pointer">
+                  <span className="font-bold block text-foreground">The Reason I Jump</span>
+                  by Naoki Higashida - An inner voice of a thirteen-year-old boy with autism.
+                </li>
+                <li className="hover:text-primary transition-colors cursor-pointer">
+                  <span className="font-bold block text-foreground">Neurotribes</span>
+                  by Steve Silberman - The legacy of autism and the future of neurodiversity.
+                </li>
+              </ul>
+            </div>
+
+            <div className="border-l-2 border-primary pl-6 py-2">
+              <h3 className="font-serif text-2xl font-bold mb-2">Helpful Blogs & Guides</h3>
+              <ul className="space-y-4 text-muted-foreground">
+                <li className="hover:text-primary transition-colors cursor-pointer">
+                  <span className="font-bold block text-foreground">Autism Speaks Tool Kits</span>
+                  Comprehensive guides for every stage of the journey, from diagnosis to adulthood.
+                </li>
+                <li className="hover:text-primary transition-colors cursor-pointer">
+                  <span className="font-bold block text-foreground">Sensory Processing Guide</span>
+                  Understanding and managing sensory sensitivities in daily life.
+                </li>
+              </ul>
+            </div>
+
+            <Button variant="outline" className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 w-full md:w-auto">
+              View All Resources
+            </Button>
+          </div>
         </div>
       </div>
     </section>

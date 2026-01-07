@@ -59,29 +59,34 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="font-serif text-4xl md:text-6xl font-black leading-[1.1] text-foreground tracking-tighter cursor-default relative z-20"
+              className="font-sans text-3xl md:text-5xl font-light leading-tight text-foreground tracking-[0.15em] uppercase cursor-default relative z-20 flex flex-col gap-4"
             >
               <motion.span 
                 whileHover={{ scale: 1.05, x: 10 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="inline-block mix-blend-multiply dark:mix-blend-normal text-primary"
+                className="inline-block text-primary"
               >
                 Aim High,
               </motion.span>
-              <br />
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="w-12 h-[1px] bg-muted-foreground self-center"
+              ></motion.div>
               <motion.span 
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                whileHover={{ scale: 1.1, rotate: -2 }}
-                transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="block my-2 origin-center font-light italic tracking-widest text-muted-foreground"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 1.2, delay: 0.2 }}
+                className="block text-muted-foreground tracking-[0.25em]"
               >
                 Achieve
               </motion.span>
               <motion.span 
                 whileHover={{ scale: 1.05, x: -10 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="inline-block font-black text-foreground"
+                className="inline-block font-normal text-foreground tracking-[0.2em]"
               >
                 Infinity!
               </motion.span>
@@ -116,33 +121,47 @@ export default function Hero() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col items-center gap-12"
           >
-            {/* Option C: Avant-Garde (Refined) */}
-            <h1 className="font-serif text-center text-foreground cursor-default flex flex-col items-center relative">
+            {/* Option B: Minimalist Luxury (Refined) */}
+            <h1 className="font-sans text-center text-foreground cursor-default flex flex-col items-center gap-2">
               <motion.span
-                initial={{ x: -50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                className="text-7xl md:text-9xl font-black tracking-tighter leading-none block relative z-10 mix-blend-difference text-primary"
+                initial={{ opacity: 0, letterSpacing: "0.5em" }}
+                animate={{ opacity: 1, letterSpacing: "0.8em" }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                className="text-xs md:text-sm uppercase font-medium tracking-[0.8em] block text-muted-foreground ml-2"
               >
-                AIM
+                EST. 2026
               </motion.span>
-              <motion.span
-                initial={{ x: 50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="text-4xl md:text-6xl font-light italic tracking-widest leading-none block -mt-4 md:-mt-8 text-muted-foreground"
+              <div className="flex flex-col items-center relative py-6">
+                <motion.span
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="text-5xl md:text-7xl font-light tracking-[0.2em] uppercase block"
+                >
+                  AIM
+                </motion.span>
+                <motion.span
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.5, duration: 1 }}
+                  className="w-16 h-[1px] bg-primary my-4"
+                ></motion.span>
+                <motion.span
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-3xl md:text-5xl font-light tracking-[0.3em] uppercase block text-muted-foreground"
+                >
+                  Centre
+                </motion.span>
+              </div>
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 1 }}
+                className="text-[5rem] md:text-[7rem] font-thin tracking-tighter leading-none block text-primary font-serif -mt-4"
               >
-                Centre
+                360
               </motion.span>
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="relative mt-2"
-              >
-                <span className="text-[6rem] md:text-[9rem] font-bold leading-none block text-foreground">
-                  360
-                </span>
-              </motion.div>
             </h1>
             
             <Button 

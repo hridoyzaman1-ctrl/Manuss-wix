@@ -4,11 +4,13 @@ export default function NewArrivals() {
   const products = [
     {
       title: "Professional Spoken English",
+      description: "Master the art of communication with our comprehensive Spoken English course. Designed for students and professionals alike, this program focuses on fluency, pronunciation, and confidence-building through interactive sessions and real-world practice scenarios.",
       image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop",
       type: "course"
     },
     {
       title: "New Gamified Elements",
+      description: "Experience learning like never before with our cutting-edge gamified platform. We've integrated immersive challenges, reward systems, and interactive milestones to make education engaging, fun, and highly effective for learners of all ages.",
       image: "https://images.unsplash.com/photo-1556438064-2d7646166914?q=80&w=800&auto=format&fit=crop",
       type: "feature"
     }
@@ -32,9 +34,12 @@ export default function NewArrivals() {
             <div key={index} className="bg-card border border-border p-0 flex flex-col md:flex-row h-auto md:h-[400px] group overflow-hidden hover-lift">
               {/* Content Left */}
               <div className="flex-1 p-12 flex flex-col items-center justify-center text-center gap-6">
-                <h3 className="font-serif text-2xl font-bold text-card-foreground">
+                <h3 className="font-serif text-3xl font-bold text-card-foreground">
                   {product.title}
                 </h3>
+                <p className="text-muted-foreground max-w-md leading-relaxed text-sm md:text-base">
+                  {product.description}
+                </p>
                 <div className="w-8 h-[1px] bg-border"></div>
                 <Button 
                   variant="outline"

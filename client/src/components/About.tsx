@@ -15,7 +15,7 @@ export default function About() {
               <div className="text-6xl font-serif">*</div>
             </div>
             
-            <div className="space-y-6 text-lg leading-relaxed text-gray-800 max-w-xl">
+            <div className="space-y-6 text-lg leading-relaxed text-gray-800 max-w-xl text-justify">
               <p>
                 AIM Centre 360 is an innovative e-learning platform offering a wide range of academic courses, live classes, and skill-based programs for students of all ages.
               </p>
