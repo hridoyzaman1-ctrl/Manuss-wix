@@ -48,30 +48,36 @@ export default function About() {
 
         </div>
 
-        {/* Standout Features Grid */}
-        <div className="mt-24">
-          <div className="text-center mb-16">
-            <span className="text-primary font-medium tracking-widest uppercase text-sm">Why Choose Us</span>
-            <h3 className="text-3xl md:text-4xl font-serif font-bold mt-2">The AIM Advantage</h3>
+        {/* Standout Features Grid (Restyled) */}
+        <div className="mt-32">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-border pb-8">
+            <div>
+              <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs block mb-4">Why Choose Us</span>
+              <h3 className="text-4xl md:text-6xl font-serif font-bold text-foreground leading-none">The AIM<br/>Advantage</h3>
+            </div>
+            <p className="text-muted-foreground max-w-md text-right mt-6 md:mt-0 leading-relaxed">
+              A holistic ecosystem designed to nurture every aspect of a learner's journey, from academic excellence to emotional well-being.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16">
             {[
-              { title: "Live Classes & Academics", desc: "Interactive real-time learning with comprehensive academic curriculum.", icon: "🎓" },
-              { title: "Tiny Explorers", desc: "Curiosity-driven early childhood education for our youngest learners.", icon: "🌱" },
-              { title: "Special Needs Innovation", desc: "Sensory-induced teaching tailored for Autism Levels 1-3 & developmental needs.", icon: "🧩" },
-              { title: "Mental Health Support", desc: "Professional counseling for both students and parents for holistic well-being.", icon: "🧠" },
-              { title: "AIMVerse & Gamification", desc: "Animated educational episodes and fun, gamified learning elements.", icon: "🎮" },
-              { title: "Skill-Based Learning", desc: "Practical skills development with quizzes and real-time progress tracking.", icon: "⚡" },
-              { title: "AIMbot: AI Tutor", desc: "Smart 24/7 AI companion for personalized guidance and instant doubts resolution.", icon: "🤖" },
-              { title: "Accessibility First", desc: "Customizable interface options to suit every learner's unique needs.", icon: "♿" }
+              { title: "Live Classes & Academics", desc: "Interactive real-time learning with comprehensive academic curriculum.", number: "01" },
+              { title: "Tiny Explorers", desc: "Curiosity-driven early childhood education for our youngest learners.", number: "02" },
+              { title: "Special Needs Innovation", desc: "Sensory-induced teaching tailored for Autism Levels 1-3 & developmental needs.", number: "03" },
+              { title: "Mental Health Support", desc: "Professional counseling for both students and parents for holistic well-being.", number: "04" },
+              { title: "AIMVerse & Gamification", desc: "Animated educational episodes and fun, gamified learning elements.", number: "05" },
+              { title: "Skill-Based Learning", desc: "Practical skills development with quizzes and real-time progress tracking.", number: "06" },
+              { title: "AIMbot: AI Tutor", desc: "Smart 24/7 AI companion for personalized guidance and instant doubts resolution.", number: "07" },
+              { title: "Accessibility First", desc: "Customizable interface options to suit every learner's unique needs.", number: "08" }
             ].map((feature, index) => (
               <div 
                 key={index}
-                className="group p-6 border border-border bg-card hover:border-primary/50 transition-all duration-500 hover:-translate-y-1"
+                className="group flex flex-col items-start"
               >
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
-                <h4 className="font-serif text-lg font-bold mb-2 group-hover:text-primary transition-colors">{feature.title}</h4>
+                <span className="text-xs font-bold text-muted-foreground/50 mb-6 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>
+                <h4 className="font-serif text-2xl font-bold mb-4 text-foreground group-hover:translate-x-2 transition-transform duration-500">{feature.title}</h4>
+                <div className="w-12 h-[1px] bg-border mb-4 group-hover:w-full group-hover:bg-primary transition-all duration-700 ease-in-out"></div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
               </div>
             ))}

@@ -52,14 +52,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info (Simplified) */}
           <div>
             <h3 className="font-serif text-lg font-bold mb-6">Contact Us</h3>
             <ul className="space-y-4 text-muted-foreground">
-              <li>
-                <strong className="block text-foreground mb-1">Address:</strong>
-                123 Education Lane, Knowledge City, Dhaka 1200
-              </li>
               <li>
                 <strong className="block text-foreground mb-1">Email:</strong>
                 info@aimcentre360.com
@@ -71,31 +67,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* Empty Column for Balance or Additional Links if needed */}
           <div>
-            <h3 className="font-serif text-lg font-bold mb-6">Newsletter</h3>
-            <p className="text-muted-foreground mb-4">Subscribe to get updates on new courses and events.</p>
-            <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-              <Input 
-                placeholder="Your email address" 
-                className="bg-background border-border/50 focus:border-primary transition-colors" 
-                type="email"
-                required
-              />
-              <Button type="submit" className="w-full group">
-                Subscribe Now
-                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-              </Button>
-            </form>
-            
-            {/* Antique Books Image from original site */}
-            <div className="mt-8 relative h-12 overflow-hidden rounded opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
-              <img 
-                src="/images/antique-books.webp" 
-                alt="Antique Books" 
-                className="w-full h-full object-cover"
-              />
-            </div>
+             {/* Placeholder for future content or just spacing */}
           </div>
         </div>
 
