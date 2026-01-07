@@ -36,7 +36,7 @@ export default function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="relative top-0 left-0 right-0 z-50 bg-background border-b border-border py-4"
+      className="relative top-0 left-0 right-0 z-50 bg-white dark:bg-background border-b-0 py-4"
     >
       <div className="container flex items-center justify-between">
         {/* Logo */}

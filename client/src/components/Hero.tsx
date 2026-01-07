@@ -39,10 +39,10 @@ export default function Hero() {
   return (
     <div 
       ref={containerRef} 
-      className="relative w-full overflow-hidden bg-background"
+      className="relative w-full overflow-hidden bg-white dark:bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-[20px] h-auto md:h-[800px] bg-white">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-[20px] h-auto md:h-[800px] bg-white dark:bg-background">
         
         {/* Panel 1: Texture Background + Tagline */}
         <motion.div 
