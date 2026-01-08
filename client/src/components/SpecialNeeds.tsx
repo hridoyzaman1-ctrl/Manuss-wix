@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Brain, Heart, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SpecialNeeds() {
@@ -9,18 +9,29 @@ export default function SpecialNeeds() {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const toggleMute = () => {
+  useEffect(() => {
+    // Force autoplay when component mounts
     if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(!isMuted);
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+
+      const playVideo = () => {
+        videoRef.current?.play().catch(e => console.log("Autoplay failed:", e));
+      };
+
+      playVideo();
+
+      // Double check after a small delay to handle hydration/loading capability
+      const timer = setTimeout(playVideo, 1000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, []);
   return (
     <section className="py-24 bg-secondary/30 relative overflow-hidden">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Content Side */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -30,7 +41,7 @@ export default function SpecialNeeds() {
             <h2 className="text-4xl md:text-5xl font-serif font-bold mt-2 mb-6">
               {t("special.title")}
             </h2>
-            
+
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed text-justify">
               {t("special.desc")}
             </p>
@@ -41,13 +52,13 @@ export default function SpecialNeeds() {
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.sensory")}</h3>
                 <p className="text-sm text-muted-foreground">Tailored environments that respect sensory sensitivities while promoting engagement through tactile, visual, and auditory stimuli.</p>
               </div>
-              
+
               <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
                 <Heart className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.emotional")}</h3>
                 <p className="text-sm text-muted-foreground">Building confidence and emotional resilience through positive reinforcement, social stories, and guided interaction.</p>
               </div>
-              
+
               <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
                 <Sparkles className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.individualized")}</h3>
@@ -67,7 +78,7 @@ export default function SpecialNeeds() {
           </motion.div>
 
           {/* Visual Side */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -75,15 +86,15 @@ export default function SpecialNeeds() {
             className="relative"
           >
             <div className="relative aspect-square md:aspect-[4/3] overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1555819206-7b30da4f1506?q=80&w=2071&auto=format&fit=crop" 
-                alt="Child learning with sensory toys" 
+              <img
+                src="https://images.unsplash.com/photo-1555819206-7b30da4f1506?q=80&w=2071&auto=format&fit=crop"
+                alt="Child learning with sensory toys"
                 loading="lazy"
                 className="w-full h-full object-cover"
               />
-              
+
               {/* Floating Cards */}
-              <motion.div 
+              <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-8 -left-8 bg-background p-6 shadow-xl border border-border max-w-xs hidden md:block"
@@ -99,7 +110,7 @@ export default function SpecialNeeds() {
                 </div>
               </motion.div>
             </div>
-            
+
             {/* Decorative Elements */}
             <div className="absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 border-primary/30"></div>
             <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 border-primary/30"></div>
@@ -120,38 +131,23 @@ export default function SpecialNeeds() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Video Section */}
           <div className="relative group">
-            <div className="aspect-video bg-black relative overflow-hidden border border-border shadow-2xl">
-              <video 
-                ref={videoRef}
-                width="100%" 
-                height="100%" 
-                autoPlay 
-                muted={isMuted}
-                loop 
+            <div className="aspect-video bg-black relative overflow-hidden border border-border shadow-2xl z-10">
+              <video
+                key="github-classroom-v1"
+                width="100%"
+                height="100%"
+                controls
+                autoPlay
+                muted
+                loop
                 playsInline
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                preload="auto"
+                poster="https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                className="w-full h-full object-cover"
               >
-                <source src="/videos/autism-child.mp4" type="video/mp4" />
+                <source src="https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/classroom.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
-              
-              {/* Custom Overlay for Premium Feel */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-              
-              {/* Sound Control */}
-              <button 
-                onClick={toggleMute}
-                className="absolute bottom-6 right-6 bg-black/40 hover:bg-black/60 backdrop-blur-md p-3 rounded-full border border-white/20 text-white transition-all duration-300 z-20"
-                aria-label={isMuted ? "Unmute video" : "Mute video"}
-              >
-                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-              </button>
-
-              {/* Live Indicator */}
-              <div className="absolute top-6 left-6 bg-primary/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="text-white text-xs font-bold uppercase tracking-wider">Therapy Session</span>
-              </div>
             </div>
             <div className="mt-6">
               <h3 className="font-serif text-2xl font-bold mb-2">{t("special.classroom")}</h3>

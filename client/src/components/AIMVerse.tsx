@@ -1,11 +1,18 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Play, Timer } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AIMVerse() {
   const { t } = useLanguage();
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -36,11 +43,11 @@ export default function AIMVerse() {
   }, []);
 
   return (
-    <section className="py-24 bg-background text-foreground relative overflow-hidden">
+    <section ref={containerRef} className="py-24 bg-background text-foreground relative overflow-hidden">
       {/* Subtle Texture Background */}
-      <div className="absolute inset-0 opacity-5">
+      <motion.div style={{ y: bgY }} className="absolute inset-0 opacity-5 h-[120%] -top-[10%]">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] dark:invert dark:opacity-10"></div>
-      </div>
+      </motion.div>
 
       <div className="container relative z-10">
         <div className="text-center max-w-4xl mx-auto mb-16">
@@ -66,15 +73,15 @@ export default function AIMVerse() {
           viewport={{ once: true }}
           className="relative aspect-video w-full max-w-5xl mx-auto bg-gray-100 rounded-none overflow-hidden shadow-xl mb-16 group"
         >
-          <img 
-            src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2094&auto=format&fit=crop" 
-            alt="AIMVerse Trailer" 
+          <img
+            src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2094&auto=format&fit=crop"
+            alt="AIMVerse Trailer"
             loading="lazy"
             className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors duration-300">
-            <Button 
-              size="icon" 
+            <Button
+              size="icon"
               className="h-24 w-24 rounded-full bg-white text-black hover:bg-black hover:text-white transition-all duration-300 border-none"
             >
               <Play className="h-8 w-8 ml-1 fill-current" />
@@ -130,11 +137,13 @@ export default function AIMVerse() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Hero Profile */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
+              whileHover={{ y: -10, scale: 1.02 }}
               viewport={{ once: true }}
-              className="bg-card border border-border p-8 shadow-lg relative overflow-hidden group hover:border-primary/20 transition-all duration-300 hover:-translate-y-1"
+              transition={{ duration: 0.5 }}
+              className="bg-card border border-border p-8 shadow-lg relative overflow-hidden group hover:border-primary/20 transition-colors duration-300"
             >
               <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 uppercase tracking-widest">Hero</div>
               <div className="flex items-start justify-between mb-6">
@@ -144,7 +153,7 @@ export default function AIMVerse() {
                 </div>
                 <div className="text-4xl">⚡</div>
               </div>
-              
+
               <div className="space-y-6">
                 <div>
                   <h5 className="text-sm font-bold uppercase tracking-wide text-foreground mb-2 border-b border-border pb-1">Power: Light Manipulation</h5>
@@ -160,8 +169,14 @@ export default function AIMVerse() {
                   </div>
                   <div>
                     <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Plausibility</h5>
-                    <div className="w-full bg-gray-100 h-2 rounded-full mt-1">
-                      <div className="bg-green-500 h-2 rounded-full w-[40%]"></div>
+                    <div className="w-full bg-gray-100 h-2 rounded-full mt-1 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "40%" }}
+                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                        viewport={{ once: true }}
+                        className="bg-green-500 h-2 rounded-full"
+                      ></motion.div>
                     </div>
                     <p className="text-xs text-right mt-1 text-muted-foreground">Theoretical</p>
                   </div>
@@ -184,11 +199,13 @@ export default function AIMVerse() {
             </motion.div>
 
             {/* Villain Profile */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
+              whileHover={{ y: -10, scale: 1.02 }}
               viewport={{ once: true }}
-              className="bg-secondary text-secondary-foreground border border-border p-8 shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-all duration-300"
+              transition={{ duration: 0.5 }}
+              className="bg-secondary text-secondary-foreground border border-border p-8 shadow-lg relative overflow-hidden group transition-colors duration-300"
             >
               <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-bold px-3 py-1 uppercase tracking-widest">Villain</div>
               <div className="flex items-start justify-between mb-6">
@@ -198,7 +215,7 @@ export default function AIMVerse() {
                 </div>
                 <div className="text-4xl">🌀</div>
               </div>
-              
+
               <div className="space-y-6">
                 <div>
                   <h5 className="text-sm font-bold uppercase tracking-wide text-secondary-foreground mb-2 border-b border-border pb-1">Power: Decay Acceleration</h5>
@@ -214,8 +231,14 @@ export default function AIMVerse() {
                   </div>
                   <div>
                     <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Plausibility</h5>
-                    <div className="w-full bg-gray-800 h-2 rounded-full mt-1">
-                      <div className="bg-red-500 h-2 rounded-full w-[85%]"></div>
+                    <div className="w-full bg-gray-800 h-2 rounded-full mt-1 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "85%" }}
+                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                        viewport={{ once: true }}
+                        className="bg-red-500 h-2 rounded-full"
+                      ></motion.div>
                     </div>
                     <p className="text-xs text-right mt-1 text-secondary-foreground/60">High (Natural Law)</p>
                   </div>

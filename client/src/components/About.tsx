@@ -1,15 +1,24 @@
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Video, Baby, HeartHandshake, Brain, Rocket, Hammer, Bot, Accessibility } from "lucide-react";
+import { useRef } from "react";
 
 export default function About() {
   const { t } = useLanguage();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+
   return (
-    <section className="w-full bg-background py-24">
+    <section ref={containerRef} className="w-full bg-background py-24 overflow-hidden">
       <div className="container mx-auto px-4 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          
+
           {/* Left Column: Text Content */}
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
@@ -18,14 +27,14 @@ export default function About() {
               </h2>
               <div className="text-6xl font-serif">*</div>
             </div>
-            
+
             <div className="space-y-6 text-lg leading-relaxed text-muted-foreground max-w-xl text-justify">
               <p>{t("about.desc")}</p>
             </div>
 
             <div className="pt-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="rounded-none border-foreground text-foreground hover:bg-foreground hover:text-background px-8 py-6 text-sm uppercase tracking-widest transition-all duration-300"
               >
                 Explore More
@@ -35,12 +44,14 @@ export default function About() {
 
           {/* Right Column: Image (Relevant Alternative) */}
           <div className="relative h-[600px] w-full overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070&auto=format&fit=crop" 
-              alt="Modern Learning Environment" 
-              loading="lazy"
-              className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-            />
+            <motion.div style={{ y: imageY }} className="h-[120%] -top-[10%] relative">
+              <img
+                src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070&auto=format&fit=crop"
+                alt="Modern Learning Environment"
+                loading="lazy"
+                className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+              />
+            </motion.div>
           </div>
 
         </div>
@@ -50,7 +61,7 @@ export default function About() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-border pb-8">
             <div>
               <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs block mb-4">Why Choose Us</span>
-              <h3 className="text-4xl md:text-6xl font-serif font-bold text-foreground leading-none">The AIM<br/>Advantage</h3>
+              <h3 className="text-4xl md:text-6xl font-serif font-bold text-foreground leading-none">The AIM<br />Advantage</h3>
             </div>
             <p className="text-muted-foreground max-w-md text-right mt-6 md:mt-0 leading-relaxed">
               A holistic ecosystem designed to nurture every aspect of a learner's journey, from academic excellence to emotional well-being.
@@ -68,13 +79,13 @@ export default function About() {
               { title: t("about.features.aimBot"), desc: t("about.features.aimBot.desc"), number: "07", icon: Bot },
               { title: t("about.features.accessibility"), desc: t("about.features.accessibility.desc"), number: "08", icon: Accessibility }
             ].map((feature, index) => (
-              <motion.div 
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.8, delay: index * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
-                className="group flex flex-col items-start hover-trigger"
+                className="group flex flex-col items-start hover-trigger bg-card border border-border/50 p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 dark:bg-card/50"
               >
                 <div className="flex items-center justify-between w-full mb-6">
                   <span className="text-xs font-bold text-muted-foreground/50 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>

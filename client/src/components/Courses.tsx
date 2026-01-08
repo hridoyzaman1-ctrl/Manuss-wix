@@ -98,20 +98,20 @@ export default function Courses() {
   };
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden">
       {/* Background Elements */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, x: 100 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1 }}
         className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/4 pointer-events-none"
       ></motion.div>
-      
+
       <div className="container relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -119,7 +119,7 @@ export default function Courses() {
             >
               {t("courses.subtitle")}
             </motion.span>
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -130,16 +130,16 @@ export default function Courses() {
             </motion.h2>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="relative w-full md:w-72"
           >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search courses..." 
-              className="pl-10 bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary"
+            <Input
+              placeholder="Search courses..."
+              className="pl-10 bg-transparent border-primary/20 focus:border-primary text-foreground placeholder:text-muted-foreground"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -156,7 +156,7 @@ export default function Courses() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + index * 0.05 }}
               >
-                <TabsTrigger 
+                <TabsTrigger
                   value={category}
                   className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all hover:text-primary/80"
                 >
@@ -176,18 +176,18 @@ export default function Courses() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500"
+                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 flex flex-col"
                 >
                   {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
-                    <img 
-                      src={course.image} 
-                      alt={course.title} 
+                  <div className="relative h-64 overflow-hidden flex-shrink-0">
+                    <img
+                      src={course.image}
+                      alt={course.title}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
-                    
+
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
                       {course.category}
@@ -200,14 +200,14 @@ export default function Courses() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-6 relative flex flex-col h-full">
+                  <div className="p-6 relative flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="font-serif text-xl font-bold text-premium-hover">
                         {course.title}
                       </h3>
                       <span className="font-bold text-primary">{course.price}</span>
                     </div>
-                    
+
                     <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
                       {course.description}
                     </p>
@@ -218,21 +218,21 @@ export default function Courses() {
                           <BookOpen className="h-4 w-4" />
                           <span>12 Lessons</span>
                         </div>
-                        
+
                         <Button variant="ghost" className="group/btn p-0 hover:bg-transparent text-premium-hover text-xs">
-                          View Details 
+                          View Details
                           <ArrowRight className="ml-2 h-3 w-3 transition-transform group-hover/btn:translate-x-1" />
                         </Button>
                       </div>
-                      
+
                       <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
-                        {t("courses.enroll")}
+                        {t("courses.enroll") || "Enroll Now"}
                       </Button>
                     </div>
                   </div>
 
                   {/* Hover Border Effect */}
-                  <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                  < div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" ></div>
                 </motion.div>
               ))}
             </div>
@@ -242,18 +242,18 @@ export default function Courses() {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-serif font-bold">More to Explore</h3>
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    onClick={handlePrev} 
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePrev}
                     className="rounded-full hover:bg-primary hover:text-white transition-colors"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    onClick={handleNext} 
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleNext}
                     className="rounded-full hover:bg-primary hover:text-white transition-colors"
                   >
                     <ChevronRight className="h-4 w-4" />
@@ -262,18 +262,20 @@ export default function Courses() {
               </div>
 
               <div className="overflow-hidden" ref={carouselRef}>
-                <motion.div 
-                  className="flex gap-6"
+                <motion.div
+                  className="flex gap-6 cursor-grab active:cursor-grabbing touch-pan-y"
+                  drag="x"
+                  dragConstraints={{ right: 0, left: -((courses.length * 2) * 320 - 1000) }}
                   animate={{ x: `-${carouselIndex * 320}px` }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1 }}
                 >
                   {[...courses, ...courses].map((course, idx) => (
                     <div key={`${course.id}-${idx}`} className="min-w-[300px] w-[300px]">
                       <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full hover:shadow-xl dark:hover:shadow-primary/10">
                         <div className="relative h-48 overflow-hidden">
-                          <img 
-                            src={course.image} 
-                            alt={course.title} 
+                          <img
+                            src={course.image}
+                            alt={course.title}
                             loading="lazy"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
@@ -286,15 +288,20 @@ export default function Courses() {
                             <Heart className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <div className="p-4 flex flex-col h-[180px]">
+                        <div className="p-4 flex flex-col h-auto min-h-[200px]">
                           <div className="flex justify-between items-start mb-2">
                             <h4 className="font-serif text-lg font-bold line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h4>
                             <span className="text-sm font-bold text-primary">{course.price}</span>
                           </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-grow">{course.description}</p>
-                          <Button size="sm" className="w-full mt-auto bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-medium tracking-wide">
-                            {t("courses.enroll")}
-                          </Button>
+                          <div className="mt-auto space-y-2">
+                            <Button size="sm" variant="ghost" className="w-full hover:bg-transparent text-premium-hover text-xs p-0 h-auto justify-start font-medium">
+                              View Details
+                              <ArrowRight className="ml-1 h-3 w-3" />
+                            </Button>
+                            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
+                              {t("courses.enroll") || "Enroll Now"}
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -303,8 +310,8 @@ export default function Courses() {
               </div>
             </div>
           </TabsContent>
-        </Tabs>
-      </div>
-    </section>
+        </Tabs >
+      </div >
+    </section >
   );
 }

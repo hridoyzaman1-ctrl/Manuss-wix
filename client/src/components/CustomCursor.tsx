@@ -42,22 +42,22 @@ export default function CustomCursor() {
 
   return (
     <motion.div
-      className="hidden md:block fixed top-0 left-0 w-8 h-8 border border-primary rounded-full pointer-events-none z-[9999] mix-blend-difference"
+      className="hidden md:block fixed top-0 left-0 w-8 h-8 border border-primary rounded-full pointer-events-none z-[9999]"
       style={{
         x: cursorXSpring,
         y: cursorYSpring,
       }}
       animate={{
-        scale: isHovered ? 2.5 : 1,
-        backgroundColor: isHovered ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0)",
-        borderColor: isHovered ? "transparent" : "var(--primary)",
+        scale: isHovered ? 1.5 : 1,
+        backgroundColor: "transparent",
+        borderColor: "var(--primary)",
       }}
       transition={{
         scale: { type: "spring", stiffness: 300, damping: 20 },
         backgroundColor: { duration: 0.2 },
       }}
     >
-      <motion.div 
+      <motion.div
         className="w-1 h-1 bg-primary rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         animate={{
           opacity: isHovered ? 0 : 1
