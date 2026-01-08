@@ -9,7 +9,7 @@ import { Textarea } from "./ui/textarea";
 
 export default function MentalHealth() {
   return (
-    <section className="py-24 bg-background relative">
+    <section className="py-24 bg-transparent relative">
       <div className="container">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Info Side */}
@@ -23,7 +23,7 @@ export default function MentalHealth() {
               Mental Health <br />
               <span className="italic text-primary">Counseling</span>
             </h2>
-            
+
             <p className="text-lg text-muted-foreground mb-8">
               We offer mental health counseling by certified professionals for both parents and students. Understanding the importance of mental well-being is crucial for academic success and personal growth.
             </p>
@@ -38,7 +38,7 @@ export default function MentalHealth() {
                   <p className="text-muted-foreground">Managing exam stress, peer pressure, and building emotional resilience.</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift">
                 <div className="p-3 bg-secondary rounded-full">
                   <User className="h-6 w-6 text-primary" />
@@ -51,9 +51,9 @@ export default function MentalHealth() {
             </div>
 
             <div className="relative h-64 w-full overflow-hidden rounded-lg">
-              <img 
-                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2070&auto=format&fit=crop" 
-                alt="Counseling session" 
+              <img
+                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2070&auto=format&fit=crop"
+                alt="Counseling session"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -68,7 +68,7 @@ export default function MentalHealth() {
           >
             <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
             <h3 className="font-serif text-2xl font-bold mb-6">Schedule an Appointment</h3>
-            
+
             <form className="space-y-6">
               <div className="space-y-3">
                 <Label>I am a...</Label>

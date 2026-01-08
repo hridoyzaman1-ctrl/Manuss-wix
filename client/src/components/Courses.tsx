@@ -98,7 +98,7 @@ export default function Courses() {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden bg-transparent">
       {/* Background Elements */}
       <motion.div
         initial={{ opacity: 0, x: 100 }}

@@ -17,27 +17,30 @@ import MissionStatement from "@/components/MissionStatement";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 
+import AimAdvantage from "@/components/AimAdvantage";
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <ScrollProgress />
       <Header />
-      <main>
-      <div className="bg-background"><Hero /></div>
-      <div className="bg-muted/30 dark:bg-card/30"><About /></div>
-      <div className="bg-background"><NewArrivals /></div>
-      <div className="bg-muted/30 dark:bg-card/30"><Courses /></div>
-      <div className="bg-background"><LearningHours /></div>
-      <MissionStatement />
-      <div className="bg-muted/30 dark:bg-card/30"><SpecialNeeds /></div>
-      <div className="bg-background"><TinyExplorers /></div>
-      <div className="bg-muted/30 dark:bg-card/30"><MentalHealth /></div>
-      <div className="bg-background"><AIMVerse /></div>
-      <div className="bg-muted/30 dark:bg-card/30"><CreativeGallery /></div>
-      <div className="bg-background"><Contact /></div>
-      <div className="bg-muted/30 dark:bg-card/30"><Testimonials /></div>
-      <div className="bg-background"><FAQ /></div>
-      <PreFooter />
+      <main className="w-full">
+        <div className="bg-background"><Hero /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><About /></div>
+        <div className="bg-background"><AimAdvantage /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><NewArrivals /></div>
+        <div className="bg-background"><Courses /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><LearningHours /></div>
+        <div className="bg-background"><MissionStatement /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><SpecialNeeds /></div>
+        <div className="bg-background"><TinyExplorers /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><MentalHealth /></div>
+        <div className="bg-background"><AIMVerse /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><CreativeGallery /></div>
+        <div className="bg-background"><Contact /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><Testimonials /></div>
+        <div className="bg-background"><FAQ /></div>
+        <div className="bg-[#EFEDE8] dark:bg-card/30"><PreFooter /></div>
       </main>
       <Footer />
     </div>
