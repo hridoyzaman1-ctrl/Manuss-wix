@@ -26,17 +26,17 @@ export default function Home() {
       <Header />
       <main className="w-full">
         <div className="bg-background"><Hero /></div>
-        <div className="bg-[#EFEDE8] dark:bg-card/30"><About /></div>
+        <div id="about" className="bg-[#EFEDE8] dark:bg-card/30"><About /></div>
         <div className="bg-background"><AimAdvantage /></div>
         <div className="bg-[#EFEDE8] dark:bg-card/30"><NewArrivals /></div>
-        <div className="bg-background"><Courses /></div>
+        <div id="courses" className="bg-background"><Courses /></div>
         <div className="bg-[#EFEDE8] dark:bg-card/30"><LearningHours /></div>
         <div className="bg-background"><MissionStatement /></div>
-        <div className="bg-[#EFEDE8] dark:bg-card/30"><SpecialNeeds /></div>
-        <div className="bg-background"><TinyExplorers /></div>
-        <div className="bg-[#EFEDE8] dark:bg-card/30"><MentalHealth /></div>
-        <div className="bg-background"><AIMVerse /></div>
-        <div className="bg-[#EFEDE8] dark:bg-card/30"><CreativeGallery /></div>
+        <div id="special-needs" className="bg-[#EFEDE8] dark:bg-card/30"><SpecialNeeds /></div>
+        <div id="tiny-explorers" className="bg-background"><TinyExplorers /></div>
+        <div id="mental-health" className="bg-[#EFEDE8] dark:bg-card/30"><MentalHealth /></div>
+        <div id="aimverse" className="bg-background"><AIMVerse /></div>
+        <div id="gallery" className="bg-[#EFEDE8] dark:bg-card/30"><CreativeGallery /></div>
         <div className="bg-background"><Contact /></div>
         <div className="bg-[#EFEDE8] dark:bg-card/30"><Testimonials /></div>
         <div className="bg-background"><FAQ /></div>

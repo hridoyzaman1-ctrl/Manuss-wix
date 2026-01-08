@@ -25,6 +25,24 @@ export const translations = {
     "nav.signup": "Sign Up",
     "nav.bookAppointment": "Book Appointment",
 
+    // Auth
+    "auth.title.login": "Welcome Back",
+    "auth.subtitle.login": "Log in to continue your infinity journey.",
+    "auth.title.signup": "Join AIM Centre 360",
+    "auth.subtitle.signup": "Start your holistic learning adventure today.",
+    "auth.label.email": "Email Address",
+    "auth.label.password": "Password",
+    "auth.label.fullName": "Full Name",
+    "auth.label.childUid": "Child UID",
+    "auth.label.student": "Student",
+    "auth.label.parent": "Parent",
+    "auth.btn.login": "Log In",
+    "auth.btn.signup": "Create Account",
+    "auth.switch.login": "Already have an account? Log In",
+    "auth.switch.signup": "Don't have an account? Sign Up",
+    "auth.branding.title": "Achieve Infinity",
+    "auth.branding.subtitle": "Holistic Excellence for Every Mind",
+
     // Hero
     "hero.est": "E S T .   2 0 2 6",
     "hero.title1": "AIM",
@@ -32,9 +50,18 @@ export const translations = {
     "hero.title3": "360",
     "hero.subtitle": "Aim High, Achieve Infinity!",
     "hero.cta": "ENROLL NOW",
+    "hero.scroll": "Scroll to Discover",
 
     // Mission Statement
     "mission.text": "Knowledge for anybody, anywhere, anytime.",
+
+    // Learning Hours
+    "learning.title": "Learning Hours",
+    "learning.schedule": "Flexible Schedules",
+    "learning.weekend": "Tailored to your needs",
+    "learning.digital": "Digital Library",
+    "learning.access": "24/7 Online Access",
+    "learning.resources": "Resources & Materials",
 
     // About
     "about.title": "About AIM Centre 360",
@@ -70,13 +97,37 @@ export const translations = {
     "aimverse.glossaryTag": "CLASSIFIED ARCHIVES",
     "aimverse.glossaryTitle": "Power Glossary",
     "aimverse.glossaryDesc": "Explore the scientific basis behind our heroes' and villains' abilities.",
-    "aimverse.theory": "THEORY",
-    "aimverse.plausibility": "PLAUSIBILITY",
-    "aimverse.mechanism": "MECHANISM",
-    "aimverse.future": "FUTURE POSSIBILITY",
+    "aimverse.hero": "Hero",
+    "aimverse.heroName": "Photon",
+    "aimverse.heroEp": "Episode 04: \"Light Speed\"",
+    "aimverse.heroPower": "Power: Light Manipulation",
+    "aimverse.heroPowerDesc": "Ability to control and solidify photons, creating hard-light constructs and moving at relativistic speeds.",
+    "aimverse.theory": "Scientific Theory",
+    "aimverse.heroTheory": "Wave-Particle Duality",
+    "aimverse.plausibility": "Plausibility",
+    "aimverse.heroPlausibility": "Theoretical",
+    "aimverse.mechanism": "Mechanism",
+    "aimverse.heroMechanism": "Utilizes a quantum field generator to collapse the wave function of light into tangible matter (Bose-Einstein Condensates).",
+    "aimverse.future": "Future Possibility",
+    "aimverse.heroFuture": "\"Photonics computing and laser cooling are early steps toward controlling light as matter.\"",
+
+    "aimverse.villain": "Villain",
+    "aimverse.villainName": "Entropy",
+    "aimverse.villainEp": "Episode 07: \"Heat Death\"",
+    "aimverse.villainPower": "Power: Decay Acceleration",
+    "aimverse.villainPowerDesc": "Can instantly increase the disorder (entropy) of any closed system, causing structures to crumble and energy to dissipate.",
+    "aimverse.villainTheory": "Second Law of Thermodynamics",
+    "aimverse.villainPlausibility": "High (Natural Law)",
+    "aimverse.villainMechanism": "Acts as a catalyst for thermodynamic equilibrium, bypassing activation energy barriers to speed up natural decay.",
+    "aimverse.villainFuture": "\"Understanding entropy is key to energy efficiency, but weaponizing it remains pure sci-fi... for now.\"",
+
     "aimverse.nextEpisode": "Next Episode",
     "aimverse.nextEpisodeDesc": "Discover the secrets of subatomic particles with Captain Quantum.",
     "aimverse.reminder": "Set Reminder",
+    "aimverse.days": "Days",
+    "aimverse.hours": "Hours",
+    "aimverse.minutes": "Minutes",
+    "aimverse.seconds": "Seconds",
 
     // Courses
     "courses.title": "Our Learning Paths",
@@ -110,6 +161,10 @@ export const translations = {
     "footer.privacy": "Privacy Policy",
     "footer.terms": "Terms of Service",
     "footer.contact": "Contact Us",
+    "footer.desc": "Aim High, Achieve Infinity! An innovative e-learning platform dedicated to providing unique and effective learning experiences for everyone.",
+    "footer.quickLinks": "Quick Links",
+    "footer.email": "Email:",
+    "footer.phone": "Phone:",
   },
   bn: {
     // Header
@@ -125,6 +180,24 @@ export const translations = {
     "nav.signup": "সাইন আপ",
     "nav.bookAppointment": "অ্যাপয়েন্টমেন্ট বুক করুন",
 
+    // Auth
+    "auth.title.login": "স্বাগতম",
+    "auth.subtitle.login": "আপনার অসীম যাত্রা চালিয়ে যেতে লগ ইন করুন।",
+    "auth.title.signup": "এইম সেন্টার ৩৬০-এ যোগ দিন",
+    "auth.subtitle.signup": "আজই আপনার সামগ্রিক শিক্ষা অভিযান শুরু করুন।",
+    "auth.label.email": "ইমেল ঠিকানা",
+    "auth.label.password": "পাসওয়ার্ড",
+    "auth.label.fullName": "পুরো নাম",
+    "auth.label.childUid": "চাইল্ড ইউআইডি (UID)",
+    "auth.label.student": "শিক্ষার্থী",
+    "auth.label.parent": "অভিভাবক",
+    "auth.btn.login": "লগ ইন",
+    "auth.btn.signup": "অ্যাকাউন্ট তৈরি করুন",
+    "auth.switch.login": "ইতিমধ্যেই অ্যাকাউন্ট আছে? লগ ইন করুন",
+    "auth.switch.signup": "অ্যাকাউন্ট নেই? সাইন আপ করুন",
+    "auth.branding.title": "অসীমে পৌঁছান",
+    "auth.branding.subtitle": "প্রতিটি মনের জন্য সামগ্রিক উৎকর্ষ",
+
     // Hero
     "hero.est": "স্থাপিত  ২০২৬",
     "hero.title1": "এইম",
@@ -132,9 +205,18 @@ export const translations = {
     "hero.title3": "৩৬০",
     "hero.subtitle": "লক্ষ্য হোক আকাশছোঁয়া, অর্জন হোক অসীম!",
     "hero.cta": "ভর্তি হোন",
+    "hero.scroll": "নিচে স্ক্রল করুন",
 
     // Mission Statement
     "mission.text": "জ্ঞান সবার জন্য, যেকোনো স্থানে, যেকোনো সময়ে।",
+
+    // Learning Hours
+    "learning.title": "লার্নিং আওয়ার্স",
+    "learning.schedule": "ফ্লেক্সিবল সময়সূচী",
+    "learning.weekend": "আপনার প্রয়োজন অনুযায়ী",
+    "learning.digital": "ডিজিটাল লাইব্রেরি",
+    "learning.access": "২৪/৭ অনলাইন অ্যাক্সেস",
+    "learning.resources": "রিসোর্স এবং ম্যাটেরিয়ালস",
 
     // About
     "about.title": "এইম সেন্টার ৩৬০ সম্পর্কে",
@@ -170,13 +252,37 @@ export const translations = {
     "aimverse.glossaryTag": "ক্লাসিফাইড আর্কাইভস",
     "aimverse.glossaryTitle": "পাওয়ার গ্লসারি",
     "aimverse.glossaryDesc": "আমাদের নায়ক এবং খলনায়কদের ক্ষমতার পিছনের বৈজ্ঞানিক ভিত্তি অন্বেষণ করুন।",
-    "aimverse.theory": "তত্ত্ব",
+    "aimverse.hero": "হিরো",
+    "aimverse.heroName": "ফোটন",
+    "aimverse.heroEp": "পর্ব ০৪: \"লাইট স্পিড\"",
+    "aimverse.heroPower": "শক্তি: আলোর কারসাজি",
+    "aimverse.heroPowerDesc": "ফোটন নিয়ন্ত্রণ ও ঘনীভূত করার ক্ষমতা, হার্ড-লাইট কাঠামো তৈরি এবং আপেক্ষিক গতিতে চলার ক্ষমতা।",
+    "aimverse.theory": "বৈজ্ঞানিক তত্ত্ব",
+    "aimverse.heroTheory": "তরঙ্গ-কণা দ্বৈততা",
     "aimverse.plausibility": "সম্ভাব্যতা",
+    "aimverse.heroPlausibility": "তাত্ত্বিক",
     "aimverse.mechanism": "মেকানিজম",
+    "aimverse.heroMechanism": "বস্তুতে আলোর তরঙ্গ ফাংশন ধসে ফেলার জন্য একটি কোয়ান্টাম ফিল্ড জেনারেটর ব্যবহার করে (বোস-আইনস্টাইন কনডেনসেটস)।",
     "aimverse.future": "ভবিষ্যতের সম্ভাবনা",
+    "aimverse.heroFuture": "\"ফটোনিক্স কম্পিউটিং এবং লেজার কুলিং হলো আলোকে বস্তু হিসেবে নিয়ন্ত্রণ করার প্রাথমিক পদক্ষেপ।\"",
+
+    "aimverse.villain": "ভিলেন",
+    "aimverse.villainName": "এনট্রপি",
+    "aimverse.villainEp": "পর্ব ০৭: \"হিট ডেথ\"",
+    "aimverse.villainPower": "শক্তি: ক্ষয় ত্বরান্বিতকরণ",
+    "aimverse.villainPowerDesc": "যেকোনও বদ্ধ সিস্টেমের বিশৃঙ্খলা (এনট্রপি) তাৎক্ষণিকভাবে বৃদ্ধি করতে পারে, যার ফলে কাঠামো ভেঙে পড়ে এবং শক্তি বিলীন হয়ে যায়।",
+    "aimverse.villainTheory": "তাপগতিবিদ্যার দ্বিতীয় সূত্র",
+    "aimverse.villainPlausibility": "উচ্চ (প্রাকৃতিক আইন)",
+    "aimverse.villainMechanism": "প্রাকৃতিক ক্ষয়কে ত্বরান্বিত করতে অ্যাক্টিভেশন এনার্জি বাধাগুলো বাইপাস করে থার্মোডাইনামিক ইকুইলিব্রিয়ামের জন্য অনুঘটক হিসেবে কাজ করে।",
+    "aimverse.villainFuture": "\"এনট্রপি বোঝা শক্তি দক্ষতার জন্য চাবিকাঠি, কিন্তু এটিকে অস্ত্র হিসেবে ব্যবহার করা এখনও স্রেফ সায়েন্স ফিকশন... আপাতত।\"",
+
     "aimverse.nextEpisode": "পরবর্তী এপিসোড",
     "aimverse.nextEpisodeDesc": "ক্যাপ্টেন কোয়ান্টামের সাথে সাবঅ্যাটমিক কণার রহস্য আবিষ্কার করুন।",
     "aimverse.reminder": "রিমাইন্ডার সেট করুন",
+    "aimverse.days": "দিন",
+    "aimverse.hours": "ঘণ্টা",
+    "aimverse.minutes": "মিনিট",
+    "aimverse.seconds": "সেকেন্ড",
 
     // Courses
     "courses.title": "আমাদের লার্নিং পাথ",
@@ -210,6 +316,10 @@ export const translations = {
     "footer.privacy": "গোপনীয়তা নীতি",
     "footer.terms": "সেবার শর্তাবলী",
     "footer.contact": "যোগাযোগ করুন",
+    "footer.desc": "লক্ষ্য হোক আকাশছোঁয়া, অর্জন হোক অসীম! সবার জন্য অনন্য এবং কার্যকর শেখার অভিজ্ঞতা প্রদানের জন্য নিবেদিত একটি উদ্ভাবনী ই-লার্নিং প্ল্যাটফর্ম।",
+    "footer.quickLinks": "কুইক লিংকস",
+    "footer.email": "ইমেইল:",
+    "footer.phone": "ফোন:",
   }
 };
 

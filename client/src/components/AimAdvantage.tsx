@@ -35,7 +35,12 @@ export default function AimAdvantage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.8, delay: index * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
-                            className="group flex flex-col items-start hover-trigger bg-card border border-border/50 p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 dark:bg-card/50"
+                            whileHover={{
+                                y: -12,
+                                scale: 1.03,
+                                boxShadow: "0 20px 40px -10px rgba(0,0,0,0.15)",
+                            }}
+                            className="group flex flex-col items-start hover-trigger bg-card border border-foreground p-8 rounded-2xl shadow-md transition-all duration-300 dark:bg-card/50"
                         >
                             <div className="flex items-center justify-between w-full mb-6">
                                 <span className="text-xs font-bold text-muted-foreground/50 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>

@@ -22,14 +22,37 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { name: t("nav.home"), href: "/" },
-    { name: t("nav.courses"), href: "/courses" },
-    { name: t("nav.specialNeeds"), href: "/special-needs" },
-    { name: t("nav.tinyExplorers"), href: "/tiny-explorers" },
-    { name: t("nav.mentalHealth"), href: "/mental-health" },
-    { name: t("nav.aimVerse"), href: "/aimverse" },
-    { name: t("nav.gallery"), href: "/gallery" },
+    { name: t("nav.home"), href: "#top" }, // Assuming a top ID or just scroll to top
+    { name: t("nav.courses"), href: "#courses" },
+    { name: t("nav.specialNeeds"), href: "#special-needs" },
+    { name: t("nav.tinyExplorers"), href: "#tiny-explorers" },
+    { name: t("nav.mentalHealth"), href: "#mental-health" },
+    { name: t("nav.aimVerse"), href: "#aimverse" },
+    { name: t("nav.gallery"), href: "#gallery" },
+    { name: "AIM Voice", href: "/ai-voice" },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+
+    if (href === "#top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const element = document.querySelector(href);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
 
   return (
     <motion.header
@@ -40,38 +63,37 @@ export default function Header() {
     >
       <div className="container flex items-center justify-between">
         {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center gap-2 group">
-            <div className="relative h-10 w-10 overflow-hidden bg-foreground text-background flex items-center justify-center font-serif font-bold text-xl transition-transform duration-500 group-hover:rotate-180">
-              <span>A</span>
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="font-serif text-lg font-bold leading-none tracking-tight">AIM Centre 360</span>
-            </div>
-          </a>
-        </Link>
+        <a
+          href="/"
+          onClick={(e) => handleNavClick(e, "#top")}
+          className="flex items-center gap-2 group cursor-pointer"
+        >
+          <div className="relative h-10 w-10 overflow-hidden bg-foreground text-background flex items-center justify-center font-serif font-bold text-xl transition-transform duration-500 group-hover:rotate-180">
+            <span>A</span>
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="font-serif text-lg font-bold leading-none tracking-tight">AIM Centre 360</span>
+          </div>
+        </a>
 
         {/* Desktop Navigation */}
         <nav className="hidden xl:flex items-center gap-6">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href}>
-              <motion.a
+            <a
+              key={link.name}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className={`relative text-sm font-bold tracking-wide transition-colors hover:text-foreground whitespace-nowrap cursor-pointer hover-trigger px-2 py-1 ${location === link.href ? "text-foreground" : "text-muted-foreground"
+                }`}
+            >
+              <motion.span
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative text-sm font-bold tracking-wide transition-colors hover:text-foreground whitespace-nowrap cursor-pointer hover-trigger px-2 py-1 ${
-                  location === link.href ? "text-foreground" : "text-muted-foreground"
-                }`}
+                className="inline-block"
               >
                 {link.name}
-                {location === link.href && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-foreground"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-              </motion.a>
-            </Link>
+              </motion.span>
+            </a>
           ))}
         </nav>
 
@@ -125,12 +147,16 @@ export default function Header() {
 
           {/* Auth Buttons (Hidden on Mobile) */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground">
-              {t("nav.login")}
-            </Button>
-            <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-6">
-              {t("nav.signup")}
-            </Button>
+            <Link href="/auth">
+              <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground">
+                {t("nav.login")}
+              </Button>
+            </Link>
+            <Link href="/auth">
+              <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-6">
+                {t("nav.signup")}
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -158,24 +184,28 @@ export default function Header() {
             <div className="container py-8 flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (
-                  <Link key={link.name} href={link.href}>
-                    <a 
-                      className="text-2xl font-serif font-bold py-3 border-b border-border text-foreground hover:text-primary transition-colors"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {link.name}
-                    </a>
-                  </Link>
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="text-2xl font-serif font-bold py-3 border-b border-border text-foreground hover:text-primary transition-colors cursor-pointer"
+                    onClick={(e) => handleNavClick(e, link.href)}
+                  >
+                    {link.name}
+                  </a>
                 ))}
               </div>
-              
+
               <div className="flex flex-col gap-4 mt-4">
-                <Button className="w-full rounded-full bg-foreground text-background py-6 text-lg">
-                  {t("nav.signup")}
-                </Button>
-                <Button variant="outline" className="w-full rounded-full border-foreground text-foreground py-6 text-lg">
-                  {t("nav.login")}
-                </Button>
+                <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full rounded-full bg-foreground text-background py-6 text-lg">
+                    {t("nav.signup")}
+                  </Button>
+                </Link>
+                <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full rounded-full border-foreground text-foreground py-6 text-lg">
+                    {t("nav.login")}
+                  </Button>
+                </Link>
               </div>
 
               {/* Toggles removed from here as they are now in the top bar */}

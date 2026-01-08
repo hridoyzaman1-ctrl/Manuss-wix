@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "wouter";
 
 const categories = [
   "All",
@@ -100,13 +101,7 @@ export default function Courses() {
   return (
     <section className="py-24 relative overflow-hidden bg-transparent">
       {/* Background Elements */}
-      <motion.div
-        initial={{ opacity: 0, x: 100 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-        className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/4 pointer-events-none"
-      ></motion.div>
+
 
       <div className="container relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
@@ -139,7 +134,7 @@ export default function Courses() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search courses..."
-              className="pl-10 bg-transparent border-primary/20 focus:border-primary text-foreground placeholder:text-muted-foreground"
+              className="pl-10 bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary text-foreground placeholder:text-muted-foreground shadow-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -158,7 +153,7 @@ export default function Courses() {
               >
                 <TabsTrigger
                   value={category}
-                  className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all hover:text-primary/80"
+                  className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all duration-300 hover:text-primary hover:bg-primary/5 hover:-translate-y-0.5"
                 >
                   {category}
                 </TabsTrigger>
@@ -225,9 +220,11 @@ export default function Courses() {
                         </Button>
                       </div>
 
-                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
-                        {t("courses.enroll") || "Enroll Now"}
-                      </Button>
+                      <Link href="/auth">
+                        <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
+                          {t("courses.enroll") || "Enroll Now"}
+                        </Button>
+                      </Link>
                     </div>
                   </div>
 
@@ -298,9 +295,11 @@ export default function Courses() {
                               View Details
                               <ArrowRight className="ml-1 h-3 w-3" />
                             </Button>
-                            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
-                              {t("courses.enroll") || "Enroll Now"}
-                            </Button>
+                            <Link href="/auth">
+                              <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
+                                {t("courses.enroll") || "Enroll Now"}
+                              </Button>
+                            </Link>
                           </div>
                         </div>
                       </div>

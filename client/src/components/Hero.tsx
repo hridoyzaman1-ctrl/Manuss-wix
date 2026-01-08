@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { useRef, useEffect } from "react";
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "wouter";
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -11,7 +12,6 @@ export default function Hero() {
     target: containerRef,
     offset: ["start start", "end start"],
   });
-
   // Mouse parallax effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -175,12 +175,35 @@ export default function Hero() {
               </motion.span>
             </h1>
 
-            <Button
-              variant="outline"
-              className="rounded-none border-foreground bg-transparent px-10 py-7 text-lg uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+            <Link href="/auth">
+              <Button
+                variant="outline"
+                className="rounded-none border-foreground bg-transparent px-10 py-7 text-lg uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all duration-300"
+              >
+                {t("hero.cta")} <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+
+            {/* Scroll Indicator - Positioned below CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="mt-12 flex flex-col items-center gap-2"
             >
-              {t("hero.cta")} <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+              <motion.span
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="text-xs uppercase tracking-[0.3em] text-muted-foreground"
+              >
+                {t("hero.scroll")}
+              </motion.span>
+              <motion.div
+                animate={{ y: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                className="h-8 w-[1px] bg-muted-foreground/30"
+              />
+            </motion.div>
           </motion.div>
         </motion.div>
 
@@ -200,10 +223,6 @@ export default function Hero() {
 
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 mix-blend-difference text-white">
-        <span className="text-xs uppercase tracking-[0.3em]">Scroll</span>
-      </div>
     </div>
   );
 }

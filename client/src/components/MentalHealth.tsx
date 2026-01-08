@@ -54,7 +54,7 @@ export default function MentalHealth() {
               <img
                 src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=2070&auto=format&fit=crop"
                 alt="Counseling session"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
             </div>
           </motion.div>

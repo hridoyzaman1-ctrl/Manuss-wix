@@ -19,7 +19,7 @@ export default function NewArrivals() {
   return (
     <section className="w-full bg-muted/30 py-24">
       <div className="container mx-auto px-4 md:px-12">
-        
+
         <div className="mb-16">
           <h2 className="font-serif text-5xl font-bold uppercase tracking-tight text-foreground mb-4">
             New Arrivals
@@ -41,7 +41,7 @@ export default function NewArrivals() {
                   {product.description}
                 </p>
                 <div className="w-8 h-[1px] bg-border"></div>
-                <Button 
+                <Button
                   variant="outline"
                   className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 py-6 text-xs uppercase tracking-widest mt-4 transition-all duration-300 hover-magnetic"
                 >
@@ -51,9 +51,9 @@ export default function NewArrivals() {
 
               {/* Image Right */}
               <div className="flex-1 relative overflow-hidden bg-muted">
-                <img 
-                  src={product.image} 
-                  alt={product.title} 
+                <img
+                  src={product.image}
+                  alt={product.title}
                   className="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
@@ -62,7 +62,7 @@ export default function NewArrivals() {
         </div>
 
         <div className="flex justify-end mt-12">
-          <Button 
+          <Button
             variant="outline"
             className="rounded-none border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground px-10 py-6 text-xs uppercase tracking-widest hover-magnetic"
           >

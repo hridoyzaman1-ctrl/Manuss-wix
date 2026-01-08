@@ -11,10 +11,16 @@ import CustomCursor from "./components/CustomCursor";
 import ScrollToTop from "./components/ScrollToTop";
 
 
+import AIVoicePage from "@/pages/AIVoicePage";
+import Auth from "@/pages/Auth";
+import Chatbot from "@/components/Chatbot";
+
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/ai-voice"} component={AIVoicePage} />
+      <Route path={"/auth"} component={Auth} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -59,6 +65,7 @@ function App() {
       >
         <TooltipProvider>
           <CustomCursor />
+          <Chatbot />
           <ScrollToTop />
           <Toaster />
           <Router />

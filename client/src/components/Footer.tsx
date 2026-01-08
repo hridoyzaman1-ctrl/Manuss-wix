@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand Column */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -31,7 +31,7 @@ export default function Footer() {
               </a>
             </Link>
             <p className="text-muted-foreground leading-relaxed">
-              Aim High, Achieve Infinity! An innovative e-learning platform dedicated to providing unique and effective learning experiences for everyone.
+              {t("footer.desc")}
             </p>
             <div className="flex gap-4">
               <Button variant="outline" size="icon" className="rounded-full hover:bg-primary hover:text-white hover:border-primary transition-colors">
@@ -53,7 +53,7 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <h3 className="font-serif text-lg font-bold mb-6">Quick Links</h3>
+            <h3 className="font-serif text-lg font-bold mb-6">{t("footer.quickLinks")}</h3>
             <ul className="space-y-4">
               {[
                 { name: t("nav.about"), href: "/about" },
@@ -83,20 +83,30 @@ export default function Footer() {
             <h3 className="font-serif text-lg font-bold mb-6">{t("footer.contact")}</h3>
             <ul className="space-y-4 text-muted-foreground">
               <li>
-                <strong className="block text-foreground mb-1">Email:</strong>
+                <strong className="block text-foreground mb-1">{t("footer.email")}</strong>
                 info@aimcentre360.com
               </li>
               <li>
-                <strong className="block text-foreground mb-1">Phone:</strong>
+                <strong className="block text-foreground mb-1">{t("footer.phone")}</strong>
                 +880 1234 567890
               </li>
             </ul>
           </motion.div>
 
-          {/* Empty Column for Balance or Additional Links if needed */}
-          <div>
-             {/* Placeholder for future content or just spacing */}
-          </div>
+          {/* Newsletter Signup */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+          >
+            <h3 className="font-serif text-lg font-bold mb-6">{t("footer.newsletter.title")}</h3>
+            <p className="text-muted-foreground mb-4">{t("footer.newsletter.desc")}</p>
+            <form className="flex gap-2">
+              <Input type="email" placeholder={t("footer.newsletter.placeholder")} className="flex-grow" />
+              <Button type="submit">{t("footer.newsletter.subscribe")}</Button>
+            </form>
+          </motion.div>
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">

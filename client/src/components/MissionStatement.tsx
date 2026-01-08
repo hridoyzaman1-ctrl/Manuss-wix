@@ -3,48 +3,92 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MissionStatement() {
   const { t } = useLanguage();
+  const text = t("mission.text");
+
   return (
-    <section className="py-32 bg-[#1A1A1A] text-[#EAEAEA] relative overflow-hidden">
-      {/* Abstract Background Pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#D4AF37] blur-[120px]"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-[#C0C0C0] blur-[120px]"></div>
+    <section className="py-40 bg-gradient-to-br from-[#F5F5F0] via-[#FAF9F6] to-[#EAEAEA] text-foreground relative overflow-hidden flex items-center justify-center min-h-[60vh]">
+      {/* Premium Background Elements */}
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D4AF37] rounded-full blur-[180px] opacity-10 animate-pulse duration-[8000ms]"></div>
       </div>
 
+      {/* Texture Overlay */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-20 mix-blend-multiply"></div>
+
       <div className="container relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            className="relative"
           >
+            {/* Elegant Quotation Mark */}
+            <span className="absolute -top-12 -left-4 md:-left-12 text-6xl md:text-8xl font-cormorant text-[#1a1a1a] opacity-30 font-bold">“</span>
+
             <motion.h2
-              className="text-3xl md:text-5xl lg:text-7xl font-serif font-bold leading-tight tracking-tight drop-shadow-2xl"
-              initial={{ textShadow: "0px 0px 0px rgba(255,255,255,0)" }}
-              whileInView={{ textShadow: "0px 0px 30px rgba(255,255,255,0.3)" }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+              className="text-4xl md:text-6xl lg:text-7xl font-cormorant font-bold italic leading-tight tracking-tight text-[#1a1a1a]"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 1 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.05
+                  }
+                }
+              }}
             >
-              {t("mission.text").split(" ").map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{
-                    duration: 0.8,
-                    delay: i * 0.1,
-                    ease: [0.2, 0.65, 0.3, 0.9]
-                  }}
-                  viewport={{ once: true }}
-                  className="inline-block mr-[0.3em]"
-                >
-                  {word}
-                </motion.span>
+              {text.split(" ").map((word, wordIndex) => (
+                <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.25em]">
+                  {word.split("").map((char, charIndex) => (
+                    <motion.span
+                      key={`${wordIndex}-${charIndex}`}
+                      variants={{
+                        hidden: {
+                          opacity: 0,
+                          y: 15,
+                          textShadow: "2px 2px 0px rgba(0,0,0,0.15), 0px 0px 0px rgba(212,175,55,0)"
+                        },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          textShadow: [
+                            "2px 2px 0px rgba(0,0,0,0.15), 0px 0px 0px rgba(212,175,55,0)",
+                            "2px 2px 0px rgba(0,0,0,0.15), 0px 0px 30px rgba(212,175,55,0.8), 0px 0px 10px rgba(212,175,55,0.6)",
+                            "2px 2px 0px rgba(0,0,0,0.15), 0px 0px 0px rgba(212,175,55,0)"
+                          ],
+                          transition: {
+                            opacity: { duration: 0.5 },
+                            y: { duration: 0.5 },
+                            textShadow: {
+                              duration: 2.5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                              delay: 0.5
+                            }
+                          }
+                        }
+                      }}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
               ))}
             </motion.h2>
 
-            <div className="mt-12 flex justify-center">
-              <div className="h-[2px] w-32 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+            <span className="absolute -bottom-16 -right-4 md:-right-12 text-6xl md:text-8xl font-cormorant text-[#1a1a1a] opacity-30 font-bold rotate-180">“</span>
+
+            <div className="mt-16 flex justify-center items-center gap-4">
+              <div className="h-[1px] w-12 md:w-24 bg-gradient-to-r from-transparent to-[#1a1a1a]"></div>
+              <div className="h-2 w-2 rotate-45 bg-[#1a1a1a]"></div>
+              <div className="h-[1px] w-12 md:w-24 bg-gradient-to-l from-transparent to-[#1a1a1a]"></div>
             </div>
           </motion.div>
         </div>

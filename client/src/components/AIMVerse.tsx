@@ -42,6 +42,122 @@ export default function AIMVerse() {
     return () => clearInterval(interval);
   }, []);
 
+  // --- Sound Engine ---
+  const activeAudioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const activeOscillatorsRef = useRef<OscillatorNode[]>([]);
+  const activeGainNodesRef = useRef<GainNode[]>([]);
+
+  const stopAllSounds = () => {
+    // Stop local audio
+    if (activeAudioRef.current) {
+      const audio = activeAudioRef.current;
+      // Fade out effect
+      const fadeInterval = setInterval(() => {
+        if (audio.volume > 0.05) {
+          audio.volume -= 0.05;
+        } else {
+          audio.pause();
+          audio.currentTime = 0;
+          clearInterval(fadeInterval);
+        }
+      }, 50);
+      activeAudioRef.current = null;
+    }
+
+    // Stop synths
+    activeOscillatorsRef.current.forEach(osc => {
+      try { osc.stop(); } catch (e) { /* ignore already stopped */ }
+    });
+    activeOscillatorsRef.current = [];
+
+    // Disconnect gains to clean up
+    activeGainNodesRef.current.forEach(gain => {
+      try { gain.disconnect(); } catch (e) { /* ignore */ }
+    });
+    activeGainNodesRef.current = [];
+  };
+
+  const playHeroSound = () => {
+    stopAllSounds(); // Prevent stacking
+    const audio = new Audio("/sounds/hero.mp3");
+    audio.volume = 0.4;
+    // Lower volume or shorten if needed, but stop-on-leave handles duration best
+    audio.play()
+      .then(() => { activeAudioRef.current = audio; })
+      .catch(() => playHeroSynth());
+  };
+
+  const playVillainSound = () => {
+    stopAllSounds();
+    const audio = new Audio("/sounds/villain.mp3");
+    audio.volume = 0.4;
+    audio.play()
+      .then(() => { activeAudioRef.current = audio; })
+      .catch(() => playVillainSynth());
+  };
+
+  // Web Audio API Fallbacks
+  const getAudioContext = () => {
+    if (!audioContextRef.current) {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContext) audioContextRef.current = new AudioContext();
+    }
+    return audioContextRef.current;
+  };
+
+  const playHeroSynth = () => {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(3520, ctx.currentTime + 0.3);
+
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1);
+
+      activeOscillatorsRef.current.push(osc);
+      activeGainNodesRef.current.push(gain);
+    } catch (e) { console.error("Synth failed", e); }
+  };
+
+  const playVillainSynth = () => {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const freqs = [55, 110, 112];
+      freqs.forEach(f => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.value = f;
+
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 2);
+
+        activeOscillatorsRef.current.push(osc);
+        activeGainNodesRef.current.push(gain);
+      });
+    } catch (e) { console.error("Synth failed", e); }
+  };
+  // --------------------
+
   return (
     <section ref={containerRef} className="py-24 bg-background text-foreground relative overflow-hidden">
       {/* Subtle Texture Background */}
@@ -110,10 +226,10 @@ export default function AIMVerse() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Days", value: timeLeft.days },
-              { label: "Hours", value: timeLeft.hours },
-              { label: "Minutes", value: timeLeft.minutes },
-              { label: "Seconds", value: timeLeft.seconds }
+              { label: t("aimverse.days"), value: timeLeft.days },
+              { label: t("aimverse.hours"), value: timeLeft.hours },
+              { label: t("aimverse.minutes"), value: timeLeft.minutes },
+              { label: t("aimverse.seconds"), value: timeLeft.seconds }
             ].map((item, index) => (
               <div key={index} className="bg-card border border-border p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="text-3xl md:text-4xl font-bold font-serif text-foreground mb-2">
@@ -141,58 +257,66 @@ export default function AIMVerse() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               whileHover={{ y: -10, scale: 1.02 }}
+              onMouseEnter={playHeroSound}
+              onMouseLeave={stopAllSounds}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="bg-card border border-border p-8 shadow-lg relative overflow-hidden group hover:border-primary/20 transition-colors duration-300"
+              className="bg-gradient-to-br from-background to-amber-50/10 dark:from-background dark:to-amber-900/10 border-2 border-amber-400/30 p-8 shadow-xl shadow-amber-500/10 relative overflow-hidden group hover:border-amber-400 transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 uppercase tracking-widest">Hero</div>
+              <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">{t("aimverse.hero")}</div>
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h4 className="text-3xl font-serif font-bold text-foreground">Photon</h4>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider mt-1">Episode 04: "Light Speed"</p>
+                  <h4 className="text-3xl font-serif font-bold text-foreground">{t("aimverse.heroName")}</h4>
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider mt-1">{t("aimverse.heroEp")}</p>
                 </div>
-                <div className="text-4xl">⚡</div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-4xl"
+                >
+                  ⚡
+                </motion.div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-sm font-bold uppercase tracking-wide text-foreground mb-2 border-b border-border pb-1">Power: Light Manipulation</h5>
+                  <h5 className="text-sm font-bold uppercase tracking-wide text-foreground mb-2 border-b border-amber-400/20 pb-1">{t("aimverse.heroPower")}</h5>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Ability to control and solidify photons, creating hard-light constructs and moving at relativistic speeds.
+                    {t("aimverse.heroPowerDesc")}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Scientific Theory</h5>
-                    <p className="text-sm font-medium text-foreground">Wave-Particle Duality</p>
+                    <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">{t("aimverse.theory")}</h5>
+                    <p className="text-sm font-medium text-foreground">{t("aimverse.heroTheory")}</p>
                   </div>
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Plausibility</h5>
+                    <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">{t("aimverse.plausibility")}</h5>
                     <div className="w-full bg-gray-100 h-2 rounded-full mt-1 overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: "40%" }}
                         transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
                         viewport={{ once: true }}
-                        className="bg-green-500 h-2 rounded-full"
+                        className="bg-amber-500 h-2 rounded-full"
                       ></motion.div>
                     </div>
-                    <p className="text-xs text-right mt-1 text-muted-foreground">Theoretical</p>
+                    <p className="text-xs text-right mt-1 text-muted-foreground">{t("aimverse.heroPlausibility")}</p>
                   </div>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Mechanism</h5>
+                  <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">{t("aimverse.mechanism")}</h5>
                   <p className="text-sm text-muted-foreground">
-                    Utilizes a quantum field generator to collapse the wave function of light into tangible matter (Bose-Einstein Condensates).
+                    {t("aimverse.heroMechanism")}
                   </p>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">Future Possibility</h5>
+                  <h5 className="text-xs font-bold uppercase text-muted-foreground/70 mb-1">{t("aimverse.future")}</h5>
                   <p className="text-sm text-muted-foreground italic">
-                    "Photonics computing and laser cooling are early steps toward controlling light as matter."
+                    {t("aimverse.heroFuture")}
                   </p>
                 </div>
               </div>
@@ -203,34 +327,42 @@ export default function AIMVerse() {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               whileHover={{ y: -10, scale: 1.02 }}
+              onMouseEnter={playVillainSound}
+              onMouseLeave={stopAllSounds}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="bg-secondary text-secondary-foreground border border-border p-8 shadow-lg relative overflow-hidden group transition-colors duration-300"
+              className="bg-gradient-to-br from-background to-red-50/10 dark:from-background dark:to-red-900/10 border-2 border-red-500/30 p-8 shadow-xl shadow-red-500/10 relative overflow-hidden group hover:border-red-500 transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 bg-foreground text-background text-xs font-bold px-3 py-1 uppercase tracking-widest">Villain</div>
+              <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 uppercase tracking-widest">{t("aimverse.villain")}</div>
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h4 className="text-3xl font-serif font-bold">Entropy</h4>
-                  <p className="text-sm text-gray-400 uppercase tracking-wider mt-1">Episode 07: "Heat Death"</p>
+                  <h4 className="text-3xl font-serif font-bold">{t("aimverse.villainName")}</h4>
+                  <p className="text-sm text-gray-400 uppercase tracking-wider mt-1">{t("aimverse.villainEp")}</p>
                 </div>
-                <div className="text-4xl">🌀</div>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  className="text-4xl"
+                >
+                  🌀
+                </motion.div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <h5 className="text-sm font-bold uppercase tracking-wide text-secondary-foreground mb-2 border-b border-border pb-1">Power: Decay Acceleration</h5>
+                  <h5 className="text-sm font-bold uppercase tracking-wide text-secondary-foreground mb-2 border-b border-border pb-1">{t("aimverse.villainPower")}</h5>
                   <p className="text-secondary-foreground/80 text-sm leading-relaxed">
-                    Can instantly increase the disorder (entropy) of any closed system, causing structures to crumble and energy to dissipate.
+                    {t("aimverse.villainPowerDesc")}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Scientific Theory</h5>
-                    <p className="text-sm font-medium text-secondary-foreground">Second Law of Thermodynamics</p>
+                    <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">{t("aimverse.theory")}</h5>
+                    <p className="text-sm font-medium text-secondary-foreground">{t("aimverse.villainTheory")}</p>
                   </div>
                   <div>
-                    <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Plausibility</h5>
+                    <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">{t("aimverse.plausibility")}</h5>
                     <div className="w-full bg-gray-800 h-2 rounded-full mt-1 overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
@@ -240,21 +372,21 @@ export default function AIMVerse() {
                         className="bg-red-500 h-2 rounded-full"
                       ></motion.div>
                     </div>
-                    <p className="text-xs text-right mt-1 text-secondary-foreground/60">High (Natural Law)</p>
+                    <p className="text-xs text-right mt-1 text-secondary-foreground/60">{t("aimverse.villainPlausibility")}</p>
                   </div>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Mechanism</h5>
+                  <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">{t("aimverse.mechanism")}</h5>
                   <p className="text-sm text-secondary-foreground/80">
-                    Acts as a catalyst for thermodynamic equilibrium, bypassing activation energy barriers to speed up natural decay.
+                    {t("aimverse.villainMechanism")}
                   </p>
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">Future Possibility</h5>
+                  <h5 className="text-xs font-bold uppercase text-secondary-foreground/60 mb-1">{t("aimverse.future")}</h5>
                   <p className="text-sm text-secondary-foreground/80 italic">
-                    "Understanding entropy is key to energy efficiency, but weaponizing it remains pure sci-fi... for now."
+                    {t("aimverse.villainFuture")}
                   </p>
                 </div>
               </div>
