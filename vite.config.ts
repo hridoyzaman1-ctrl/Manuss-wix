@@ -8,9 +8,9 @@ import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 import { VitePWA } from "vite-plugin-pwa";
 
 const plugins = [
-  react(), 
-  tailwindcss(), 
-  jsxLocPlugin(), 
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
   vitePluginManusRuntime(),
   VitePWA({
     registerType: 'autoUpdate',
@@ -48,7 +48,7 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
   },
   server: {
