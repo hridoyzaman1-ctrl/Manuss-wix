@@ -17,7 +17,6 @@ import MissionStatement from "@/components/MissionStatement";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import AimAdvantage from "@/components/AimAdvantage";
-import InteractiveSection from "@/components/InteractiveSection";
 
 export default function Home() {
   return (
@@ -28,63 +27,63 @@ export default function Home() {
         <div className="bg-background"><Hero /></div>
 
         <div id="about" className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><About /></InteractiveSection>
+          <About />
         </div>
 
         <div className="bg-background">
-          <InteractiveSection><AimAdvantage /></InteractiveSection>
+          <AimAdvantage />
         </div>
 
         <div className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><NewArrivals /></InteractiveSection>
+          <NewArrivals />
         </div>
 
         <div id="courses" className="bg-background">
-          <InteractiveSection><Courses /></InteractiveSection>
+          <Courses />
         </div>
 
         <div className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><LearningHours /></InteractiveSection>
+          <LearningHours />
         </div>
 
         <div className="bg-background">
-          <InteractiveSection><MissionStatement /></InteractiveSection>
+          <MissionStatement />
         </div>
 
         <div id="special-needs" className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><SpecialNeeds /></InteractiveSection>
+          <SpecialNeeds />
         </div>
 
         <div id="tiny-explorers" className="bg-background">
-          <InteractiveSection><TinyExplorers /></InteractiveSection>
+          <TinyExplorers />
         </div>
 
         <div id="mental-health" className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><MentalHealth /></InteractiveSection>
+          <MentalHealth />
         </div>
 
         <div id="aimverse" className="bg-background">
-          <InteractiveSection><AIMVerse /></InteractiveSection>
+          <AIMVerse />
         </div>
 
         <div id="gallery" className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><CreativeGallery /></InteractiveSection>
+          <CreativeGallery />
         </div>
 
         <div className="bg-background">
-          <InteractiveSection><Contact /></InteractiveSection>
+          <Contact />
         </div>
 
         <div className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><Testimonials /></InteractiveSection>
+          <Testimonials />
         </div>
 
         <div className="bg-background">
-          <InteractiveSection><FAQ /></InteractiveSection>
+          <FAQ />
         </div>
 
         <div className="bg-[#EFEDE8] dark:bg-card/30">
-          <InteractiveSection><PreFooter /></InteractiveSection>
+          <PreFooter />
         </div>
       </main>
       <Footer />
