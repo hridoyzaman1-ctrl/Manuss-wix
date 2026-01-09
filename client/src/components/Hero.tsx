@@ -34,7 +34,7 @@ export default function Hero() {
 
         {/* Panel 1: Texture Background + Tagline - STATIC */}
         <div
-          className="relative h-[99%] flex flex-col items-center justify-center overflow-hidden border border-border/20 shadow-sm"
+          className="relative min-h-[400px] md:h-[99%] flex flex-col items-center justify-center overflow-hidden border border-border/20 shadow-sm"
         >
           <div className="absolute inset-0">
             <img
@@ -53,7 +53,7 @@ export default function Hero() {
             />
           </div>
           <div className="relative z-10 text-center px-6">
-            <h2 className="font-serif text-4xl md:text-6xl font-bold leading-tight text-foreground tracking-normal cursor-default relative z-20 flex flex-col gap-2 -mt-32">
+            <h2 className="font-serif text-3xl md:text-6xl font-bold leading-tight text-foreground tracking-normal cursor-default relative z-20 flex flex-col gap-2 -mt-8 md:-mt-32">
               <span
                 className="inline-block text-primary"
               >
@@ -76,7 +76,7 @@ export default function Hero() {
         {/* Panel 2: Video Background - Mouse Parallax Only */}
         <motion.div
           style={{ x: xMoveReverse }}
-          className="relative h-[99%] overflow-hidden"
+          className="relative min-h-[300px] md:h-[99%] overflow-hidden"
         >
           <video
             autoPlay
@@ -91,10 +91,10 @@ export default function Hero() {
 
         {/* Panel 3: White Background + Title + CTA - STATIC */}
         <div
-          className="relative h-[99%] flex flex-col items-center justify-center bg-card text-center px-4 border border-border py-12 md:py-0 shadow-sm"
+          className="relative min-h-[500px] md:h-[99%] flex flex-col items-center justify-center bg-card text-center px-4 border border-border py-12 md:py-0 shadow-sm"
         >
           <div
-            className="flex flex-col items-center gap-12 -mt-12"
+            className="flex flex-col items-center gap-12 md:-mt-12"
           >
             {/* Option B: Minimalist Luxury (Refined) */}
             <h1 className="font-sans text-center text-foreground cursor-default flex flex-col items-center gap-2">
@@ -105,7 +105,7 @@ export default function Hero() {
               </span>
               <div className="flex flex-col items-center relative py-2">
                 <span
-                  className="text-5xl md:text-7xl font-light tracking-[0.2em] uppercase block"
+                  className="text-4xl md:text-7xl font-light tracking-[0.2em] uppercase block"
                 >
                   {t("hero.title1")}
                 </span>
@@ -113,13 +113,13 @@ export default function Hero() {
                   className="w-16 h-[1px] bg-primary my-4"
                 ></span>
                 <span
-                  className="text-3xl md:text-5xl font-light tracking-[0.3em] uppercase block text-muted-foreground"
+                  className="text-2xl md:text-5xl font-light tracking-[0.3em] uppercase block text-muted-foreground"
                 >
                   {t("hero.title2")}
                 </span>
               </div>
               <span
-                className="text-[5rem] md:text-[7rem] font-thin tracking-tighter leading-none block text-primary font-serif -mt-4"
+                className="text-7xl md:text-[7rem] font-thin tracking-tighter leading-none block text-primary font-serif -mt-2 md:-mt-4"
               >
                 {t("hero.title3")}
               </span>
@@ -161,15 +161,13 @@ export default function Hero() {
 
         <motion.div
           style={{ x: xMoveReverse }}
-          className="relative h-[99%] overflow-hidden border border-border/10 shadow-sm"
+          className="relative min-h-[300px] md:h-[99%] overflow-hidden border border-border/10 shadow-sm"
         >
           <img
             src="/images/hero/panel-4-books.webp"
             alt="Stacked Books"
             className="h-full w-full object-cover"
           />
-
-
         </motion.div>
 
       </div>
