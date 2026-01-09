@@ -37,6 +37,8 @@ interface SpeechRecognition extends EventTarget {
 }
 
 export default function Chatbot() {
+    const recognitionRef = useRef<SpeechRecognition | null>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         { id: "1", text: "Hi there! 👋 I'm the AIM Bot! Ask me anything about our school, classes, or even for a fun fact!", sender: "ai" }
@@ -44,8 +46,23 @@ export default function Chatbot() {
     const [inputText, setInputText] = useState("");
     const [isThinking, setIsThinking] = useState(false);
     const [isListening, setIsListening] = useState(false);
-    const recognitionRef = useRef<SpeechRecognition | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Monitor scroll for visibility
+    useEffect(() => {
+        const handleScroll = () => {
+            // Show chatbot after scrolling down a bit (past most of the hero)
+            if (window.scrollY > 400) {
+                setIsVisible(true);
+            } else {
+                setIsVisible(false);
+                setIsOpen(false); // Close the chat window if we scroll back up
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     // --- STT Logic ---
     useEffect(() => {
@@ -308,218 +325,227 @@ export default function Chatbot() {
     const [showTooltip, setShowTooltip] = useState(true);
 
     return (
-        <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-4">
-            {/* Chat Window */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-[350px] h-[550px] flex flex-col overflow-hidden rounded-xl border-2 border-primary/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-card text-card-foreground"
-                    >
-                        {/* Header */}
-                        <div className="bg-primary px-5 py-4 flex justify-between items-center shadow-md relative overflow-hidden">
-                            {/* Texture overlay for premium feel */}
-                            <div className="absolute inset-0 bg-white/5 opacity-20 pointer-events-none"></div>
-
-                            <div className="flex items-center gap-3 relative z-10">
-                                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md shadow-inner">
-                                    <Bot className="h-6 w-6 text-white" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <h3 className="font-cormorant font-bold text-xl text-white leading-none tracking-wide">AIM Assistant</h3>
-                                    <div className="flex items-center gap-1.5 mt-1">
-                                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                        <span className="text-[10px] text-white/90 uppercase tracking-widest font-medium">Online</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-1 relative z-10">
-                                {/* Auto-TTS Toggle */}
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className={`h-8 w-8 rounded-full transition-colors ${isAutoTTS ? "text-white bg-white/20" : "text-white/60 hover:text-white hover:bg-white/10"}`}
-                                    onClick={() => {
-                                        const newState = !isAutoTTS;
-                                        setIsAutoTTS(newState);
-                                        if (!newState) stopSpeaking();
-                                    }}
-                                    title={isAutoTTS ? "Turn off Auto-Read" : "Turn on Auto-Read"}
-                                >
-                                    {isAutoTTS ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                                </Button>
-
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10 rounded-full z-10"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <X className="h-5 w-5" />
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Messages Area */}
-                        <div className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40 transition-colors">
-                            <div className="space-y-4">
-                                {messages.map((msg) => (
-                                    <div key={msg.id} className={`flex gap-3 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border shadow-sm ${msg.sender === "user"
-                                            ? "bg-primary text-primary-foreground border-primary"
-                                            : "bg-background text-foreground border-border"
-                                            }`}>
-                                            {msg.sender === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
-                                        </div>
-
-                                        <div className={`relative max-w-[80%] px-4 py-3 text-sm shadow-md leading-relaxed group ${msg.sender === "user"
-                                            ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
-                                            : "bg-white dark:bg-slate-800 border border-border text-foreground rounded-2xl rounded-tl-sm"
-                                            }`}>
-                                            {msg.sender === "user" ? msg.text : formatMessage(msg.text)}
-
-                                            {/* Manual TTS Play Button (AI Only) */}
-                                            {msg.sender === "ai" && (
-                                                <button
-                                                    onClick={() => speakingMsgId === msg.id ? stopSpeaking() : speak(msg.text, msg.id)}
-                                                    className={`absolute -right-8 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 ${speakingMsgId === msg.id ? "opacity-100 text-primary animate-pulse" : ""
-                                                        }`}
-                                                    title={speakingMsgId === msg.id ? "Stop reading" : "Read aloud"}
-                                                >
-                                                    {speakingMsgId === msg.id ? <Square className="h-3 w-3 fill-current" /> : <Play className="h-3 w-3 fill-current" />}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {isThinking && (
-                                    <div className="flex gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-background text-foreground border border-border flex items-center justify-center flex-shrink-0 shadow-sm">
-                                            <Bot className="h-4 w-4" />
-                                        </div>
-                                        <div className="px-4 py-3 bg-white dark:bg-slate-800 border border-border rounded-2xl rounded-tl-sm flex items-center gap-1.5 shadow-sm">
-                                            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                                            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                                            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
-                                        </div>
-                                    </div>
-                                )}
-                                <div ref={messagesEndRef} />
-                            </div>
-                        </div>
-
-                        {/* Input Area */}
-                        <div className="p-4 bg-background border-t-2 border-border/50">
-                            <div className="relative flex items-center gap-2">
-                                <div className="flex-1 relative">
-                                    <Input
-                                        value={inputText}
-                                        onChange={(e) => setInputText(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                                        placeholder={isListening ? "Listening..." : "Ask for help..."}
-                                        className={`w-full bg-muted/50 border-input focus-visible:ring-primary/20 h-11 pl-4 pr-10 rounded-full shadow-inner transition-all ${isListening ? "ring-2 ring-primary/50 bg-primary/5" : ""
-                                            }`}
-                                        disabled={isThinking}
-                                    />
-                                    <button
-                                        onClick={toggleListening}
-                                        className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full transition-all ${isListening ? "text-primary animate-pulse scale-110" : "text-muted-foreground hover:text-primary"
-                                            }`}
-                                        title={isListening ? "Stop listening" : "Speak to AIM Bot"}
-                                    >
-                                        {isListening ? <Mic className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                                    </button>
-                                </div>
-                                <Button
-                                    size="icon"
-                                    onClick={handleSend}
-                                    disabled={isThinking || !inputText.trim()}
-                                    className="h-11 w-11 rounded-full shadow-md transition-all hover:scale-110 hover:shadow-lg active:scale-95 bg-primary text-white"
-                                >
-                                    {isThinking ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5 ml-0.5" />}
-                                </Button>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Floating Trigger Button Container */}
-            <div className="relative group">
-                {/* Pulse Ring */}
-                {!isOpen && (
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-20 animate-ping duration-[3s]"></span>
-                )}
-
-                {/* Tooltip Label (fades in on hover or periodically) */}
-                <AnimatePresence>
-                    {showTooltip && (
-                        <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{
-                                opacity: 1,
-                                x: 0,
-                                y: [0, -8, 0] // Gentle bounce using Framer Motion
-                            }}
-                            exit={{ opacity: 0, x: -10 }}
-                            transition={{
-                                y: {
-                                    duration: 2,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }
-                            }}
-                            className={`absolute left-full ml-4 top-1/2 -mt-6 bg-card text-card-foreground text-sm font-semibold pl-4 pr-9 py-2 rounded-xl shadow-xl border border-primary/20 whitespace-nowrap z-[60] pointer-events-auto ${isOpen ? "hidden" : "block"}`}
-                        >
-                            <span className="relative z-10">Chat with AIMbot! 👋</span>
-
-                            {/* Close Button - High Z-Index & Hit Area */}
-                            <button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    setShowTooltip(false);
-                                }}
-                                className="absolute right-1 top-1/2 -translate-y-1/2 p-2 hover:bg-destructive/10 hover:text-destructive rounded-full transition-colors cursor-pointer z-50 group-hover:scale-110"
-                                aria-label="Close tooltip"
-                            >
-                                <X className="h-3.5 w-3.5" />
-                            </button>
-
-                            {/* Triangle Arrow */}
-                            <div className="absolute left-0 top-1/2 -translate-x-[5px] -translate-y-1/2 w-2.5 h-2.5 bg-card border-l border-b border-primary/20 rotate-45"></div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Main Button */}
-                <motion.button
-                    animate={isOpen ? {} : {
-                        scale: [1, 1.05, 1],
-                        rotate: [0, 5, -5, 0]
-                    }}
-                    transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        repeatType: "loop",
-                        ease: "easeInOut"
-                    }}
-                    whileHover={{ scale: 1.1, rotate: 0 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setIsOpen(!isOpen)}
-                    className={`relative w-16 h-16 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-300 border-[3px] border-white/20 backdrop-blur-sm ${isOpen
-                        ? "bg-slate-800 rotate-90"
-                        : "bg-gradient-to-br from-primary to-primary/80 hover:brightness-110"
-                        }`}
+        <AnimatePresence>
+            {isVisible && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                    className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-4"
                 >
-                    {isOpen ? <X className="h-7 w-7 text-white" /> : <MessageCircle className="h-8 w-8 text-white fill-white/20" />}
-                </motion.button>
-            </div>
-        </div>
+                    {/* Chat Window */}
+                    <AnimatePresence>
+                        {isOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                transition={{ duration: 0.2 }}
+                                className="w-[350px] h-[550px] flex flex-col overflow-hidden rounded-xl border-2 border-primary/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-card text-card-foreground"
+                            >
+                                {/* Header */}
+                                <div className="bg-primary px-5 py-4 flex justify-between items-center shadow-md relative overflow-hidden">
+                                    {/* Texture overlay for premium feel */}
+                                    <div className="absolute inset-0 bg-white/5 opacity-20 pointer-events-none"></div>
+
+                                    <div className="flex items-center gap-3 relative z-10">
+                                        <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md shadow-inner">
+                                            <Bot className="h-6 w-6 text-white" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <h3 className="font-cormorant font-bold text-xl text-white leading-none tracking-wide">AIM Assistant</h3>
+                                            <div className="flex items-center gap-1.5 mt-1">
+                                                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                                <span className="text-[10px] text-white/90 uppercase tracking-widest font-medium">Online</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-1 relative z-10">
+                                        {/* Auto-TTS Toggle */}
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className={`h-8 w-8 rounded-full transition-colors ${isAutoTTS ? "text-white bg-white/20" : "text-white/60 hover:text-white hover:bg-white/10"}`}
+                                            onClick={() => {
+                                                const newState = !isAutoTTS;
+                                                setIsAutoTTS(newState);
+                                                if (!newState) stopSpeaking();
+                                            }}
+                                            title={isAutoTTS ? "Turn off Auto-Read" : "Turn on Auto-Read"}
+                                        >
+                                            {isAutoTTS ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                                        </Button>
+
+                                        <Button
+                                            size="icon"
+                                            variant="ghost"
+                                            className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10 rounded-full z-10"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <X className="h-5 w-5" />
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Messages Area */}
+                                <div className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40 transition-colors">
+                                    <div className="space-y-4">
+                                        {messages.map((msg) => (
+                                            <div key={msg.id} className={`flex gap-3 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border shadow-sm ${msg.sender === "user"
+                                                    ? "bg-primary text-primary-foreground border-primary"
+                                                    : "bg-background text-foreground border-border"
+                                                    }`}>
+                                                    {msg.sender === "user" ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                                                </div>
+
+                                                <div className={`relative max-w-[80%] px-4 py-3 text-sm shadow-md leading-relaxed group ${msg.sender === "user"
+                                                    ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
+                                                    : "bg-white dark:bg-slate-800 border border-border text-foreground rounded-2xl rounded-tl-sm"
+                                                    }`}>
+                                                    {msg.sender === "user" ? msg.text : formatMessage(msg.text)}
+
+                                                    {/* Manual TTS Play Button (AI Only) */}
+                                                    {msg.sender === "ai" && (
+                                                        <button
+                                                            onClick={() => speakingMsgId === msg.id ? stopSpeaking() : speak(msg.text, msg.id)}
+                                                            className={`absolute -right-8 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 ${speakingMsgId === msg.id ? "opacity-100 text-primary animate-pulse" : ""
+                                                                }`}
+                                                            title={speakingMsgId === msg.id ? "Stop reading" : "Read aloud"}
+                                                        >
+                                                            {speakingMsgId === msg.id ? <Square className="h-3 w-3 fill-current" /> : <Play className="h-3 w-3 fill-current" />}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {isThinking && (
+                                            <div className="flex gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-background text-foreground border border-border flex items-center justify-center flex-shrink-0 shadow-sm">
+                                                    <Bot className="h-4 w-4" />
+                                                </div>
+                                                <div className="px-4 py-3 bg-white dark:bg-slate-800 border border-border rounded-2xl rounded-tl-sm flex items-center gap-1.5 shadow-sm">
+                                                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                                                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                                                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div ref={messagesEndRef} />
+                                    </div>
+                                </div>
+
+                                {/* Input Area */}
+                                <div className="p-4 bg-background border-t-2 border-border/50">
+                                    <div className="relative flex items-center gap-2">
+                                        <div className="flex-1 relative">
+                                            <Input
+                                                value={inputText}
+                                                onChange={(e) => setInputText(e.target.value)}
+                                                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                                placeholder={isListening ? "Listening..." : "Ask for help..."}
+                                                className={`w-full bg-muted/50 border-input focus-visible:ring-primary/20 h-11 pl-4 pr-10 rounded-full shadow-inner transition-all ${isListening ? "ring-2 ring-primary/50 bg-primary/5" : ""
+                                                    }`}
+                                                disabled={isThinking}
+                                            />
+                                            <button
+                                                onClick={toggleListening}
+                                                className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full transition-all ${isListening ? "text-primary animate-pulse scale-110" : "text-muted-foreground hover:text-primary"
+                                                    }`}
+                                                title={isListening ? "Stop listening" : "Speak to AIM Bot"}
+                                            >
+                                                {isListening ? <Mic className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                                            </button>
+                                        </div>
+                                        <Button
+                                            size="icon"
+                                            onClick={handleSend}
+                                            disabled={isThinking || !inputText.trim()}
+                                            className="h-11 w-11 rounded-full shadow-md transition-all hover:scale-110 hover:shadow-lg active:scale-95 bg-primary text-white"
+                                        >
+                                            {isThinking ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5 ml-0.5" />}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Floating Trigger Button Container */}
+                    <div className="relative group">
+                        {/* Pulse Ring */}
+                        {!isOpen && (
+                            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-20 animate-ping duration-[3s]"></span>
+                        )}
+
+                        {/* Tooltip Label (fades in on hover or periodically) */}
+                        <AnimatePresence>
+                            {showTooltip && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{
+                                        opacity: 1,
+                                        x: 0,
+                                        y: [0, -8, 0] // Gentle bounce using Framer Motion
+                                    }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{
+                                        y: {
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut"
+                                        }
+                                    }}
+                                    className={`absolute left-full ml-4 top-1/2 -mt-6 bg-card text-card-foreground text-sm font-semibold pl-4 pr-9 py-2 rounded-xl shadow-xl border border-primary/20 whitespace-nowrap z-[60] pointer-events-auto ${isOpen ? "hidden" : "block"}`}
+                                >
+                                    <span className="relative z-10">Chat with AIMbot! 👋</span>
+
+                                    {/* Close Button - High Z-Index & Hit Area */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setShowTooltip(false);
+                                        }}
+                                        className="absolute right-1 top-1/2 -translate-y-1/2 p-2 hover:bg-destructive/10 hover:text-destructive rounded-full transition-colors cursor-pointer z-50 group-hover:scale-110"
+                                        aria-label="Close tooltip"
+                                    >
+                                        <X className="h-3.5 w-3.5" />
+                                    </button>
+
+                                    {/* Triangle Arrow */}
+                                    <div className="absolute left-0 top-1/2 -translate-x-[5px] -translate-y-1/2 w-2.5 h-2.5 bg-card border-l border-b border-primary/20 rotate-45"></div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Main Button */}
+                        <motion.button
+                            animate={isOpen ? {} : {
+                                scale: [1, 1.05, 1],
+                                rotate: [0, 5, -5, 0]
+                            }}
+                            transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                ease: "easeInOut"
+                            }}
+                            whileHover={{ scale: 1.1, rotate: 0 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setIsOpen(!isOpen)}
+                            className={`relative w-16 h-16 rounded-full shadow-[0_10px_30_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-300 border-[3px] border-white/20 backdrop-blur-sm ${isOpen
+                                ? "bg-slate-800 rotate-90"
+                                : "bg-gradient-to-br from-primary to-primary/80 hover:brightness-110"
+                                }`}
+                        >
+                            {isOpen ? <X className="h-7 w-7 text-white" /> : <MessageCircle className="h-8 w-8 text-white fill-white/20" />}
+                        </motion.button>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }
