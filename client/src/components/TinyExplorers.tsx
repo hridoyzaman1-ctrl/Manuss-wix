@@ -299,7 +299,7 @@ export default function TinyExplorers() {
                       {/* Card Back (Revealed) */}
                       <div
                         className={cn(
-                          "absolute inset-0 rounded-xl flex items-center justify-center bg-white shadow-lg border-2",
+                          "absolute inset-0 rounded-xl flex items-center justify-center bg-white dark:bg-card shadow-lg border-2",
                           "border-primary"
                         )}
                         style={{

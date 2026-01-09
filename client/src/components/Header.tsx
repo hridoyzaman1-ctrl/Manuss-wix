@@ -29,7 +29,6 @@ export default function Header() {
     { name: t("nav.mentalHealth"), href: "#mental-health" },
     { name: t("nav.aimVerse"), href: "#aimverse" },
     { name: t("nav.gallery"), href: "#gallery" },
-    { name: "AIM Voice", href: "/ai-voice" },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {

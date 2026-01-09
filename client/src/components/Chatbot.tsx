@@ -476,7 +476,7 @@ export default function Chatbot() {
                             }}
                             className={`absolute left-full ml-4 top-1/2 -mt-6 bg-card text-card-foreground text-sm font-semibold pl-4 pr-9 py-2 rounded-xl shadow-xl border border-primary/20 whitespace-nowrap z-[60] pointer-events-auto ${isOpen ? "hidden" : "block"}`}
                         >
-                            <span className="relative z-10">Chat with AIM! 👋</span>
+                            <span className="relative z-10">Chat with AIMbot! 👋</span>
 
                             {/* Close Button - High Z-Index & Hit Area */}
                             <button

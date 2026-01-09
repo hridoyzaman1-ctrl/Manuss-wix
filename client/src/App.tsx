@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -13,7 +13,7 @@ import ScrollToTop from "./components/ScrollToTop";
 
 import AIVoicePage from "@/pages/AIVoicePage";
 import Auth from "@/pages/Auth";
-import Chatbot from "@/components/Chatbot";
+import Chatbot from "./components/Chatbot";
 
 function Router() {
   return (
@@ -33,7 +33,9 @@ function Router() {
 //   to keep consistent foreground/background color across components
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
-function App() {
+function AppContent() {
+  const [location] = useLocation();
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -58,19 +60,25 @@ function App() {
   }, []);
 
   return (
+    <ThemeProvider
+      defaultTheme="light"
+      switchable
+    >
+      <TooltipProvider>
+        <CustomCursor />
+        {location !== '/auth' && <Chatbot />}
+        <ScrollToTop />
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </ThemeProvider>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        switchable
-      >
-        <TooltipProvider>
-          <CustomCursor />
-          <Chatbot />
-          <ScrollToTop />
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
+      <AppContent />
     </ErrorBoundary>
   );
 }

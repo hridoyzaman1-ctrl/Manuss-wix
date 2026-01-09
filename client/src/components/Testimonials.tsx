@@ -111,18 +111,18 @@ export default function Testimonials() {
 
         <div className="max-w-4xl mx-auto relative min-h-[400px] flex items-center">
           {/* Navigation Buttons */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handlePrev}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex hover:bg-transparent hover:text-primary"
           >
             <ChevronLeft className="h-8 w-8" />
           </Button>
 
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex hover:bg-transparent hover:text-primary"
           >
@@ -147,9 +147,9 @@ export default function Testimonials() {
                 {/* Image */}
                 <div className="relative flex-shrink-0">
                   <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-background shadow-xl">
-                    <img 
-                      src={testimonials[currentIndex].image} 
-                      alt={testimonials[currentIndex].name} 
+                    <img
+                      src={testimonials[currentIndex].image}
+                      alt={testimonials[currentIndex].name}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -162,17 +162,17 @@ export default function Testimonials() {
                 <div className="flex-1 text-center md:text-left">
                   <div className="flex justify-center md:justify-start gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-5 w-5 ${i < testimonials[currentIndex].rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`} 
+                      <Star
+                        key={i}
+                        className={`h-5 w-5 ${i < testimonials[currentIndex].rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`}
                       />
                     ))}
                   </div>
-                  
+
                   <blockquote className="text-xl md:text-2xl font-serif leading-relaxed mb-6 italic text-foreground/90">
                     "{testimonials[currentIndex].content}"
                   </blockquote>
-                  
+
                   <div>
                     <h4 className="text-lg font-bold">{testimonials[currentIndex].name}</h4>
                     <p className="text-primary font-medium text-sm uppercase tracking-wide">{testimonials[currentIndex].role}</p>
@@ -192,9 +192,8 @@ export default function Testimonials() {
                 setDirection(index > currentIndex ? 1 : -1);
                 setCurrentIndex(index);
               }}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex ? "w-8 bg-primary" : "w-2 bg-primary/20 hover:bg-primary/40"
-              }`}
+              className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "w-8 bg-primary" : "w-2 bg-primary/20 hover:bg-primary/40"
+                }`}
               aria-label={`Go to testimonial ${index + 1}`}
             />
           ))}

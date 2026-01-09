@@ -80,7 +80,7 @@ export default function LearningHours() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
 
   return (
-    <section ref={containerRef} className="w-full bg-[#F4F4F4] py-32 overflow-hidden">
+    <section ref={containerRef} className="w-full bg-[#F4F4F4] dark:bg-card/20 py-32 overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
 
@@ -99,7 +99,7 @@ export default function LearningHours() {
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="mb-6 relative z-10"
             >
-              <div className="h-16 w-16 rounded-2xl bg-white border border-border shadow-sm flex items-center justify-center transform rotate-3 group-hover:rotate-6 transition-transform duration-300">
+              <div className="h-16 w-16 rounded-2xl bg-white dark:bg-card border border-border shadow-sm flex items-center justify-center transform rotate-3 group-hover:rotate-6 transition-transform duration-300">
                 <Clock className="h-8 w-8 text-primary" />
               </div>
             </motion.div>
@@ -134,7 +134,7 @@ export default function LearningHours() {
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="mb-6 relative z-10"
             >
-              <div className="h-16 w-16 rounded-2xl bg-white border border-border shadow-sm flex items-center justify-center transform -rotate-3 group-hover:-rotate-6 transition-transform duration-300">
+              <div className="h-16 w-16 rounded-2xl bg-white dark:bg-card border border-border shadow-sm flex items-center justify-center transform -rotate-3 group-hover:-rotate-6 transition-transform duration-300">
                 <Command className="h-8 w-8 text-primary" />
               </div>
             </motion.div>
