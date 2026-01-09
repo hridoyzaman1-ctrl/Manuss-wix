@@ -1,9 +1,7 @@
 import { motion } from "framer-motion";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MissionStatement() {
-  const { t } = useLanguage();
-  const text = t("mission.text");
+  const text = "Knowledge for anybody, anywhere, anytime.";
 
   return (
     <section className="py-40 bg-gradient-to-br from-[#F5F5F0] via-[#FAF9F6] to-[#EAEAEA] dark:from-card/50 dark:via-background dark:to-card/50 text-foreground relative overflow-hidden flex items-center justify-center min-h-[60vh]">
