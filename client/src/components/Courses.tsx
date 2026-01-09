@@ -234,6 +234,16 @@ export default function Courses() {
               ))}
             </div>
 
+            <div className="flex justify-center mb-16">
+              <Button
+                variant="outline"
+                className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground px-12 py-7 text-sm uppercase tracking-[0.2em] font-medium transition-all duration-300 hover-magnetic"
+              >
+                View More Courses
+                <ArrowRight className="ml-3 h-4 w-4" />
+              </Button>
+            </div>
+
             {/* Extra Courses Carousel Section */}
             <div className="border-t border-border pt-16">
               <div className="flex items-center justify-between mb-8">
