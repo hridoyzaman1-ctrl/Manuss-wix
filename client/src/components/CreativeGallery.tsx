@@ -101,9 +101,9 @@ export default function CreativeGallery() {
                 onClick={() => setSelectedId(item.id)}
                 className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg hover-lift"
               >
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
+                <img
+                  src={item.image}
+                  alt={item.title}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
@@ -134,49 +134,49 @@ export default function CreativeGallery() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4"
           >
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-4 right-4 text-white hover:bg-white/20 rounded-full h-12 w-12"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-6 right-6 text-white hover:bg-white/20 rounded-full h-12 w-12 bg-black/40 backdrop-blur-md z-[60]"
               onClick={() => setSelectedId(null)}
             >
               <X className="h-6 w-6" />
             </Button>
 
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 rounded-full h-12 w-12 hidden md:flex"
               onClick={(e) => { e.stopPropagation(); handlePrev(); }}
             >
               <ChevronLeft className="h-8 w-8" />
             </Button>
 
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 rounded-full h-12 w-12 hidden md:flex"
               onClick={(e) => { e.stopPropagation(); handleNext(); }}
             >
               <ChevronRight className="h-8 w-8" />
             </Button>
 
-            <motion.div 
+            <motion.div
               layoutId={`card-${selectedId}`}
               className="relative max-w-5xl w-full max-h-[85vh] bg-background rounded-lg overflow-hidden flex flex-col md:flex-row"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-full md:w-2/3 h-[50vh] md:h-auto bg-black">
-                <img 
-                  src={selectedItem.image} 
-                  alt={selectedItem.title} 
+                <img
+                  src={selectedItem.image}
+                  alt={selectedItem.title}
                   className="w-full h-full object-contain"
                 />
               </div>
               <div className="w-full md:w-1/3 p-8 flex flex-col justify-center bg-card">
                 <span className="text-primary text-sm font-bold uppercase tracking-wider mb-2">{selectedItem.category}</span>
                 <h3 className="text-3xl font-serif font-bold mb-4">{selectedItem.title}</h3>
-                
+
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between border-b border-border pb-2">
                     <span className="text-muted-foreground">Artist</span>

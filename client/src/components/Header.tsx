@@ -178,7 +178,7 @@ export default function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed inset-0 top-[73px] z-40 bg-background md:hidden overflow-y-auto"
+            className="fixed inset-0 top-[73px] z-40 bg-background/95 backdrop-blur-xl xl:hidden overflow-y-auto"
           >
             <div className="container py-8 flex flex-col gap-6">
               <div className="flex flex-col gap-2">
