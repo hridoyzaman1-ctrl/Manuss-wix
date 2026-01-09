@@ -1,46 +1,72 @@
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 interface InteractiveSectionProps {
     children: React.ReactNode;
     className?: string;
-    intensity?: number;
 }
 
-export default function InteractiveSection({ children, className = "", intensity = 20 }: InteractiveSectionProps) {
+export default function InteractiveSection({ children, className = "" }: InteractiveSectionProps) {
     const ref = useRef<HTMLDivElement>(null);
 
-    // Track scroll progress for this specific section
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "end start"]
-    });
+    // Motion values for tracking movement
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
 
-    // Create a subtle vertical shift (y offset)
-    // Maps scroll progress [0, 1] to [-intensity, intensity]
-    const yTranslate = useTransform(scrollYProgress, [0, 1], [intensity, -intensity]);
+    // Handle mouse/touch movement to create a 3D tilt effect
+    const handleMove = (clientX: number, clientY: number) => {
+        if (!ref.current) return;
 
-    // Smooth out the movement with a spring
-    const ySpring = useSpring(yTranslate, {
-        damping: 30,
-        stiffness: 100,
-        mass: 0.5
-    });
+        const rect = ref.current.getBoundingClientRect();
+        const offsetX = clientX - rect.left;
+        const offsetY = clientY - rect.top;
+
+        // Calculate rotation based on cursor position relative to center
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((offsetY - centerY) / centerY) * -5; // Max 5 degree tilt for subtlety
+        const rotateY = ((offsetX - centerX) / centerX) * 5;
+
+        x.set(rotateY);
+        y.set(rotateX);
+    };
+
+    const handleMouseMove = (event: React.MouseEvent) => {
+        handleMove(event.clientX, event.clientY);
+    };
+
+    const handleTouchMove = (event: React.TouchEvent) => {
+        if (event.touches[0]) {
+            handleMove(event.touches[0].clientX, event.touches[0].clientY);
+        }
+    };
+
+    const resetPosition = () => {
+        x.set(0);
+        y.set(0);
+    };
+
+    // Smooth out the movement
+    const springConfig = { stiffness: 150, damping: 20 };
+    const springX = useSpring(x, springConfig);
+    const springY = useSpring(y, springConfig);
 
     return (
-        <div
+        <motion.div
             ref={ref}
-            className={`relative w-full h-full overflow-hidden ${className}`}
+            onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove}
+            onMouseLeave={resetPosition}
+            style={{
+                perspective: "1200px",
+                rotateX: springY,
+                rotateY: springX,
+                transformStyle: "preserve-3d"
+            }}
+            className={`w-full h-full ${className}`}
         >
-            <motion.div
-                style={{
-                    y: ySpring,
-                    scale: 1.05 // Slightly larger scale to ensure no gaps appear during vertical movement
-                }}
-                className="w-full h-full"
-            >
-                {children}
-            </motion.div>
-        </div>
+            {children}
+        </motion.div>
     );
 }
