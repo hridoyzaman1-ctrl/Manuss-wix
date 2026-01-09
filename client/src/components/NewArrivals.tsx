@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 
 export default function NewArrivals() {
@@ -31,7 +32,11 @@ export default function NewArrivals() {
 
         <div className="flex flex-col gap-8">
           {products.map((product, index) => (
-            <div key={index} className="bg-card border border-border p-0 flex flex-col md:flex-row h-auto md:h-[400px] group overflow-hidden hover-lift">
+            <motion.div
+              key={index}
+              whileTap={{ scale: 0.98 }}
+              className="bg-card border border-border p-0 flex flex-col md:flex-row h-auto md:h-[400px] group overflow-hidden hover-lift cursor-pointer active:border-primary"
+            >
               {/* Content Left */}
               <div className="flex-1 p-12 flex flex-col items-center justify-center text-center gap-6">
                 <h3 className="font-serif text-3xl font-bold text-card-foreground">
@@ -57,7 +62,7 @@ export default function NewArrivals() {
                   className="w-full h-full object-contain p-12 transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

@@ -100,9 +100,6 @@ export default function Courses() {
 
   return (
     <section className="py-24 relative overflow-hidden bg-transparent">
-      {/* Background Elements */}
-
-
       <div className="container relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
@@ -171,7 +168,8 @@ export default function Courses() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 flex flex-col"
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 flex flex-col cursor-pointer active:border-primary"
                 >
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden flex-shrink-0">
@@ -229,7 +227,7 @@ export default function Courses() {
                   </div>
 
                   {/* Hover Border Effect */}
-                  < div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" ></div>
+                  <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 </motion.div>
               ))}
             </div>
@@ -278,7 +276,10 @@ export default function Courses() {
                 >
                   {[...courses, ...courses].map((course, idx) => (
                     <div key={`${course.id}-${idx}`} className="min-w-[300px] w-[300px]">
-                      <div className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full hover:shadow-xl dark:hover:shadow-primary/10">
+                      <motion.div
+                        whileTap={{ scale: 0.96 }}
+                        className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 h-full hover:shadow-xl dark:hover:shadow-primary/10 cursor-pointer active:border-primary"
+                      >
                         <div className="relative h-48 overflow-hidden">
                           <img
                             src={course.image}
@@ -312,15 +313,15 @@ export default function Courses() {
                             </Link>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     </div>
                   ))}
                 </motion.div>
               </div>
             </div>
           </TabsContent>
-        </Tabs >
-      </div >
-    </section >
+        </Tabs>
+      </div>
+    </section>
   );
 }

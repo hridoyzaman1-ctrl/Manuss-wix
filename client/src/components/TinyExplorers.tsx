@@ -163,6 +163,7 @@ export default function TinyExplorers() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
+              whileTap={{ scale: 0.98 }}
               className="group relative h-[400px] overflow-hidden border border-border hover-lift cursor-pointer rounded-2xl"
             >
               <img

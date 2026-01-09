@@ -29,7 +29,10 @@ export default function MentalHealth() {
             </p>
 
             <div className="space-y-6 mb-8">
-              <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift active:bg-secondary/70"
+              >
                 <div className="p-3 bg-secondary rounded-full">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
@@ -37,9 +40,12 @@ export default function MentalHealth() {
                   <h3 className="font-bold text-lg">For Students</h3>
                   <p className="text-muted-foreground">Managing exam stress, peer pressure, and building emotional resilience.</p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="flex items-start gap-4 p-4 rounded-lg hover:bg-secondary/50 transition-colors duration-300 cursor-pointer hover-lift active:bg-secondary/70"
+              >
                 <div className="p-3 bg-secondary rounded-full">
                   <User className="h-6 w-6 text-primary" />
                 </div>
@@ -47,7 +53,7 @@ export default function MentalHealth() {
                   <h3 className="font-bold text-lg">For Parents</h3>
                   <p className="text-muted-foreground">Guidance on parenting strategies and supporting your child's development.</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             <div className="relative h-64 w-full overflow-hidden rounded-lg">

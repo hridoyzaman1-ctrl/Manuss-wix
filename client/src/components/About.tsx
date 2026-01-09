@@ -42,14 +42,17 @@ export default function About() {
             </div>
           </div>
 
-          {/* Right Column: Image (Relevant Alternative) */}
-          <div className="relative h-[600px] w-full overflow-hidden">
-            <motion.div style={{ y: imageY }} className="h-[120%] -top-[10%] relative">
+          <div className="relative h-[600px] w-full overflow-hidden rounded-2xl md:rounded-none group cursor-pointer">
+            <motion.div
+              style={{ y: imageY }}
+              whileTap={{ scale: 0.98 }}
+              className="h-[120%] -top-[10%] relative transition-transform duration-500"
+            >
               <img
                 src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070&auto=format&fit=crop"
                 alt="Modern Learning Environment"
                 loading="lazy"
-                className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                className="h-full w-full object-cover grayscale group-hover:grayscale-0 group-active:grayscale-0 transition-all duration-700"
               />
             </motion.div>
           </div>

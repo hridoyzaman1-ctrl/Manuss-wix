@@ -26,6 +26,7 @@ export default function SpecialNeeds() {
       return () => clearTimeout(timer);
     }
   }, []);
+
   return (
     <section className="py-24 bg-secondary/30 relative overflow-hidden">
       <div className="container">
@@ -47,29 +48,41 @@ export default function SpecialNeeds() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer active:border-primary"
+              >
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.sensory")}</h3>
                 <p className="text-sm text-muted-foreground">Tailored environments that respect sensory sensitivities while promoting engagement through tactile, visual, and auditory stimuli.</p>
-              </div>
+              </motion.div>
 
-              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer active:border-primary"
+              >
                 <Heart className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.emotional")}</h3>
                 <p className="text-sm text-muted-foreground">Building confidence and emotional resilience through positive reinforcement, social stories, and guided interaction.</p>
-              </div>
+              </motion.div>
 
-              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer active:border-primary"
+              >
                 <Sparkles className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.individualized")}</h3>
                 <p className="text-sm text-muted-foreground">Customized Individualized Education Programs (IEPs) that evolve with your child's growth and milestones.</p>
-              </div>
+              </motion.div>
 
-              <div className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer">
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                className="bg-background p-6 border border-border hover:border-primary transition-all duration-300 group hover-lift hover-glow cursor-pointer active:border-primary"
+              >
                 <Brain className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
                 <h3 className="font-serif text-xl font-bold mb-2">{t("special.lifeSkills")}</h3>
                 <p className="text-sm text-muted-foreground">Practical training in daily living skills, communication, and social interaction to foster independence.</p>
-              </div>
+              </motion.div>
             </div>
 
             <Button size="lg" className="rounded-none px-8">
@@ -160,11 +173,11 @@ export default function SpecialNeeds() {
             <div className="border-l-2 border-primary pl-6 py-2">
               <h3 className="font-serif text-2xl font-bold mb-2">Recommended Reading</h3>
               <ul className="space-y-4 text-muted-foreground">
-                <li className="hover:text-primary transition-colors cursor-pointer">
+                <li className="hover:text-primary active:text-primary transition-colors cursor-pointer">
                   <span className="font-bold block text-foreground">The Reason I Jump</span>
                   by Naoki Higashida - An inner voice of a thirteen-year-old boy with autism.
                 </li>
-                <li className="hover:text-primary transition-colors cursor-pointer">
+                <li className="hover:text-primary active:text-primary transition-colors cursor-pointer">
                   <span className="font-bold block text-foreground">Neurotribes</span>
                   by Steve Silberman - The legacy of autism and the future of neurodiversity.
                 </li>
@@ -174,11 +187,11 @@ export default function SpecialNeeds() {
             <div className="border-l-2 border-primary pl-6 py-2">
               <h3 className="font-serif text-2xl font-bold mb-2">Helpful Blogs & Guides</h3>
               <ul className="space-y-4 text-muted-foreground">
-                <li className="hover:text-primary transition-colors cursor-pointer">
+                <li className="hover:text-primary active:text-primary transition-colors cursor-pointer">
                   <span className="font-bold block text-foreground">Autism Speaks Tool Kits</span>
                   Comprehensive guides for every stage of the journey, from diagnosis to adulthood.
                 </li>
-                <li className="hover:text-primary transition-colors cursor-pointer">
+                <li className="hover:text-primary active:text-primary transition-colors cursor-pointer">
                   <span className="font-bold block text-foreground">Sensory Processing Guide</span>
                   Understanding and managing sensory sensitivities in daily life.
                 </li>

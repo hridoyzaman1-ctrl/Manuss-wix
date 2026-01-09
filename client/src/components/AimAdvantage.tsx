@@ -40,7 +40,8 @@ export default function AimAdvantage() {
                                 scale: 1.03,
                                 boxShadow: "0 20px 40px -10px rgba(0,0,0,0.15)",
                             }}
-                            className="group flex flex-col items-start hover-trigger bg-card border border-foreground p-8 rounded-2xl shadow-md transition-all duration-300 dark:bg-card/50"
+                            whileTap={{ scale: 0.97, y: -4 }}
+                            className="group flex flex-col items-start hover-trigger bg-card border border-foreground p-8 rounded-2xl shadow-md transition-all duration-300 dark:bg-card/50 cursor-pointer active:border-primary"
                         >
                             <div className="flex items-center justify-between w-full mb-6">
                                 <span className="text-xs font-bold text-muted-foreground/50 font-serif tracking-widest group-hover:text-primary transition-colors duration-500">{feature.number}</span>
