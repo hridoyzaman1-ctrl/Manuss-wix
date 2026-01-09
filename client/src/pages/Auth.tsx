@@ -101,15 +101,15 @@ export default function Auth() {
             </motion.div>
 
             {/* Right Side: Auth Form */}
-            <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 lg:p-24 bg-card relative">
+            <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-10 md:p-12 lg:p-24 bg-card relative min-h-screen">
                 {/* Mobile Logo */}
-                <div className="md:hidden absolute top-8 left-8">
+                <div className="md:hidden absolute top-10 left-0 right-0 flex justify-center px-8">
                     <Link href="/">
-                        <div className="flex items-center gap-2 group">
-                            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                                <span className="text-white font-serif font-bold">A</span>
+                        <div className="flex items-center gap-3 group bg-background/50 backdrop-blur-sm px-4 py-2 rounded-full border border-border/40 shadow-sm">
+                            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
+                                <span className="text-white font-serif font-bold text-lg">A</span>
                             </div>
-                            <span className="font-serif font-bold text-foreground">AIM Centre 360</span>
+                            <span className="font-serif font-bold text-foreground text-lg tracking-tight">AIM Centre 360</span>
                         </div>
                     </Link>
                 </div>
@@ -120,11 +120,11 @@ export default function Auth() {
                     animate="visible"
                     className="w-full max-w-md space-y-8"
                 >
-                    <div className="space-y-2 text-center md:text-left">
-                        <motion.h2 variants={itemVariants} className="text-3xl font-serif font-bold tracking-tight text-foreground sm:text-4xl">
+                    <div className="space-y-3 text-center md:text-left pt-16 md:pt-0">
+                        <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-serif font-bold tracking-tight text-foreground sm:text-4xl">
                             {isLogin ? t("auth.title.login") : t("auth.title.signup")}
                         </motion.h2>
-                        <motion.p variants={itemVariants} className="text-muted-foreground font-light italic">
+                        <motion.p variants={itemVariants} className="text-muted-foreground font-light italic text-lg">
                             {isLogin ? t("auth.subtitle.login") : t("auth.subtitle.signup")}
                         </motion.p>
                     </div>
@@ -148,24 +148,24 @@ export default function Auth() {
                     {/* Role Selection */}
                     <motion.div variants={itemVariants} className="space-y-4">
                         <Label className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground">{t("auth.label.student")} / {t("auth.label.parent")}</Label>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
                             <button
                                 onClick={() => setRole("student")}
                                 className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all group ${role === "student" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
                             >
-                                <div className={`p-2 rounded-lg transition-colors ${role === "student" ? "bg-primary text-white" : "bg-muted text-muted-foreground group-hover:text-primary"}`}>
+                                <div className={`p-2.5 rounded-lg transition-colors ${role === "student" ? "bg-primary text-white" : "bg-muted text-muted-foreground group-hover:text-primary"}`}>
                                     <User className="h-5 w-5" />
                                 </div>
-                                <span className={`text-sm font-bold ${role === "student" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.label.student")}</span>
+                                <span className={`text-sm font-bold tracking-tight ${role === "student" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.label.student")}</span>
                             </button>
                             <button
                                 onClick={() => setRole("parent")}
                                 className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all group ${role === "parent" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
                             >
-                                <div className={`p-2 rounded-lg transition-colors ${role === "parent" ? "bg-primary text-white" : "bg-muted text-muted-foreground group-hover:text-primary"}`}>
+                                <div className={`p-2.5 rounded-lg transition-colors ${role === "parent" ? "bg-primary text-white" : "bg-muted text-muted-foreground group-hover:text-primary"}`}>
                                     <Users className="h-5 w-5" />
                                 </div>
-                                <span className={`text-sm font-bold ${role === "parent" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.label.parent")}</span>
+                                <span className={`text-sm font-bold tracking-tight ${role === "parent" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.label.parent")}</span>
                             </button>
                         </div>
                     </motion.div>
