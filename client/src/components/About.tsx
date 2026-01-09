@@ -2,7 +2,7 @@ import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Video, Baby, HeartHandshake, Brain, Rocket, Hammer, Bot, Accessibility } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function About() {
   const { t } = useLanguage();
@@ -13,6 +13,14 @@ export default function About() {
   });
 
   const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <section ref={containerRef} className="w-full bg-transparent py-24 overflow-hidden">
@@ -48,11 +56,14 @@ export default function About() {
               whileTap={{ scale: 0.98 }}
               className="h-[120%] -top-[10%] relative transition-transform duration-500"
             >
-              <img
+              <motion.img
                 src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070&auto=format&fit=crop"
                 alt="Modern Learning Environment"
                 loading="lazy"
-                className="h-full w-full object-cover grayscale group-hover:grayscale-0 group-active:grayscale-0 transition-all duration-700"
+                initial={isMobile ? { filter: "grayscale(100%)" } : {}}
+                whileInView={isMobile ? { filter: "grayscale(0%)" } : {}}
+                viewport={{ amount: 0.5 }}
+                className="h-full w-full object-cover grayscale md:group-hover:grayscale-0 transition-all duration-700"
               />
             </motion.div>
           </div>
