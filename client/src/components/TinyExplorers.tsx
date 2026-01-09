@@ -222,7 +222,7 @@ export default function TinyExplorers() {
             className="relative aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl"
           >
             <img
-              src="/src/assets/tiny_explorers_premium.png"
+              src="/images/tiny-explorers/tiny_explorers_premium.png"
               alt="child discovering magical learning"
               className="object-cover w-full h-full hover:scale-105 transition-transform duration-700"
             />
