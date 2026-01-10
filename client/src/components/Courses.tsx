@@ -407,16 +407,16 @@ export default function Courses() {
                 >
                   <motion.div
                     className="flex gap-4 sm:gap-6 cursor-grab active:cursor-grabbing"
-                    animate={{ x: -carouselIndex * (isMobile ? 74 : 25) + "%" }}
+                    animate={{ x: -carouselIndex * (isMobile ? 216 : 256) }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     {filteredCourses.map((course) => (
                       <div
                         key={`carousel-${course.id}`}
-                        className="min-w-[70%] sm:min-w-[35%] lg:min-w-[23%] flex-shrink-0 bg-card border border-border rounded-lg overflow-hidden hover:border-primary transition-all duration-500 hover:shadow-lg"
+                        className="w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0 bg-card border border-border rounded-lg overflow-hidden hover:border-primary transition-all duration-500 hover:shadow-lg"
                       >
-                        {/* Image Container - compact */}
-                        <div className="relative h-32 sm:h-36 md:h-40 overflow-hidden">
+                        {/* Image Container - square aspect */}
+                        <div className="relative aspect-square overflow-hidden">
                           <img
                             src={course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
                             alt={course.title}
@@ -429,22 +429,16 @@ export default function Courses() {
                           </div>
                         </div>
                         {/* Content - compact */}
-                        <div className="p-3 sm:p-4">
-                          <div className="flex justify-between items-start gap-2 mb-2">
-                            <h4 className="font-serif text-sm sm:text-base font-bold line-clamp-2 leading-tight">{course.title}</h4>
-                            <span className="font-bold text-primary text-xs sm:text-sm whitespace-nowrap">
+                        <div className="p-3">
+                          <h4 className="font-serif text-sm font-bold line-clamp-1 mb-1">{course.title}</h4>
+                          <p className="text-muted-foreground text-xs line-clamp-1 mb-2">
+                            {course.description || "Explore this course."}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-primary text-sm">
                               {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
                             </span>
-                          </div>
-                          <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
-                            {course.description || "Explore this comprehensive course."}
-                          </p>
-                          <div className="flex items-center justify-between pt-2 border-t border-border">
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <BookOpen className="h-3 w-3" />
-                              <span>{(course as any).totalLessons || 0} Lessons</span>
-                            </div>
-                            <span className="text-primary text-[10px] sm:text-xs">View Details →</span>
+                            <span className="text-xs text-muted-foreground">{(course as any).totalLessons || 0} Lessons</span>
                           </div>
                         </div>
                       </div>
