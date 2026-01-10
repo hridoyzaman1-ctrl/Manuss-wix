@@ -82,8 +82,14 @@ export default function AdminLessons() {
   const [isUploadingMaterial, setIsUploadingMaterial] = useState(false);
   const [materialDialogOpen, setMaterialDialogOpen] = useState(false);
   const [selectedLessonForMaterial, setSelectedLessonForMaterial] = useState<number | null>(null);
+  const [createContentType, setCreateContentType] = useState<string>('video');
+  const [editContentType, setEditContentType] = useState<string>('video');
+  const [isUploadingDocument, setIsUploadingDocument] = useState(false);
   
   const videoInputRef = useRef<HTMLInputElement>(null);
+  const documentInputRef = useRef<HTMLInputElement>(null);
+  const editVideoInputRef = useRef<HTMLInputElement>(null);
+  const editDocumentInputRef = useRef<HTMLInputElement>(null);
   const materialInputRef = useRef<HTMLInputElement>(null);
   
   const { data: courses } = trpc.course.getAll.useQuery();
@@ -193,13 +199,46 @@ export default function AdminLessons() {
     }
   };
 
+  const handleDocumentUpload = async (file: File): Promise<string> => {
+    setIsUploadingDocument(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error('Upload error:', error);
+      return URL.createObjectURL(file);
+    } finally {
+      setIsUploadingDocument(false);
+    }
+  };
+
   const handleCreate = async (formData: FormData) => {
     const videoFile = (document.getElementById('videoFile') as HTMLInputElement)?.files?.[0];
+    const documentFile = (document.getElementById('documentFile') as HTMLInputElement)?.files?.[0];
     let videoUrl = formData.get('videoUrl') as string;
+    let documentUrl = formData.get('documentUrl') as string;
     
     if (videoFile) {
       videoUrl = await handleVideoUpload(videoFile);
     }
+    if (documentFile) {
+      documentUrl = await handleDocumentUpload(documentFile);
+    }
+    
+    // Use documentUrl as videoUrl for non-video content types (stored in same field)
+    const contentUrl = createContentType === 'video' ? videoUrl : (documentUrl || videoUrl);
     
     createMutation.mutate({
       courseId: selectedCourseId!,
@@ -207,8 +246,8 @@ export default function AdminLessons() {
       titleBn: formData.get('titleBn') as string || undefined,
       description: formData.get('description') as string || undefined,
       orderIndex: parseInt(formData.get('orderIndex') as string) || (lessons?.length || 0) + 1,
-      contentType: formData.get('contentType') as 'video' | 'pdf' | 'text' | 'mixed' || 'video',
-      videoUrl: videoUrl || undefined,
+      contentType: createContentType as 'video' | 'pdf' | 'text' | 'mixed',
+      videoUrl: contentUrl || undefined,
       duration: parseInt(formData.get('duration') as string) || undefined,
       isPreview: formData.get('isPreview') === 'on',
     });
@@ -218,11 +257,19 @@ export default function AdminLessons() {
     if (!editingLesson) return;
     
     const videoFile = (document.getElementById('editVideoFile') as HTMLInputElement)?.files?.[0];
+    const documentFile = (document.getElementById('editDocumentFile') as HTMLInputElement)?.files?.[0];
     let videoUrl = formData.get('videoUrl') as string;
+    let documentUrl = formData.get('documentUrl') as string;
     
     if (videoFile) {
       videoUrl = await handleVideoUpload(videoFile);
     }
+    if (documentFile) {
+      documentUrl = await handleDocumentUpload(documentFile);
+    }
+    
+    // Use documentUrl as videoUrl for non-video content types
+    const contentUrl = editContentType === 'video' ? videoUrl : (documentUrl || videoUrl);
     
     updateMutation.mutate({
       id: editingLesson.id,
@@ -230,8 +277,8 @@ export default function AdminLessons() {
       titleBn: formData.get('titleBn') as string || undefined,
       description: formData.get('description') as string || undefined,
       orderIndex: parseInt(formData.get('orderIndex') as string) || undefined,
-      contentType: formData.get('contentType') as 'video' | 'pdf' | 'text' | 'mixed' || undefined,
-      videoUrl: videoUrl || undefined,
+      contentType: editContentType as 'video' | 'pdf' | 'text' | 'mixed',
+      videoUrl: contentUrl || undefined,
       duration: parseInt(formData.get('duration') as string) || undefined,
       isPreview: formData.get('isPreview') === 'on',
     });
@@ -414,7 +461,10 @@ export default function AdminLessons() {
                                   <Upload className="h-4 w-4 mr-2" />
                                   Add Material
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setEditingLesson(lesson)}>
+                                <DropdownMenuItem onClick={() => {
+                                setEditingLesson(lesson);
+                                setEditContentType(lesson.contentType || 'video');
+                              }}>
                                   <Edit className="h-4 w-4 mr-2" />
                                   Edit
                                 </DropdownMenuItem>
@@ -454,7 +504,10 @@ export default function AdminLessons() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setEditingLesson(lesson)}>
+                              <DropdownMenuItem onClick={() => {
+                                setEditingLesson(lesson);
+                                setEditContentType(lesson.contentType || 'video');
+                              }}>
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
@@ -517,7 +570,7 @@ export default function AdminLessons() {
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="contentType">Content Type</Label>
-                    <Select name="contentType" defaultValue="video">
+                    <Select name="contentType" defaultValue="video" onValueChange={(value) => setCreateContentType(value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -544,38 +597,138 @@ export default function AdminLessons() {
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label>Video</Label>
-                  <div className="flex gap-2">
-                    <Input 
-                      id="videoUrl" 
-                      name="videoUrl" 
-                      placeholder="Video URL (YouTube, Vimeo, etc.)" 
-                      className="flex-1"
-                    />
-                    <span className="text-slate-400 self-center">or</span>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => videoInputRef.current?.click()}
-                      disabled={isUploadingVideo}
-                    >
-                      {isUploadingVideo ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : (
-                        <Upload className="h-4 w-4 mr-2" />
-                      )}
-                      Upload
-                    </Button>
-                    <input
-                      ref={videoInputRef}
-                      id="videoFile"
-                      type="file"
-                      accept="video/*"
-                      className="hidden"
-                    />
+                {createContentType === 'video' ? (
+                  <div className="space-y-2">
+                    <Label>Video</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        id="videoUrl" 
+                        name="videoUrl" 
+                        placeholder="Video URL (YouTube, Vimeo, etc.)" 
+                        className="flex-1"
+                      />
+                      <span className="text-slate-400 self-center">or</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => videoInputRef.current?.click()}
+                        disabled={isUploadingVideo}
+                      >
+                        {isUploadingVideo ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Upload className="h-4 w-4 mr-2" />
+                        )}
+                        Upload
+                      </Button>
+                      <input
+                        ref={videoInputRef}
+                        id="videoFile"
+                        type="file"
+                        accept="video/*"
+                        className="hidden"
+                      />
+                    </div>
                   </div>
-                </div>
+                ) : createContentType === 'pdf' || createContentType === 'text' ? (
+                  <div className="space-y-2">
+                    <Label>Document ({createContentType === 'pdf' ? 'PDF, DOC, DOCX, PPTX' : 'TXT, MD, RTF'})</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        id="documentUrl" 
+                        name="documentUrl" 
+                        placeholder="Document URL" 
+                        className="flex-1"
+                      />
+                      <span className="text-slate-400 self-center">or</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => documentInputRef.current?.click()}
+                        disabled={isUploadingDocument}
+                      >
+                        {isUploadingDocument ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Upload className="h-4 w-4 mr-2" />
+                        )}
+                        Upload
+                      </Button>
+                      <input
+                        ref={documentInputRef}
+                        id="documentFile"
+                        type="file"
+                        accept={createContentType === 'pdf' ? '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx' : '.txt,.md,.rtf'}
+                        className="hidden"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Video (Optional)</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          id="videoUrl" 
+                          name="videoUrl" 
+                          placeholder="Video URL" 
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => videoInputRef.current?.click()}
+                          disabled={isUploadingVideo}
+                        >
+                          {isUploadingVideo ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Upload
+                        </Button>
+                        <input
+                          ref={videoInputRef}
+                          id="videoFile"
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Document (Optional)</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          id="documentUrl" 
+                          name="documentUrl" 
+                          placeholder="Document URL" 
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => documentInputRef.current?.click()}
+                          disabled={isUploadingDocument}
+                        >
+                          {isUploadingDocument ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Upload
+                        </Button>
+                        <input
+                          ref={documentInputRef}
+                          id="documentFile"
+                          type="file"
+                          accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.rtf"
+                          className="hidden"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-2">
                   <Switch id="isPreview" name="isPreview" />
@@ -625,7 +778,7 @@ export default function AdminLessons() {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="editContentType">Content Type</Label>
-                      <Select name="contentType" defaultValue={editingLesson.contentType || 'video'}>
+                      <Select name="contentType" defaultValue={editingLesson.contentType || 'video'} onValueChange={(value) => setEditContentType(value)}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -657,37 +810,141 @@ export default function AdminLessons() {
                     </div>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label>Video</Label>
-                    <div className="flex gap-2">
-                      <Input 
-                        id="editVideoUrl" 
-                        name="videoUrl" 
-                        placeholder="Video URL" 
-                        defaultValue={editingLesson.videoUrl || ''}
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => document.getElementById('editVideoFile')?.click()}
-                        disabled={isUploadingVideo}
-                      >
-                        {isUploadingVideo ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : (
-                          <Upload className="h-4 w-4 mr-2" />
-                        )}
-                        Upload
-                      </Button>
-                      <input
-                        id="editVideoFile"
-                        type="file"
-                        accept="video/*"
-                        className="hidden"
-                      />
+                  {editContentType === 'video' ? (
+                    <div className="space-y-2">
+                      <Label>Video</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          id="editVideoUrl" 
+                          name="videoUrl" 
+                          placeholder="Video URL" 
+                          defaultValue={editingLesson.videoUrl || ''}
+                          className="flex-1"
+                        />
+                        <span className="text-slate-400 self-center">or</span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => editVideoInputRef.current?.click()}
+                          disabled={isUploadingVideo}
+                        >
+                          {isUploadingVideo ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Upload
+                        </Button>
+                        <input
+                          ref={editVideoInputRef}
+                          id="editVideoFile"
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  ) : editContentType === 'pdf' || editContentType === 'text' ? (
+                    <div className="space-y-2">
+                      <Label>Document ({editContentType === 'pdf' ? 'PDF, DOC, DOCX, PPTX' : 'TXT, MD, RTF'})</Label>
+                      <div className="flex gap-2">
+                        <Input 
+                          id="editDocumentUrl" 
+                          name="documentUrl" 
+                          placeholder="Document URL" 
+                          defaultValue={editingLesson.videoUrl || ''}
+                          className="flex-1"
+                        />
+                        <span className="text-slate-400 self-center">or</span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => editDocumentInputRef.current?.click()}
+                          disabled={isUploadingDocument}
+                        >
+                          {isUploadingDocument ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Upload
+                        </Button>
+                        <input
+                          ref={editDocumentInputRef}
+                          id="editDocumentFile"
+                          type="file"
+                          accept={editContentType === 'pdf' ? '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx' : '.txt,.md,.rtf'}
+                          className="hidden"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Video (Optional)</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            id="editVideoUrl" 
+                            name="videoUrl" 
+                            placeholder="Video URL" 
+                            defaultValue={editingLesson.videoUrl || ''}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => editVideoInputRef.current?.click()}
+                            disabled={isUploadingVideo}
+                          >
+                            {isUploadingVideo ? (
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : (
+                              <Upload className="h-4 w-4 mr-2" />
+                            )}
+                            Upload
+                          </Button>
+                          <input
+                            ref={editVideoInputRef}
+                            id="editVideoFile"
+                            type="file"
+                            accept="video/*"
+                            className="hidden"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Document (Optional)</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            id="editDocumentUrl" 
+                            name="documentUrl" 
+                            placeholder="Document URL" 
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => editDocumentInputRef.current?.click()}
+                            disabled={isUploadingDocument}
+                          >
+                            {isUploadingDocument ? (
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            ) : (
+                              <Upload className="h-4 w-4 mr-2" />
+                            )}
+                            Upload
+                          </Button>
+                          <input
+                            ref={editDocumentInputRef}
+                            id="editDocumentFile"
+                            type="file"
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.rtf"
+                            className="hidden"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="flex items-center gap-2">
                     <Switch id="editIsPreview" name="isPreview" defaultChecked={editingLesson.isPreview ?? false} />
