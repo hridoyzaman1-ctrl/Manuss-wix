@@ -162,13 +162,13 @@ export default function Header() {
           {/* Auth Buttons (Hidden on Mobile) */}
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
             <Link href="/auth">
-              <Button variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground text-sm">
-                {t("nav.login")}
+              <Button asChild variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground text-sm">
+                <span>{t("nav.login")}</span>
               </Button>
             </Link>
             <Link href="/auth">
-              <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 lg:px-6 text-sm">
-                {t("nav.signup")}
+              <Button asChild className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 lg:px-6 text-sm">
+                <span>{t("nav.signup")}</span>
               </Button>
             </Link>
           </div>
@@ -251,13 +251,13 @@ export default function Header() {
                 className="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6"
               >
                 <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button className="w-full rounded-full bg-foreground text-background py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
-                    {t("nav.signup")}
+                  <Button asChild className="w-full rounded-full bg-foreground text-background py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
+                    <span>{t("nav.signup")}</span>
                   </Button>
                 </Link>
                 <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full rounded-full border-foreground text-foreground py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
-                    {t("nav.login")}
+                  <Button asChild variant="outline" className="w-full rounded-full border-foreground text-foreground py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
+                    <span>{t("nav.login")}</span>
                   </Button>
                 </Link>
               </motion.div>

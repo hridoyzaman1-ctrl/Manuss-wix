@@ -219,8 +219,8 @@ export default function Courses() {
                       </div>
 
                       <Link href="/auth">
-                        <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
-                          {t("courses.enroll") || "Enroll Now"}
+                        <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
+                          <span>{t("courses.enroll") || "Enroll Now"}</span>
                         </Button>
                       </Link>
                     </div>
@@ -307,8 +307,8 @@ export default function Courses() {
                               <ArrowRight className="ml-1 h-3 w-3" />
                             </Button>
                             <Link href="/auth">
-                              <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
-                                {t("courses.enroll") || "Enroll Now"}
+                              <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
+                                <span>{t("courses.enroll") || "Enroll Now"}</span>
                               </Button>
                             </Link>
                           </div>

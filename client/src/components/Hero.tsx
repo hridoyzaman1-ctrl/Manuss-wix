@@ -182,10 +182,11 @@ export default function Hero() {
 
             <Link href="/auth">
               <Button
+                asChild
                 variant="outline"
                 className="rounded-none border-foreground bg-transparent px-6 sm:px-10 py-5 sm:py-7 text-base sm:text-lg uppercase tracking-wider sm:tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all duration-300 active:scale-95 touch-manipulation"
               >
-                {t("hero.cta")} <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span>{t("hero.cta")} <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" /></span>
               </Button>
             </Link>
 

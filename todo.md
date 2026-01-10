@@ -138,3 +138,5 @@
 
 ## Bug Fixes
 - [x] Fix failing user tests (tests assume empty DB but real user exists)
+- [x] Fix Chatbot speech synthesis errors (getVoices, cancel undefined)
+- [x] Fix nested anchor tag HTML error

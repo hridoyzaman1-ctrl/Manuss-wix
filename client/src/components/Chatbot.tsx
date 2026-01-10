@@ -121,7 +121,9 @@ export default function Chatbot() {
     const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
     const stopSpeaking = () => {
-        window.speechSynthesis.cancel();
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
         setSpeakingMsgId(null);
     };
 
@@ -141,7 +143,7 @@ export default function Chatbot() {
 
         const utterance = new SpeechSynthesisUtterance(cleanText);
         // Try to find a good English voice
-        const voices = window.speechSynthesis.getVoices();
+        const voices = (typeof window !== 'undefined' && window.speechSynthesis) ? window.speechSynthesis.getVoices() : [];
         const preferredVoice = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha")) || voices[0];
         if (preferredVoice) utterance.voice = preferredVoice;
 
@@ -154,17 +156,25 @@ export default function Chatbot() {
         if (msgId) setSpeakingMsgId(msgId);
 
         speechRef.current = utterance;
-        window.speechSynthesis.speak(utterance);
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            window.speechSynthesis.speak(utterance);
+        }
     };
 
     // Cleanup speech on unmount or close
     useEffect(() => {
-        return () => window.speechSynthesis.cancel();
+        return () => {
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        };
     }, []);
 
     // Ensure voices are loaded (Chrome quirk)
     useEffect(() => {
-        window.speechSynthesis.getVoices();
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+        }
     }, []);
     // -------------------------
 

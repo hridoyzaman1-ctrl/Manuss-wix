@@ -19,16 +19,14 @@ export default function Footer() {
             transition={{ delay: 0.1 }}
             className="space-y-4 sm:space-y-6 sm:col-span-2 lg:col-span-1"
           >
-            <Link href="/">
-              <a className="flex items-center gap-2 group touch-manipulation">
-                <div className="relative h-9 w-9 sm:h-10 sm:w-10 overflow-hidden bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-serif font-bold text-lg sm:text-xl">
-                  <span>A</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-serif text-base sm:text-lg font-bold leading-none tracking-tight">AIM Centre</span>
-                  <span className="text-[10px] sm:text-xs font-medium tracking-[0.2em] text-muted-foreground">360</span>
-                </div>
-              </a>
+            <Link href="/" className="flex items-center gap-2 group touch-manipulation">
+              <div className="relative h-9 w-9 sm:h-10 sm:w-10 overflow-hidden bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-serif font-bold text-lg sm:text-xl">
+                <span>A</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-base sm:text-lg font-bold leading-none tracking-tight">AIM Centre</span>
+                <span className="text-[10px] sm:text-xs font-medium tracking-[0.2em] text-muted-foreground">360</span>
+              </div>
             </Link>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
               {t("footer.desc")}
