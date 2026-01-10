@@ -327,40 +327,42 @@ export default function AdminCategories() {
                       <div className="border rounded-lg overflow-hidden">
                         {/* Category Header */}
                         <div 
-                          className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors gap-3"
                           style={{ borderLeft: `4px solid ${category.color || '#3B82F6'}` }}
                         >
                           <CollapsibleTrigger asChild>
-                            <button className="flex items-center gap-3 flex-1 text-left">
+                            <button className="flex items-center gap-3 flex-1 text-left min-w-0">
                               {isExpanded ? (
-                                <ChevronDown className="h-4 w-4 text-slate-500" />
+                                <ChevronDown className="h-4 w-4 text-slate-500 flex-shrink-0" />
                               ) : (
-                                <ChevronRight className="h-4 w-4 text-slate-500" />
+                                <ChevronRight className="h-4 w-4 text-slate-500 flex-shrink-0" />
                               )}
-                              <Icon className="h-5 w-5" style={{ color: category.color || '#3B82F6' }} />
-                              <div>
-                                <span className="font-medium text-slate-900 dark:text-white">{category.name}</span>
+                              <Icon className="h-5 w-5 flex-shrink-0" style={{ color: category.color || '#3B82F6' }} />
+                              <div className="min-w-0 flex-1">
+                                <span className="font-medium text-slate-900 dark:text-white block truncate">{category.name}</span>
                                 {category.nameBn && (
-                                  <span className="ml-2 text-sm text-slate-500">({category.nameBn})</span>
+                                  <span className="text-sm text-slate-500 block truncate">({category.nameBn})</span>
                                 )}
                               </div>
-                              <Badge variant="secondary" className="ml-2">
-                                {category.subcategories?.length || 0} subcategories
+                              <Badge variant="secondary" className="flex-shrink-0 text-xs">
+                                {category.subcategories?.length || 0} sub
                               </Badge>
                             </button>
                           </CollapsibleTrigger>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-shrink-0 ml-7 sm:ml-0">
                             <Button
                               variant="ghost"
                               size="sm"
+                              className="text-xs h-8"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelectedCategoryId(category.id);
                                 setIsCreateSubcategoryOpen(true);
                               }}
                             >
-                              <Plus className="h-4 w-4 mr-1" />
-                              Add Subcategory
+                              <Plus className="h-3 w-3 mr-1" />
+                              <span className="hidden sm:inline">Add Subcategory</span>
+                              <span className="sm:hidden">Add</span>
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -402,37 +404,39 @@ export default function AdminCategories() {
                                 
                                 return (
                                   <Collapsible key={subcategory.id} open={isSubExpanded} onOpenChange={() => toggleSubcategory(subcategory.id)}>
-                                    <div className="ml-8 border-l-2 border-slate-200 dark:border-slate-700">
+                                    <div className="ml-4 sm:ml-8 border-l-2 border-slate-200 dark:border-slate-700">
                                       {/* Subcategory Header */}
-                                      <div className="flex items-center justify-between p-3 pl-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 pl-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors gap-2">
                                         <CollapsibleTrigger asChild>
-                                          <button className="flex items-center gap-2 flex-1 text-left">
+                                          <button className="flex items-center gap-2 flex-1 text-left min-w-0">
                                             {subcategory.sections && subcategory.sections.length > 0 ? (
                                               isSubExpanded ? (
-                                                <ChevronDown className="h-4 w-4 text-slate-400" />
+                                                <ChevronDown className="h-4 w-4 text-slate-400 flex-shrink-0" />
                                               ) : (
-                                                <ChevronRight className="h-4 w-4 text-slate-400" />
+                                                <ChevronRight className="h-4 w-4 text-slate-400 flex-shrink-0" />
                                               )
                                             ) : (
-                                              <div className="w-4" />
+                                              <div className="w-4 flex-shrink-0" />
                                             )}
-                                            <Layers className="h-4 w-4 text-slate-500" />
-                                            <span className="text-slate-700 dark:text-slate-300">{subcategory.name}</span>
-                                            {subcategory.nameBn && (
-                                              <span className="text-sm text-slate-400">({subcategory.nameBn})</span>
-                                            )}
+                                            <Layers className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                                            <div className="min-w-0 flex-1">
+                                              <span className="text-slate-700 dark:text-slate-300 block truncate">{subcategory.name}</span>
+                                              {subcategory.nameBn && (
+                                                <span className="text-sm text-slate-400 block truncate">({subcategory.nameBn})</span>
+                                              )}
+                                            </div>
                                             {subcategory.sections && subcategory.sections.length > 0 && (
-                                              <Badge variant="outline" className="ml-2 text-xs">
-                                                {subcategory.sections.length} sections
+                                              <Badge variant="outline" className="text-xs flex-shrink-0">
+                                                {subcategory.sections.length}
                                               </Badge>
                                             )}
                                           </button>
                                         </CollapsibleTrigger>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 flex-shrink-0 ml-6 sm:ml-0">
                                           <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="h-8 text-xs"
+                                            className="h-7 text-xs px-2"
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               setSelectedSubcategoryId(subcategory.id);
@@ -440,7 +444,8 @@ export default function AdminCategories() {
                                             }}
                                           >
                                             <Plus className="h-3 w-3 mr-1" />
-                                            Add Section
+                                            <span className="hidden sm:inline">Add Section</span>
+                                            <span className="sm:hidden">Add</span>
                                           </Button>
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
