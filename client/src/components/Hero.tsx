@@ -8,30 +8,25 @@ import { preloadImages } from "@/hooks/useOptimizedImage";
 
 // Critical hero images to preload immediately
 const HERO_IMAGES = [
-  '/images/hero/panel-1-texture.jpg',
-  '/images/hero/panel-1-texture-dark.jpg',
-  '/images/hero/panel-4-books.jpg',
+  '/images/hero/panel-1-texture.webp',
+  '/images/hero/panel-1-texture-dark.webp',
+  '/images/hero/panel-4-books.webp',
 ];
 
 export default function Hero() {
   const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  // Start with images loaded true to show immediately (they're preloaded in index.html and main.tsx)
-  const [imagesLoaded, setImagesLoaded] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
   
   // Mouse parallax state
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Images are preloaded in index.html and main.tsx, so we just ensure they're marked as loaded
+  // Preload images on mount
   useEffect(() => {
-    // Double-check images are loaded (they should be from preload)
     preloadImages(HERO_IMAGES).then(() => {
-      setImagesLoaded(true);
-    }).catch(() => {
-      // Even on error, show images (browser will handle fallback)
       setImagesLoaded(true);
     });
   }, []);
@@ -107,7 +102,7 @@ export default function Hero() {
         >
           <div className="absolute inset-0">
             <img
-              src="/images/hero/panel-1-texture.jpg"
+              src="/images/hero/panel-1-texture.webp"
               alt="Paper Texture"
               className="h-full w-full object-cover dark:hidden"
               fetchPriority="high"
@@ -115,7 +110,7 @@ export default function Hero() {
               decoding="async"
             />
             <img
-              src="/images/hero/panel-1-texture-dark.jpg"
+              src="/images/hero/panel-1-texture-dark.webp"
               alt="Dark Paper Texture"
               className="h-full w-full object-cover hidden dark:block"
               fetchPriority="high"
@@ -155,7 +150,7 @@ export default function Hero() {
             playsInline
             preload="auto"
             className={`h-full w-full object-cover transition-opacity duration-500 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
-            poster="/images/hero/panel-1-texture.jpg"
+            poster="/images/hero/panel-1-texture.webp"
           >
             <source src="/images/hero/hero-video.mp4" type="video/mp4" />
           </video>
@@ -226,7 +221,7 @@ export default function Hero() {
           className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden border border-border/10 shadow-sm order-4 md:order-none"
         >
           <img
-            src="/images/hero/panel-4-books.jpg"
+            src="/images/hero/panel-4-books.webp"
             alt="Stacked Books"
             className="h-full w-full object-cover"
             fetchPriority="high"
