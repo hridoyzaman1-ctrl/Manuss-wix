@@ -8,96 +8,58 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes" />
     <title>AIM Centre 360</title>
     
-    <!-- DNS Prefetch and Preconnect for faster resource loading -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <!-- Critical Resource Preloading for Instant Load -->
+    <!-- Preload Hero Images - High Priority -->
+    <link rel="preload" href="/images/hero/panel-1-texture.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/images/hero/panel-4-books.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/images/hero/hero-video.mp4" as="video" type="video/mp4" fetchpriority="high" />
+    
+    <!-- Preconnect to Font Services -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- CRITICAL: Preload Hero Images with highest priority -->
-    <link rel="preload" href="/images/hero/panel-1-texture.jpg" as="image" fetchpriority="high" />
-    <link rel="preload" href="/images/hero/panel-1-texture-dark.jpg" as="image" fetchpriority="high" />
-    <link rel="preload" href="/images/hero/panel-4-books.jpg" as="image" fetchpriority="high" />
-    
-    <!-- Preload Hero Video with high priority -->
-    <link rel="preload" href="/images/hero/hero-video.mp4" as="video" type="video/mp4" fetchpriority="high" />
-    
-    <!-- Preload Critical Fonts - Inline for fastest delivery -->
+    <!-- Preload Critical Fonts -->
     <link rel="preload" href="https://fonts.gstatic.com/s/outfit/v11/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC1C4G-EiAou6Y.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff2" as="font" type="font/woff2" crossorigin />
     
-    <!-- Load Fonts with display=swap for instant text rendering -->
+    <!-- Load Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
     
-    <!-- Inline Critical CSS for Instant First Paint - No Layout Shift -->
+    <!-- Inline Critical CSS for Instant First Paint -->
     <style>
-      /* Critical CSS - renders immediately before JS loads */
-      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-      html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
-      body{font-family:'Outfit',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;color:#1a1a1a;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-      #root{min-height:100vh;display:flex;flex-direction:column}
-      
-      /* Instant hero placeholder - matches exact layout */
-      .hero-instant{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;padding:0.5rem;min-height:800px;background:#fff}
-      .hero-instant>div{background:#f5f4f0;min-height:100%}
-      .hero-instant .panel-1{background-image:url('/images/hero/panel-1-texture.jpg');background-size:cover;background-position:center}
-      .hero-instant .panel-2{background:#2a2a2a}
-      .hero-instant .panel-3{background:#fff;display:flex;align-items:center;justify-content:center}
-      .hero-instant .panel-4{background-image:url('/images/hero/panel-4-books.jpg');background-size:cover;background-position:center}
-      
-      /* Mobile layout - single column */
-      @media(max-width:768px){
-        .hero-instant{grid-template-columns:1fr;min-height:auto}
-        .hero-instant>div{min-height:300px}
-        .hero-instant .panel-3{min-height:450px;order:-1}
-      }
-      
-      /* Dark mode support */
-      @media(prefers-color-scheme:dark){
-        body{background:#0a0a0a;color:#fafafa}
-        .hero-instant{background:#0a0a0a}
-        .hero-instant .panel-1{background-image:url('/images/hero/panel-1-texture-dark.jpg')}
-        .hero-instant .panel-3{background:#1a1a1a}
-      }
-      
-      /* Prevent layout shift */
-      img,video{max-width:100%;height:auto;display:block}
-      
-      /* Font display optimization */
-      @font-face{font-family:'Outfit';font-display:swap}
-      @font-face{font-family:'Playfair Display';font-display:swap}
+      /* Critical CSS for instant first paint */
+      *,*::before,*::after{box-sizing:border-box}
+      html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+      body{margin:0;font-family:'Outfit',system-ui,-apple-system,sans-serif;background:#f5f4f0;color:#1a1a1a}
+      #root{min-height:100vh}
+      /* Skeleton loader for hero section */
+      .hero-skeleton{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;padding:0.5rem;height:800px;background:#fff}
+      .hero-skeleton>div{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+      @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+      /* Hide content until JS loads */
+      .js-loading .hero-skeleton{display:grid}
+      /* Mobile skeleton */
+      @media(max-width:768px){.hero-skeleton{grid-template-columns:1fr;height:auto}.hero-skeleton>div{min-height:300px}}
     </style>
   </head>
 
-  <body>
+  <body class="js-loading">
     <div id="root"></div>
-    
-    <!-- Preload images immediately via JavaScript for fastest loading -->
-    <script>
-      // Immediately start loading critical images
-      (function() {
-        var criticalImages = [
-          '/images/hero/panel-1-texture.jpg',
-          '/images/hero/panel-1-texture-dark.jpg',
-          '/images/hero/panel-4-books.jpg'
-        ];
-        
-        criticalImages.forEach(function(src) {
-          var img = new Image();
-          img.fetchPriority = 'high';
-          img.decoding = 'async';
-          img.src = src;
-        });
-        
-        // Preload video
-        var video = document.createElement('video');
-        video.preload = 'auto';
-        video.muted = true;
-        video.src = '/images/hero/hero-video.mp4';
-      })();
-    </script>
-    
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Remove loading class once JS is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.remove('js-loading');
+      });
+      // Preload video for instant playback
+      if ('IntersectionObserver' in window) {
+        const video = document.createElement('link');
+        video.rel = 'preload';
+        video.as = 'video';
+        video.href = '/images/hero/hero-video.mp4';
+        document.head.appendChild(video);
+      }
+    </script>
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"

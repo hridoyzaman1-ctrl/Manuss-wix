@@ -4,47 +4,50 @@ import { useRef, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
+import { preloadImages } from "@/hooks/useOptimizedImage";
 
-// Critical hero images - use JPG for original quality
-const HERO_IMAGES = {
-  texture: '/images/hero/panel-1-texture.jpg',
-  textureDark: '/images/hero/panel-1-texture-dark.jpg',
-  books: '/images/hero/panel-4-books.jpg',
-  video: '/images/hero/hero-video.mp4',
-};
+// Critical hero images to preload immediately
+const HERO_IMAGES = [
+  '/images/hero/panel-1-texture.webp',
+  '/images/hero/panel-1-texture-dark.webp',
+  '/images/hero/panel-4-books.webp',
+];
 
 export default function Hero() {
   const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  
-  // Start with images visible - they're preloaded in index.html
-  const [imagesReady, setImagesReady] = useState(true);
-  const [videoReady, setVideoReady] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   
   // Mouse parallax state
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Handle video ready state
+  // Preload images on mount
+  useEffect(() => {
+    preloadImages(HERO_IMAGES).then(() => {
+      setImagesLoaded(true);
+    });
+  }, []);
+
+  // Handle video load
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    
-    const handleCanPlay = () => setVideoReady(true);
-    
-    // Check if already ready
-    if (video.readyState >= 3) {
-      setVideoReady(true);
+    if (video) {
+      // Try to preload video
+      video.preload = 'auto';
+      
+      const handleCanPlay = () => setVideoLoaded(true);
+      video.addEventListener('canplaythrough', handleCanPlay);
+      
+      // If video is already ready
+      if (video.readyState >= 3) {
+        setVideoLoaded(true);
+      }
+      
+      return () => video.removeEventListener('canplaythrough', handleCanPlay);
     }
-    
-    video.addEventListener('canplaythrough', handleCanPlay);
-    video.addEventListener('loadeddata', handleCanPlay);
-    
-    return () => {
-      video.removeEventListener('canplaythrough', handleCanPlay);
-      video.removeEventListener('loadeddata', handleCanPlay);
-    };
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -59,6 +62,7 @@ export default function Hero() {
 
   // Touch handler for mobile - subtle feedback
   const handleTouchStart = () => {
+    // Reset parallax on touch
     mouseX.set(0);
     mouseY.set(0);
   };
@@ -73,25 +77,45 @@ export default function Hero() {
       onMouseMove={handleMouseMove}
       onTouchStart={handleTouchStart}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-2 p-2 h-auto md:h-[800px] bg-white dark:bg-background overflow-hidden">
+      {/* Loading skeleton - shows until images are ready */}
+      {!imagesLoaded && (
+        <div className="absolute inset-0 z-10 grid w-full grid-cols-1 md:grid-cols-4 gap-2 p-2 bg-white dark:bg-background">
+          {[1, 2, 3, 4].map((i) => (
+            <div 
+              key={i} 
+              className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 animate-pulse min-h-[300px] md:min-h-[800px]"
+              style={{
+                backgroundSize: '200% 100%',
+                animation: 'shimmer 1.5s infinite linear'
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      <div 
+        className={`grid w-full grid-cols-1 md:grid-cols-4 gap-2 p-2 h-auto md:h-[800px] bg-white dark:bg-background overflow-hidden transition-opacity duration-500 ${imagesLoaded ? 'opacity-100' : 'opacity-0'}`}
+      >
         {/* Panel 1: Texture Background + Tagline - STATIC */}
-        <div className="relative min-h-[350px] sm:min-h-[400px] md:h-[99%] flex flex-col items-center justify-center overflow-hidden border border-border/20 shadow-sm">
+        <div
+          className="relative min-h-[350px] sm:min-h-[400px] md:h-[99%] flex flex-col items-center justify-center overflow-hidden border border-border/20 shadow-sm"
+        >
           <div className="absolute inset-0">
             <img
-              src={HERO_IMAGES.texture}
+              src="/images/hero/panel-1-texture.webp"
               alt="Paper Texture"
               className="h-full w-full object-cover dark:hidden"
               fetchPriority="high"
               loading="eager"
-              decoding="sync"
+              decoding="async"
             />
             <img
-              src={HERO_IMAGES.textureDark}
+              src="/images/hero/panel-1-texture-dark.webp"
               alt="Dark Paper Texture"
               className="h-full w-full object-cover hidden dark:block"
               fetchPriority="high"
               loading="eager"
-              decoding="sync"
+              decoding="async"
             />
           </div>
           <div className="relative z-10 text-center px-4 sm:px-6">
@@ -112,17 +136,12 @@ export default function Hero() {
         {/* Panel 2: Video Background - Mouse Parallax Only on Desktop */}
         <motion.div
           style={{ x: typeof window !== 'undefined' && window.innerWidth >= 768 ? xMoveReverse : 0 }}
-          className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden order-3 md:order-none bg-stone-900"
+          className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden order-3 md:order-none"
         >
-          {/* Static poster image shown immediately */}
-          <img
-            src={HERO_IMAGES.texture}
-            alt="Video Poster"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${videoReady ? 'opacity-0' : 'opacity-100'}`}
-            fetchPriority="high"
-            loading="eager"
-            decoding="sync"
-          />
+          {/* Video placeholder while loading */}
+          {!videoLoaded && (
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 animate-pulse" />
+          )}
           <video
             ref={videoRef}
             autoPlay
@@ -130,15 +149,17 @@ export default function Hero() {
             muted
             playsInline
             preload="auto"
-            className={`h-full w-full object-cover transition-opacity duration-300 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
-            poster={HERO_IMAGES.texture}
+            className={`h-full w-full object-cover transition-opacity duration-500 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+            poster="/images/hero/panel-1-texture.webp"
           >
-            <source src={HERO_IMAGES.video} type="video/mp4" />
+            <source src="/images/hero/hero-video.mp4" type="video/mp4" />
           </video>
         </motion.div>
 
         {/* Panel 3: White Background + Title + CTA - STATIC */}
-        <div className="relative min-h-[450px] sm:min-h-[500px] md:h-[99%] flex flex-col items-center justify-center bg-card text-center px-4 border border-border py-8 sm:py-12 md:py-0 shadow-sm order-1 md:order-none">
+        <div
+          className="relative min-h-[450px] sm:min-h-[500px] md:h-[99%] flex flex-col items-center justify-center bg-card text-center px-4 border border-border py-8 sm:py-12 md:py-0 shadow-sm order-1 md:order-none"
+        >
           <div className="flex flex-col items-center gap-8 sm:gap-12 md:-mt-12">
             {/* Option B: Minimalist Luxury (Refined) */}
             <h1 className="font-sans text-center text-foreground cursor-default flex flex-col items-center gap-2">
@@ -159,7 +180,7 @@ export default function Hero() {
               </span>
             </h1>
 
-            <Link href="/signup">
+            <Link href="/auth">
               <Button
                 asChild
                 variant="outline"
@@ -200,15 +221,23 @@ export default function Hero() {
           className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden border border-border/10 shadow-sm order-4 md:order-none"
         >
           <img
-            src={HERO_IMAGES.books}
+            src="/images/hero/panel-4-books.webp"
             alt="Stacked Books"
             className="h-full w-full object-cover"
             fetchPriority="high"
             loading="eager"
-            decoding="sync"
+            decoding="async"
           />
         </motion.div>
       </div>
+
+      {/* CSS for shimmer animation */}
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `}</style>
     </div>
   );
 }
