@@ -133,8 +133,8 @@ export default function Chatbot() {
         // Clean text: strip emojis and indicators
         const cleanText = text
             .replace(/\n\n\*\(Generated via Unlimited Backup AI\)\*/g, "") // Remove fallback indicator
-            .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F3FB}-\u{1F3FF}\u{1F170}-\u{1F251}]/gu, "") // Basic Emoji range
-            .replace(/\p{Extended_Pictographic}/gu, "") // Modern Emoji/Pictograph range
+            .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "") // Remove surrogate pairs (emojis)
+            .replace(/[\u2600-\u27BF]/g, "") // Remove misc symbols
             .trim();
 
         if (!cleanText) return;
