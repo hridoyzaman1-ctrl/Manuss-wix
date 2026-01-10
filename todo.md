@@ -267,3 +267,9 @@
 ## Bug Fixes - Course Carousel
 - [x] Fix carousel card responsive layout on mobile (cards getting cut off)
 - [x] Add touch swipe left-right support for carousel on mobile
+
+
+## Chatbot Gemini API Integration
+- [x] Update chatbot to use Google Gemini API (primary)
+- [x] Add GEMINI_API_KEY with user's key
+- [ ] Test chatbot responses with Gemini

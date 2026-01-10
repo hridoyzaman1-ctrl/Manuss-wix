@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+const GEMINI_API_KEY = "AIzaSyCcRWzrw2XdAjVke3yM4JKnDXDkBfEVpMA";
 const OPENROUTER_API_KEY = "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";
 
 type Message = {
@@ -271,18 +272,64 @@ export default function Chatbot() {
 
     const getAIResponse = async (userText: string) => {
         setIsThinking(true);
+        let errorLog: string[] = [];
+
+        const systemPrompt = `You are "AIM Bot", a smart, funny, and safe AI assistant for AIM Centre 360 (School). 
+MISSION: Answer ANY question (Math, Science, History, etc) clearly & concisely.
+TONE: Friendly, Humorous, Creative 🎨. Use emojis.
+SAFETY: NO explicit/adult/illegal topics.
+FORMAT: Plain text only (NO LaTeX). Use "x^2" for math. Bold key terms with **bold**.`;
+
+        // 1. Try Google Gemini API (Primary - User's own API key)
+        try {
+            console.log("Attempting Google Gemini API...");
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: `${systemPrompt}\n\nUser: ${userText}` }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 1024,
+                        },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" }
+                        ]
+                    })
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (content) {
+                    setIsThinking(false);
+                    return content;
+                }
+            } else {
+                const errText = await response.text();
+                console.warn("Gemini API error:", errText);
+                errorLog.push(`Gemini: ${response.status} - ${errText}`);
+            }
+        } catch (geminiError: any) {
+            console.error("Gemini error:", geminiError);
+            errorLog.push(`Gemini Exception: ${geminiError.message}`);
+        }
+
+        // 2. Fallback to OpenRouter free models
         const models = [
-            "xiaomi/mimo-v2-flash:free",           // User requested specific free model
             "google/gemini-2.0-flash-exp:free",
             "meta-llama/llama-3-8b-instruct:free",
-            "mistralai/mistral-7b-instruct:free",
-            "huggingfaceh4/zephyr-7b-beta:free", // Added reliable free model
-            "openchat/openchat-7b:free",
-            "gryphe/mythomax-l2-13b:free"
+            "mistralai/mistral-7b-instruct:free"
         ];
-        let errorLog = [];
 
-        // 1. Try OpenRouter Models
         for (const model of models) {
             try {
                 console.log(`Attempting OpenRouter model: ${model}`);
@@ -297,53 +344,28 @@ export default function Chatbot() {
                     body: JSON.stringify({
                         "model": model,
                         "messages": [
-                            {
-                                "role": "system",
-                                "content": `You are "AIM Bot", a smart, funny, and safe AI assistant for AIM Centre 360 (School). 
-                                MISSION: Answer ANY question (Math, Science, History, etc) clearly & concisely.
-                                TONE: Friendly, Humorous, Creative 🎨. Use emojis.
-                                SAFETY: NO explicit/adult/illegal topics.
-                                FORMAT: Plain text only (NO LaTeX). Use "x^2" for math. Bold key terms.`
-                            },
+                            { "role": "system", "content": systemPrompt },
                             { "role": "user", "content": userText }
                         ]
                     })
                 });
 
-                if (!response.ok) {
-                    const errText = await response.text();
-                    let errJson;
-                    try { errJson = JSON.parse(errText); } catch (e) { errJson = { error: errText }; }
-
-                    const specificError = errJson.error?.message || response.statusText;
-                    const log = `OR Model ${model} failed: ${response.status} - ${specificError}`;
-                    console.warn(log);
-                    errorLog.push(log);
-
-                    // Allow 401/402 to fall through to Pollinations instead of breaking completely
-                    continue;
+                if (response.ok) {
+                    const data = await response.json();
+                    const content = data.choices?.[0]?.message?.content;
+                    if (content) {
+                        setIsThinking(false);
+                        return content;
+                    }
                 }
-
-                const data = await response.json();
-                const content = data.choices?.[0]?.message?.content;
-                if (!content) throw new Error("Empty content received");
-
-                setIsThinking(false);
-                return content;
-
             } catch (error: any) {
-                console.error("OpenRouter Fetch error:", error);
-                errorLog.push(`OR Exception: ${error.message}`);
+                errorLog.push(`OpenRouter ${model}: ${error.message}`);
             }
         }
 
-        // 2. Fallback to Pollinations.ai (Keyless, Unlimited)
+        // 3. Final fallback to Pollinations.ai
         try {
             console.log("Attempting Pollinations.ai fallback...");
-            const systemPrompt = "You are AIM Bot, a friendly, smart AI for AIM Centre 360 school. Answer questions clearly, safely, and creatively. No explicit content.";
-            const fullPrompt = `${systemPrompt}\n\nUser Question: ${userText}\n\nAnswer:`;
-
-            // Using POST to handle longer prompts better
             const response = await fetch("https://text.pollinations.ai/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -352,7 +374,7 @@ export default function Chatbot() {
                         { role: "system", content: systemPrompt },
                         { role: "user", content: userText }
                     ],
-                    model: "openai" // Pollinations maps this to a good free model
+                    model: "openai"
                 })
             });
 
@@ -360,26 +382,15 @@ export default function Chatbot() {
                 const text = await response.text();
                 if (text && text.trim()) {
                     setIsThinking(false);
-                    return text + " \n\n*(Generated via Unlimited Backup AI)*"; // Optional indicator
+                    return text;
                 }
             }
-            // Fallback for simple GET if POST fails
-            const fallbackResponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
-            if (fallbackResponse.ok) {
-                const text = await fallbackResponse.text();
-                if (text && text.trim()) {
-                    setIsThinking(false);
-                    return text + " \n\n*(Generated via Unlimited Backup AI)*";
-                }
-            }
-
         } catch (pollinationError: any) {
-            console.error("Pollinations error:", pollinationError);
-            errorLog.push(`Pollinations Exception: ${pollinationError.message}`);
+            errorLog.push(`Pollinations: ${pollinationError.message}`);
         }
 
         setIsThinking(false);
-        return `⚠️ All AI services failed. We are currently experiencing high traffic.\nDebug details:\n${errorLog.join("\n")}`;
+        return `⚠️ AI service temporarily unavailable. Please try again in a moment.`;
     };
 
     // Simple Markdown Parser (Bold, Italic, Newlines)
