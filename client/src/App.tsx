@@ -45,6 +45,15 @@ const StudentProfile = lazy(() => import("@/pages/student/StudentProfile"));
 const CoursePlayer = lazy(() => import("@/pages/student/CoursePlayer"));
 const CourseCatalog = lazy(() => import("@/pages/student/CourseCatalog"));
 const QuizPlayer = lazy(() => import("@/pages/student/QuizPlayer"));
+const StudentNotes = lazy(() => import("@/pages/student/StudentNotes"));
+const StudentProgress = lazy(() => import("@/pages/student/StudentProgress"));
+const StudentAttendance = lazy(() => import("@/pages/student/StudentAttendance"));
+const StudentGrades = lazy(() => import("@/pages/student/StudentGrades"));
+const StudentLiveClasses = lazy(() => import("@/pages/student/StudentLiveClasses"));
+const StudentGames = lazy(() => import("@/pages/student/StudentGames"));
+const StudentEvents = lazy(() => import("@/pages/student/StudentEvents"));
+const StudentNotifications = lazy(() => import("@/pages/student/StudentNotifications"));
+const StudentMessages = lazy(() => import("@/pages/student/StudentMessages"));
 
 // Parent pages
 const ParentLinkChild = lazy(() => import("@/pages/parent/ParentLinkChild"));
@@ -87,6 +96,15 @@ function Router() {
         <Route path={"/student/profile"} component={StudentProfile} />
         <Route path={"/student/course/:courseId"} component={CoursePlayer} />
         <Route path={"/student/course/:courseId/lesson/:lessonId"} component={CoursePlayer} />
+        <Route path={"/student/notes"} component={StudentNotes} />
+        <Route path={"/student/progress"} component={StudentProgress} />
+        <Route path={"/student/attendance"} component={StudentAttendance} />
+        <Route path={"/student/grades"} component={StudentGrades} />
+        <Route path={"/student/live-classes"} component={StudentLiveClasses} />
+        <Route path={"/student/games"} component={StudentGames} />
+        <Route path={"/student/events"} component={StudentEvents} />
+        <Route path={"/student/notifications"} component={StudentNotifications} />
+        <Route path={"/student/messages"} component={StudentMessages} />
         
         {/* Parent routes */}
         <Route path={"/parent"} component={ParentDashboard} />

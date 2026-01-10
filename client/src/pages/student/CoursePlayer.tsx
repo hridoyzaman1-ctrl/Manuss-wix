@@ -3,16 +3,18 @@ import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
+
 import { 
   Play, Pause, Volume2, VolumeX, Maximize, 
   ChevronLeft, ChevronRight, FileText, Video, Image as ImageIcon,
-  Download, CheckCircle, Circle, Save, Trash2, Edit2, X,
-  BookOpen, Clock, User, Loader2, StickyNote
+  Download, CheckCircle, Circle, X,
+  BookOpen, Clock, User, Loader2, StickyNote, Check
 } from "lucide-react";
 import StudentDashboardLayout from "@/components/StudentDashboardLayout";
 
 export default function CoursePlayer() {
   const params = useParams();
+  
   const courseId = parseInt(params.courseId || "0");
   const lessonId = params.lessonId ? parseInt(params.lessonId) : null;
   
@@ -27,6 +29,8 @@ export default function CoursePlayer() {
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<any>(null);
+  const [completedLessons, setCompletedLessons] = useState<Set<number>>(new Set());
+  const [viewMode, setViewMode] = useState<'video' | 'pdf'>('video');
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -39,14 +43,21 @@ export default function CoursePlayer() {
   );
 
   // Fetch lessons for this course
-  const { data: lessons = [], isLoading: lessonsLoading } = trpc.lesson.getByCourse.useQuery(
+  const { data: lessons = [], isLoading: lessonsLoading, refetch: refetchLessons } = trpc.lesson.getByCourse.useQuery(
     { courseId },
     { enabled: courseId > 0 }
   );
 
+  // Fetch enrollment for this course
+  const { data: enrollmentData } = trpc.enrollment.checkAccess.useQuery(
+    { courseId },
+    { enabled: courseId > 0 }
+  );
+  const enrollment = enrollmentData?.enrollment;
+
   // Get current lesson
   const currentLesson = lessonId 
-    ? lessons.find(l => l.id === lessonId) 
+    ? lessons.find((l: any) => l.id === lessonId) 
     : lessons[0];
 
   // Fetch materials for current lesson
@@ -61,6 +72,12 @@ export default function CoursePlayer() {
     { enabled: !!currentLesson?.id }
   );
 
+  // Fetch lesson progress
+  const { data: lessonProgress, refetch: refetchProgress } = trpc.progress.getByEnrollment.useQuery(
+    { enrollmentId: enrollment?.id || 0 },
+    { enabled: !!enrollment?.id }
+  );
+
   // Save note mutation
   const saveNoteMutation = trpc.notes.save.useMutation({
     onSuccess: () => {
@@ -69,7 +86,33 @@ export default function CoursePlayer() {
     }
   });
 
+  // Mark lesson complete mutation
+  const markCompleteMutation = trpc.progress.markComplete.useMutation({
+    onSuccess: () => {
+      // Progress saved
+      refetchProgress();
+      refetchLessons();
+    },
+    onError: (error) => {
+      console.error("Failed to mark lesson as complete:", error);
+    }
+  });
 
+  // Update progress mutation
+  const updateProgressMutation = trpc.progress.update.useMutation();
+
+  // Initialize completed lessons from progress data
+  useEffect(() => {
+    if (lessonProgress) {
+      const completed = new Set<number>();
+      lessonProgress.forEach((p: any) => {
+        if (p.completed) {
+          completed.add(p.lessonId);
+        }
+      });
+      setCompletedLessons(completed);
+    }
+  }, [lessonProgress]);
 
   // Auto-save notes
   const autoSaveNote = useCallback(() => {
@@ -102,11 +145,28 @@ export default function CoursePlayer() {
   // Load existing note when lesson changes
   useEffect(() => {
     if (existingNotes.length > 0) {
-      setNoteContent(existingNotes[0].content || "");
+      setNoteContent((existingNotes[0] as any).content || "");
     } else {
       setNoteContent("");
     }
   }, [existingNotes]);
+
+  // Track video progress
+  useEffect(() => {
+    if (enrollment?.id && currentLesson?.id && currentTime > 0 && duration > 0) {
+      const progressPercent = Math.round((currentTime / duration) * 100);
+      // Update progress every 10 seconds
+      if (Math.floor(currentTime) % 10 === 0) {
+        updateProgressMutation.mutate({
+          enrollmentId: enrollment.id,
+          lessonId: currentLesson.id,
+          progressPercent,
+          watchedDuration: Math.floor(currentTime),
+          lastPosition: Math.floor(currentTime),
+        });
+      }
+    }
+  }, [currentTime, duration, enrollment?.id, currentLesson?.id]);
 
   // Video controls
   const togglePlay = () => {
@@ -162,10 +222,29 @@ export default function CoursePlayer() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleMarkComplete = () => {
+    if (enrollment?.id && currentLesson?.id) {
+      markCompleteMutation.mutate({
+        enrollmentId: enrollment.id,
+        lessonId: currentLesson.id,
+      });
+    }
+  };
+
+  const isLessonCompleted = currentLesson?.id ? completedLessons.has(currentLesson.id) : false;
+
+  // Get PDF material if available
+  const pdfMaterial = materials.find((m: any) => m.type === 'pdf');
+
   // Get current and next/prev lesson indices
-  const currentIndex = lessons.findIndex(l => l.id === currentLesson?.id);
+  const currentIndex = lessons.findIndex((l: any) => l.id === currentLesson?.id);
   const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
   const nextLesson = currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+
+  // Calculate overall course progress
+  const completedCount = completedLessons.size;
+  const totalLessons = lessons.length;
+  const overallProgress = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
   if (courseLoading || lessonsLoading) {
     return (
@@ -213,80 +292,155 @@ export default function CoursePlayer() {
               {lessons.length} lessons
             </span>
           </div>
+          {/* Overall Progress Bar */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-sm mb-1">
+              <span className="text-stone-600 dark:text-stone-400">Course Progress</span>
+              <span className="font-medium text-primary">{overallProgress}%</span>
+            </div>
+            <div className="h-2 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-primary transition-all duration-300"
+                style={{ width: `${overallProgress}%` }}
+              />
+            </div>
+            <p className="text-xs text-stone-500 mt-1">{completedCount} of {totalLessons} lessons completed</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content Area */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Video Player */}
-            <div 
-              ref={playerContainerRef}
-              className="bg-black rounded-xl overflow-hidden relative aspect-video"
-            >
-              {currentLesson?.videoUrl ? (
-                <>
-                  <video
-                    ref={videoRef}
-                    src={currentLesson.videoUrl}
-                    className="w-full h-full object-contain"
-                    onTimeUpdate={handleTimeUpdate}
-                    onEnded={() => setIsPlaying(false)}
-                    onClick={togglePlay}
-                  />
-                  
-                  {/* Video Controls */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                    {/* Progress Bar */}
-                    <div 
-                      className="h-1 bg-white/30 rounded-full mb-3 cursor-pointer"
-                      onClick={handleSeek}
-                    >
-                      <div 
-                        className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-white">
-                      <div className="flex items-center gap-3">
-                        <button onClick={togglePlay} className="hover:text-primary transition-colors">
-                          {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-                        </button>
-                        <button onClick={toggleMute} className="hover:text-primary transition-colors">
-                          {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                        </button>
-                        <span className="text-sm">
-                          {formatTime(currentTime)} / {formatTime(duration)}
-                        </span>
-                      </div>
-                      <button onClick={toggleFullscreen} className="hover:text-primary transition-colors">
-                        <Maximize className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-white/50">
-                  <div className="text-center">
-                    <Video className="h-16 w-16 mx-auto mb-2" />
-                    <p>No video available for this lesson</p>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* View Mode Toggle */}
+            {pdfMaterial && currentLesson?.videoUrl && (
+              <div className="flex gap-2 mb-2">
+                <Button
+                  variant={viewMode === 'video' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('video')}
+                >
+                  <Video className="h-4 w-4 mr-2" /> Video
+                </Button>
+                <Button
+                  variant={viewMode === 'pdf' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('pdf')}
+                >
+                  <FileText className="h-4 w-4 mr-2" /> PDF
+                </Button>
+              </div>
+            )}
 
-            {/* Lesson Navigation */}
+            {/* Video Player */}
+            {(viewMode === 'video' || !pdfMaterial) && (
+              <div 
+                ref={playerContainerRef}
+                className="bg-black rounded-xl overflow-hidden relative aspect-video"
+              >
+                {currentLesson?.videoUrl ? (
+                  <>
+                    <video
+                      ref={videoRef}
+                      src={currentLesson.videoUrl}
+                      className="w-full h-full object-contain"
+                      onTimeUpdate={handleTimeUpdate}
+                      onEnded={() => setIsPlaying(false)}
+                      onClick={togglePlay}
+                    />
+                    
+                    {/* Video Controls */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                      {/* Progress Bar */}
+                      <div 
+                        className="h-1 bg-white/30 rounded-full mb-3 cursor-pointer"
+                        onClick={handleSeek}
+                      >
+                        <div 
+                          className="h-full bg-primary rounded-full transition-all"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-white">
+                        <div className="flex items-center gap-3">
+                          <button onClick={togglePlay} className="hover:text-primary transition-colors">
+                            {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                          </button>
+                          <button onClick={toggleMute} className="hover:text-primary transition-colors">
+                            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                          </button>
+                          <span className="text-sm">
+                            {formatTime(currentTime)} / {formatTime(duration)}
+                          </span>
+                        </div>
+                        <button onClick={toggleFullscreen} className="hover:text-primary transition-colors">
+                          <Maximize className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white/50">
+                    <div className="text-center">
+                      <Video className="h-16 w-16 mx-auto mb-2" />
+                      <p>No video available for this lesson</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* PDF Viewer */}
+            {viewMode === 'pdf' && pdfMaterial && (
+              <div className="bg-white dark:bg-stone-800 rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700">
+                <div className="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+                  <span className="font-medium text-stone-800 dark:text-stone-200 flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-red-500" />
+                    {pdfMaterial.title}
+                  </span>
+                  <a href={pdfMaterial.fileUrl} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm">
+                      <Download className="h-4 w-4 mr-2" /> Download
+                    </Button>
+                  </a>
+                </div>
+                <iframe
+                  src={pdfMaterial.fileUrl}
+                  className="w-full h-[70vh]"
+                  title={pdfMaterial.title}
+                />
+              </div>
+            )}
+
+            {/* Lesson Navigation & Mark Complete */}
             <div className="flex items-center justify-between">
               {prevLesson ? (
-                <Link href={`/student/course/${courseId}/lesson/${prevLesson.id}`}>
+                <Link href={`/student/course/${courseId}/lesson/${(prevLesson as any).id}`}>
                   <Button variant="outline" size="sm">
                     <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                   </Button>
                 </Link>
               ) : <div />}
               
+              {/* Mark Complete Button */}
+              <Button
+                onClick={handleMarkComplete}
+                disabled={isLessonCompleted || markCompleteMutation.isPending}
+                variant={isLessonCompleted ? "secondary" : "default"}
+                size="sm"
+              >
+                {markCompleteMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : isLessonCompleted ? (
+                  <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                ) : (
+                  <Check className="h-4 w-4 mr-2" />
+                )}
+                {isLessonCompleted ? 'Completed' : 'Mark as Complete'}
+              </Button>
+              
               {nextLesson ? (
-                <Link href={`/student/course/${courseId}/lesson/${nextLesson.id}`}>
+                <Link href={`/student/course/${courseId}/lesson/${(nextLesson as any).id}`}>
                   <Button size="sm">
                     Next <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
@@ -297,14 +451,23 @@ export default function CoursePlayer() {
             {/* Current Lesson Info */}
             {currentLesson && (
               <div className="bg-white dark:bg-stone-800 rounded-xl p-4 border border-stone-200 dark:border-stone-700">
-                <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
-                  {currentLesson.title}
-                </h2>
-                {currentLesson.description && (
-                  <p className="text-stone-600 dark:text-stone-400 mt-2 text-sm">
-                    {currentLesson.description}
-                  </p>
-                )}
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
+                      {currentLesson.title}
+                    </h2>
+                    {currentLesson.description && (
+                      <p className="text-stone-600 dark:text-stone-400 mt-2 text-sm">
+                        {currentLesson.description}
+                      </p>
+                    )}
+                  </div>
+                  {isLessonCompleted && (
+                    <span className="flex items-center gap-1 text-green-500 text-sm bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
+                      <CheckCircle className="h-4 w-4" /> Completed
+                    </span>
+                  )}
+                </div>
               </div>
             )}
 
@@ -345,7 +508,7 @@ export default function CoursePlayer() {
               </div>
             )}
 
-            {/* Note Taking Section (shown when not fullscreen) */}
+            {/* Note Taking Section */}
             {!isFullscreen && showNotes && (
               <div className="bg-white dark:bg-stone-800 rounded-xl p-4 border border-stone-200 dark:border-stone-700">
                 <div className="flex items-center justify-between mb-3">
@@ -385,42 +548,48 @@ export default function CoursePlayer() {
             <div className="bg-white dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700 overflow-hidden">
               <div className="p-4 border-b border-stone-200 dark:border-stone-700">
                 <h3 className="font-semibold text-stone-800 dark:text-stone-100">Course Content</h3>
-                <p className="text-sm text-stone-500">{lessons.length} lessons</p>
+                <p className="text-sm text-stone-500">{completedCount}/{lessons.length} lessons completed</p>
               </div>
               <div className="max-h-[500px] overflow-y-auto">
-                {lessons.map((lesson: any, index: number) => (
-                  <Link 
-                    key={lesson.id}
-                    href={`/student/course/${courseId}/lesson/${lesson.id}`}
-                  >
-                    <div className={`p-4 border-b border-stone-100 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-700 cursor-pointer transition-colors ${
-                      lesson.id === currentLesson?.id ? 'bg-primary/10 border-l-4 border-l-primary' : ''
-                    }`}>
-                      <div className="flex items-start gap-3">
-                        <div className={`mt-0.5 ${lesson.id === currentLesson?.id ? 'text-primary' : 'text-stone-400'}`}>
-                          {lesson.completed ? (
-                            <CheckCircle className="h-5 w-5 text-green-500" />
-                          ) : (
-                            <Circle className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium truncate ${
-                            lesson.id === currentLesson?.id 
-                              ? 'text-primary' 
-                              : 'text-stone-800 dark:text-stone-200'
-                          }`}>
-                            {index + 1}. {lesson.title}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1 text-xs text-stone-500">
-                            <Video className="h-3 w-3" />
-                            <span>{lesson.duration || 0} min</span>
+                {lessons.map((lesson: any, index: number) => {
+                  const isCompleted = completedLessons.has(lesson.id);
+                  return (
+                    <Link 
+                      key={lesson.id}
+                      href={`/student/course/${courseId}/lesson/${lesson.id}`}
+                    >
+                      <div className={`p-4 border-b border-stone-100 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-700 cursor-pointer transition-colors ${
+                        lesson.id === currentLesson?.id ? 'bg-primary/10 border-l-4 border-l-primary' : ''
+                      }`}>
+                        <div className="flex items-start gap-3">
+                          <div className={`mt-0.5 ${lesson.id === currentLesson?.id ? 'text-primary' : 'text-stone-400'}`}>
+                            {isCompleted ? (
+                              <CheckCircle className="h-5 w-5 text-green-500" />
+                            ) : (
+                              <Circle className="h-5 w-5" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm font-medium truncate ${
+                              lesson.id === currentLesson?.id 
+                                ? 'text-primary' 
+                                : 'text-stone-800 dark:text-stone-200'
+                            }`}>
+                              {index + 1}. {lesson.title}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1 text-xs text-stone-500">
+                              <Video className="h-3 w-3" />
+                              <span>{lesson.duration || 0} min</span>
+                              {isCompleted && (
+                                <span className="text-green-500 ml-auto">✓ Done</span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 

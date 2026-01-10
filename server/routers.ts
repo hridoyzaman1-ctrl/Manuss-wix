@@ -518,6 +518,10 @@ export const appRouter = router({
       return db.getStudentSubmissions(ctx.user.id);
     }),
     
+    getMyAssignments: studentProcedure.query(async ({ ctx }) => {
+      return db.getStudentAssignments(ctx.user.id);
+    }),
+    
     grade: staffProcedure.input(z.object({
       submissionId: z.number(),
       score: z.number(),

@@ -200,3 +200,14 @@
 - [x] Notifications for announcements
 - [x] Notifications for assignment deadlines
 - [x] Notifications for live class reminders
+
+## Course Player & Assignment Features
+- [x] Course player page with video viewer
+- [x] Course player PDF viewer
+- [x] Lesson navigation sidebar in course player
+- [x] Progress tracking (mark lessons complete)
+- [x] Auto-save note-taking while watching/reading
+- [x] Notes stored per lesson in notes section
+- [x] Assignment submission page with file upload
+- [x] Deadline enforcement for assignments
+- [x] Assignment status tracking (pending/submitted/graded)

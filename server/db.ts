@@ -612,6 +612,45 @@ export async function getStudentSubmissions(userId: number) {
   return db.select().from(assignmentSubmissions).where(eq(assignmentSubmissions.userId, userId)).orderBy(desc(assignmentSubmissions.submittedAt));
 }
 
+export async function getStudentAssignments(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get user's enrolled courses
+  const userEnrollments = await db.select({ courseId: enrollments.courseId })
+    .from(enrollments)
+    .where(eq(enrollments.userId, userId));
+  
+  const courseIds = userEnrollments.map(e => e.courseId);
+  if (courseIds.length === 0) return [];
+  
+  // Get all assignments for enrolled courses
+  const allAssignments = await db.select()
+    .from(assignments)
+    .where(inArray(assignments.courseId, courseIds))
+    .orderBy(desc(assignments.dueDate));
+  
+  // Get user's submissions
+  const userSubmissions = await db.select()
+    .from(assignmentSubmissions)
+    .where(eq(assignmentSubmissions.userId, userId));
+  
+  // Get course names
+  const courseList = await db.select({ id: courses.id, title: courses.title })
+    .from(courses)
+    .where(inArray(courses.id, courseIds));
+  
+  const courseMap = new Map(courseList.map(c => [c.id, c.title]));
+  const submissionMap = new Map(userSubmissions.map(s => [s.assignmentId, s]));
+  
+  // Combine data
+  return allAssignments.map(a => ({
+    ...a,
+    courseName: courseMap.get(a.courseId!) || 'Unknown Course',
+    submission: submissionMap.get(a.id),
+  }));
+}
+
 export async function gradeSubmission(submissionId: number, score: number, feedback: string, gradedBy: number) {
   const db = await getDb();
   if (!db) return;
