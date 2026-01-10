@@ -135,3 +135,6 @@
 - [x] Responsive layouts for all sections
 - [x] Optimized animations for mobile devices
 - [x] Preserve desktop layout exactly as-is
+
+## Bug Fixes
+- [x] Fix failing user tests (tests assume empty DB but real user exists)
