@@ -186,3 +186,4 @@
 - [ ] Show enrolled courses as accessible on landing page for logged-in students (future enhancement)
 - [x] Fix OAuth login popup appearing while navigating the site when already logged in (updated context.ts to check JWT auth_token first)
 - [x] Remove back button from main dashboard pages, only show on sub-pages/sections
+- [x] Fix white border on right side of mobile view in landing page (added overflow-x: hidden)
