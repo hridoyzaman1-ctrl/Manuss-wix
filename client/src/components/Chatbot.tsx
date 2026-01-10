@@ -48,12 +48,11 @@ export default function Chatbot() {
     const [isListening, setIsListening] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     
-    // Draggable state - fixed position, no dragging on mobile
-    const [position, setPosition] = useState({ x: 24, y: 100 }); // bottom-left, above back-to-top button
+    // Draggable state - works on all devices
+    const [position, setPosition] = useState({ x: 24, y: 24 }); // bottom-left default
     const [isDragging, setIsDragging] = useState(false);
     const dragStartRef = useRef({ x: 0, y: 0, posX: 0, posY: 0 });
     const hasDraggedRef = useRef(false);
-    const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 768;
 
     // Monitor scroll for visibility
     useEffect(() => {
@@ -86,12 +85,6 @@ export default function Chatbot() {
     const handleDragMove = (clientX: number, clientY: number) => {
         if (!isDragging) return;
         
-        // Disable dragging on mobile to prevent magnet behavior
-        if (isMobileDevice) {
-            setIsDragging(false);
-            return;
-        }
-        
         const deltaX = dragStartRef.current.x - clientX;
         const deltaY = dragStartRef.current.y - clientY;
         
@@ -101,7 +94,7 @@ export default function Chatbot() {
         }
         
         const newX = Math.max(10, Math.min(window.innerWidth - 80, dragStartRef.current.posX + deltaX));
-        const newY = Math.max(100, Math.min(window.innerHeight - 80, dragStartRef.current.posY + deltaY)); // Min 100 to stay above back-to-top
+        const newY = Math.max(10, Math.min(window.innerHeight - 80, dragStartRef.current.posY + deltaY));
         
         setPosition({ x: newX, y: newY });
     };
@@ -607,7 +600,7 @@ export default function Chatbot() {
                                             ease: "easeInOut"
                                         }
                                     }}
-                                    className={`absolute right-full mr-4 top-1/2 -mt-6 bg-card text-card-foreground text-sm font-semibold pl-4 pr-9 py-2 rounded-xl shadow-xl border border-primary/20 whitespace-nowrap z-[60] pointer-events-auto ${isOpen ? "hidden" : "block"}`}
+                                    className={`absolute left-full ml-4 top-1/2 -mt-6 bg-card text-card-foreground text-sm font-semibold pl-4 pr-9 py-2 rounded-xl shadow-xl border border-primary/20 whitespace-nowrap z-[60] pointer-events-auto ${isOpen ? "hidden" : "block"}`}
                                 >
                                     <span className="relative z-10">Chat with AIMbot! 👋</span>
 
@@ -624,8 +617,8 @@ export default function Chatbot() {
                                         <X className="h-3.5 w-3.5" />
                                     </button>
 
-                                    {/* Triangle Arrow - pointing right */}
-                                    <div className="absolute right-0 top-1/2 translate-x-[5px] -translate-y-1/2 w-2.5 h-2.5 bg-card border-r border-t border-primary/20 rotate-45"></div>
+                                    {/* Triangle Arrow - pointing left */}
+                                    <div className="absolute left-0 top-1/2 -translate-x-[5px] -translate-y-1/2 w-2.5 h-2.5 bg-card border-l border-b border-primary/20 rotate-45"></div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
