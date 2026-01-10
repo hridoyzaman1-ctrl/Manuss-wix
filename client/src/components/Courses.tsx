@@ -413,7 +413,7 @@ export default function Courses() {
                     {filteredCourses.map((course) => (
                       <div
                         key={`carousel-${course.id}`}
-                        className="min-w-[80%] sm:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] flex-shrink-0 bg-card border border-border p-3 sm:p-4 hover:border-primary transition-colors rounded-lg"
+                        className="min-w-[80%] sm:min-w-[45%] lg:min-w-[30%] flex-shrink-0 bg-card border border-border p-3 sm:p-4 hover:border-primary transition-colors rounded-lg"
                       >
                         <div className="aspect-video bg-muted mb-3 sm:mb-4 overflow-hidden rounded-md">
                           <img
