@@ -33,6 +33,7 @@ const AdminEvents = lazy(() => import("@/pages/admin/AdminEvents"));
 const AdminAIMVerse = lazy(() => import("@/pages/admin/AdminAIMVerse"));
 const AdminLiveClasses = lazy(() => import("@/pages/admin/AdminLiveClasses"));
 const AdminAchievements = lazy(() => import("@/pages/admin/AdminAchievements"));
+const AdminProfile = lazy(() => import("@/pages/admin/AdminProfile"));
 
 // Student pages
 const StudentCourses = lazy(() => import("@/pages/student/StudentCourses"));
@@ -40,6 +41,8 @@ const StudentQuizzes = lazy(() => import("@/pages/student/StudentQuizzes"));
 const StudentAssignments = lazy(() => import("@/pages/student/StudentAssignments"));
 const StudentAchievements = lazy(() => import("@/pages/student/StudentAchievements"));
 const StudentAIMVerse = lazy(() => import("@/pages/student/StudentAIMVerse"));
+const StudentProfile = lazy(() => import("@/pages/student/StudentProfile"));
+const CoursePlayer = lazy(() => import("@/pages/student/CoursePlayer"));
 
 // Parent pages
 const ParentLinkChild = lazy(() => import("@/pages/parent/ParentLinkChild"));
@@ -68,6 +71,7 @@ function Router() {
         <Route path={"/admin/aimverse"} component={AdminAIMVerse} />
         <Route path={"/admin/live-classes"} component={AdminLiveClasses} />
         <Route path={"/admin/achievements"} component={AdminAchievements} />
+        <Route path={"/admin/profile"} component={AdminProfile} />
         
         {/* Student routes */}
         <Route path={"/student"} component={StudentDashboard} />
@@ -76,6 +80,9 @@ function Router() {
         <Route path={"/student/assignments"} component={StudentAssignments} />
         <Route path={"/student/achievements"} component={StudentAchievements} />
         <Route path={"/student/aimverse"} component={StudentAIMVerse} />
+        <Route path={"/student/profile"} component={StudentProfile} />
+        <Route path={"/student/course/:courseId"} component={CoursePlayer} />
+        <Route path={"/student/course/:courseId/lesson/:lessonId"} component={CoursePlayer} />
         
         {/* Parent routes */}
         <Route path={"/parent"} component={ParentDashboard} />

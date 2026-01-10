@@ -82,13 +82,22 @@ export const appRouter = router({
     updateProfile: protectedProcedure.input(z.object({
       name: z.string().optional(),
       phone: z.string().optional(),
-      dateOfBirth: z.date().optional(),
+      dateOfBirth: z.string().optional(),
       grade: z.string().optional(),
       occupation: z.string().optional(),
       address: z.string().optional(),
+      avatarUrl: z.string().optional(),
     })).mutation(async ({ ctx, input }) => {
-      await db.updateUserProfile(ctx.user.id, input);
+      const updateData: any = { ...input };
+      if (input.dateOfBirth) {
+        updateData.dateOfBirth = new Date(input.dateOfBirth);
+      }
+      await db.updateUserProfile(ctx.user.id, updateData);
       return { success: true };
+    }),
+    
+    getProfile: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserById(ctx.user.id);
     }),
     
     getByStudentUid: protectedProcedure.input(z.object({ uid: z.string() })).query(async ({ input }) => {

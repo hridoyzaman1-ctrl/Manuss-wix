@@ -38,7 +38,8 @@ import {
   Sparkles,
   Settings,
   Home,
-  GraduationCap
+  GraduationCap,
+  User
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -60,6 +61,7 @@ const menuItems = [
   { icon: Calendar, label: "Events", path: "/admin/events" },
   { icon: Sparkles, label: "AIMVerse", path: "/admin/aimverse" },
   { icon: MessageSquare, label: "Messages", path: "/admin/messages" },
+  { icon: User, label: "Profile", path: "/admin/profile" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },
 ];
 

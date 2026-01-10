@@ -156,3 +156,15 @@
 
 ## Bug Fixes
 - [x] Fix signup JSON error - unexpected end of JSON input
+
+## Profile & Course Player Features
+- [x] Create student profile page with editable fields
+- [x] Create admin profile page with editable fields
+- [x] Add avatar/profile picture upload functionality
+- [x] Build course video player page
+- [x] Add lesson/chapter navigation in player
+- [x] Implement note-taking feature with auto-save
+- [x] Create notes section in study materials
+- [x] Add demo course with sample video, PDF, doc, image
+- [x] Add instructor mockup details
+- [x] Add course quiz for demo course
