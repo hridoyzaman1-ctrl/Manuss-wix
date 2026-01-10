@@ -187,3 +187,16 @@
 - [x] Fix OAuth login popup appearing while navigating the site when already logged in (updated context.ts to check JWT auth_token first)
 - [x] Remove back button from main dashboard pages, only show on sub-pages/sections
 - [x] Fix white border on right side of mobile view in landing page (added overflow-x: hidden)
+
+## New Features - Phase 2
+- [x] Student course enrollment from landing page
+- [x] Student course enrollment from student dashboard
+- [x] Course browse/catalog page for students
+- [x] Enrollment confirmation and success feedback
+- [x] Timed quiz interface with countdown timer
+- [x] Quiz auto-submit when time expires
+- [x] Quiz results display with score
+- [x] Browser push notifications setup
+- [x] Notifications for announcements
+- [x] Notifications for assignment deadlines
+- [x] Notifications for live class reminders

@@ -43,6 +43,8 @@ const StudentAchievements = lazy(() => import("@/pages/student/StudentAchievemen
 const StudentAIMVerse = lazy(() => import("@/pages/student/StudentAIMVerse"));
 const StudentProfile = lazy(() => import("@/pages/student/StudentProfile"));
 const CoursePlayer = lazy(() => import("@/pages/student/CoursePlayer"));
+const CourseCatalog = lazy(() => import("@/pages/student/CourseCatalog"));
+const QuizPlayer = lazy(() => import("@/pages/student/QuizPlayer"));
 
 // Parent pages
 const ParentLinkChild = lazy(() => import("@/pages/parent/ParentLinkChild"));
@@ -76,7 +78,9 @@ function Router() {
         {/* Student routes */}
         <Route path={"/student"} component={StudentDashboard} />
         <Route path={"/student/courses"} component={StudentCourses} />
+        <Route path={"/student/catalog"} component={CourseCatalog} />
         <Route path={"/student/quizzes"} component={StudentQuizzes} />
+        <Route path={"/student/quiz/:quizId"} component={QuizPlayer} />
         <Route path={"/student/assignments"} component={StudentAssignments} />
         <Route path={"/student/achievements"} component={StudentAchievements} />
         <Route path={"/student/aimverse"} component={StudentAIMVerse} />

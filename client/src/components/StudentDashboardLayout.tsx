@@ -35,16 +35,19 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  Search
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import NotificationCenter from "./NotificationCenter";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/student" },
   { icon: BookOpen, label: "My Courses", path: "/student/courses" },
+  { icon: Search, label: "Browse Courses", path: "/student/catalog" },
   { icon: BarChart3, label: "Progress", path: "/student/progress" },
   { icon: ClipboardList, label: "Quizzes", path: "/student/quizzes" },
   { icon: FileText, label: "Assignments", path: "/student/assignments" },
@@ -243,6 +246,7 @@ export default function StudentDashboardLayout({
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <NotificationCenter />
             <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="h-9 w-9" title="Back to Home">
               <Home className="h-5 w-5" />
             </Button>
@@ -323,7 +327,7 @@ export default function StudentDashboardLayout({
         </div>
 
         {/* Back to Home Button */}
-        <div className="px-2 pt-2">
+        <div className="px-2 pt-2 space-y-2">
           <Button
             variant="outline"
             size="sm"
@@ -333,6 +337,11 @@ export default function StudentDashboardLayout({
             <Home className="h-4 w-4" />
             {!sidebarCollapsed && <span>Back to Home</span>}
           </Button>
+          {!sidebarCollapsed && (
+            <div className="flex justify-center">
+              <NotificationCenter />
+            </div>
+          )}
         </div>
 
         <NavigationContent />

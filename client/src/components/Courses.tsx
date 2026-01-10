@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const categories = [
   "All",
@@ -69,6 +70,7 @@ const courses = [
 
 export default function Courses() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -218,9 +220,9 @@ export default function Courses() {
                         </Button>
                       </div>
 
-                      <Link href="/auth">
+                      <Link href={user ? "/student/catalog" : "/auth"}>
                         <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
-                          <span>{t("courses.enroll") || "Enroll Now"}</span>
+                          <span>{user ? "Browse & Enroll" : (t("courses.enroll") || "Enroll Now")}</span>
                         </Button>
                       </Link>
                     </div>

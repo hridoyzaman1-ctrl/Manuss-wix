@@ -40,6 +40,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import NotificationCenter from "./NotificationCenter";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
@@ -253,6 +254,8 @@ export default function AdminDashboardLayout({
             </span>
           </div>
           <div className="flex items-center gap-2">
+            {/* Notifications */}
+            <NotificationCenter />
             {/* Home Button */}
             <Button
               variant="ghost"
@@ -346,7 +349,7 @@ export default function AdminDashboardLayout({
         </div>
 
         {/* Back to Home Button */}
-        <div className="px-2 pt-2">
+        <div className="px-2 pt-2 space-y-2">
           <Button
             variant="outline"
             size="sm"
@@ -356,6 +359,11 @@ export default function AdminDashboardLayout({
             <Home className="h-4 w-4" />
             {!sidebarCollapsed && <span>Back to Home</span>}
           </Button>
+          {!sidebarCollapsed && (
+            <div className="flex justify-center">
+              <NotificationCenter />
+            </div>
+          )}
         </div>
 
         {/* Navigation */}
