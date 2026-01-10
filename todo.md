@@ -259,3 +259,7 @@
 ## Bug Fixes - My Courses Page
 - [x] Fix course cards to be clickable and navigate to respective course lessons
 - [x] Fix progress calculation to update after marking lessons as complete
+
+## Homepage Course Carousel
+- [x] Restore fake sample courses on homepage course carousel (12 sample courses)
+- [x] Restore auto-scroll functionality for course carousel (4 second interval)

@@ -9,7 +9,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 
-// Fallback sample courses for when no courses exist in database
+// Sample courses to always display alongside database courses
 const sampleCourses = [
   {
     id: -1,
@@ -58,6 +58,54 @@ const sampleCourses = [
     thumbnail: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=2073&auto=format&fit=crop",
     price: "2800",
     description: "In-depth academic support for Class 8 Bangla Medium students across all subjects."
+  },
+  {
+    id: -7,
+    title: "Kindergarten Fun Learning",
+    category: "Tiny Explorers",
+    thumbnail: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?q=80&w=2070&auto=format&fit=crop",
+    price: "2000",
+    description: "Engaging activities and games to make learning fun for kindergartners."
+  },
+  {
+    id: -8,
+    title: "English Version - Class 10",
+    category: "Academic",
+    thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=2073&auto=format&fit=crop",
+    price: "3500",
+    description: "Complete SSC preparation for English Version students with expert guidance."
+  },
+  {
+    id: -9,
+    title: "Art & Craft for Kids",
+    category: "Skills and Creativities",
+    thumbnail: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=2071&auto=format&fit=crop",
+    price: "1200",
+    description: "Creative art and craft sessions to develop fine motor skills and imagination."
+  },
+  {
+    id: -10,
+    title: "Autism Support - Level 2",
+    category: "Special Needs",
+    thumbnail: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2032&auto=format&fit=crop",
+    price: "3500",
+    description: "Specialized support program for children with Level 2 Autism spectrum."
+  },
+  {
+    id: -11,
+    title: "Basic English Grammar",
+    category: "Spoken English & Grammar",
+    thumbnail: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=2070&auto=format&fit=crop",
+    price: "1500",
+    description: "Build a strong foundation in English grammar from basics to intermediate."
+  },
+  {
+    id: -12,
+    title: "Music & Dance for Youth",
+    category: "Skills and Creativities",
+    thumbnail: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=2070&auto=format&fit=crop",
+    price: "2000",
+    description: "Express yourself through music and dance with our youth program."
   }
 ];
 
@@ -76,17 +124,21 @@ export default function Courses() {
   // Build category list from database
   const categories = ["All", ...(categoryHierarchy?.map(c => c.name) || [])];
   
-  // Use published courses or fallback to sample courses
-  const coursesToShow = publishedCourses && publishedCourses.length > 0 
-    ? publishedCourses.map(course => {
-        // Find category name for the course
-        const category = categoryHierarchy?.find(c => c.id === course.categoryId);
-        return {
-          ...course,
-          categoryName: category?.name || course.category || 'Uncategorized'
-        };
-      })
-    : sampleCourses.map(c => ({ ...c, categoryName: c.category }));
+  // Combine sample courses with published courses from database
+  const dbCourses = publishedCourses?.map(course => {
+    // Find category name for the course
+    const category = categoryHierarchy?.find(c => c.id === course.categoryId);
+    return {
+      ...course,
+      categoryName: category?.name || course.category || 'Uncategorized'
+    };
+  }) || [];
+  
+  // Always show sample courses + any real courses from database
+  const coursesToShow = [
+    ...sampleCourses.map(c => ({ ...c, categoryName: c.category })),
+    ...dbCourses
+  ];
 
   const filteredCourses = coursesToShow.filter(course => {
     const matchesCategory = activeCategory === "All" || course.categoryName === activeCategory;
@@ -94,13 +146,14 @@ export default function Courses() {
     return matchesCategory && matchesSearch;
   });
 
-  // Auto-swipe functionality
+  // Auto-swipe functionality for carousel
   useEffect(() => {
+    const maxIndex = Math.max(0, filteredCourses.length - 3);
     const interval = setInterval(() => {
       if (filteredCourses.length > 3) {
-        setCarouselIndex((prev) => (prev + 1) % (filteredCourses.length - 2));
+        setCarouselIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
       }
-    }, 5000);
+    }, 4000); // Auto-scroll every 4 seconds
     return () => clearInterval(interval);
   }, [filteredCourses.length]);
 
