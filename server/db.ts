@@ -345,7 +345,30 @@ export async function enrollStudent(userId: number, courseId: number, durationMo
 export async function getEnrollmentsByUser(userId: number) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(enrollments).where(eq(enrollments.userId, userId)).orderBy(desc(enrollments.enrolledAt));
+  const result = await db.select({
+    id: enrollments.id,
+    userId: enrollments.userId,
+    courseId: enrollments.courseId,
+    enrolledAt: enrollments.enrolledAt,
+    expiresAt: enrollments.expiresAt,
+    status: enrollments.status,
+    paymentId: enrollments.paymentId,
+    paymentAmount: enrollments.paymentAmount,
+    progressPercent: enrollments.progressPercent,
+    lastAccessedAt: enrollments.lastAccessedAt,
+    completedAt: enrollments.completedAt,
+
+    createdAt: enrollments.createdAt,
+    updatedAt: enrollments.updatedAt,
+    courseTitle: courses.title,
+    courseDescription: courses.description,
+    courseThumbnail: courses.thumbnail,
+  })
+  .from(enrollments)
+  .leftJoin(courses, eq(enrollments.courseId, courses.id))
+  .where(eq(enrollments.userId, userId))
+  .orderBy(desc(enrollments.enrolledAt));
+  return result;
 }
 
 export async function getEnrollmentsByCourse(courseId: number) {
@@ -432,7 +455,45 @@ export async function getLessonProgressByEnrollment(enrollmentId: number) {
 }
 
 export async function markLessonComplete(enrollmentId: number, lessonId: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Mark the lesson as complete
   await updateLessonProgress(enrollmentId, lessonId, { completed: true, progressPercent: 100, completedAt: new Date() });
+  
+  // Get the enrollment to find the courseId
+  const enrollment = await db.select().from(enrollments).where(eq(enrollments.id, enrollmentId)).limit(1);
+  if (!enrollment.length) return;
+  
+  const courseId = enrollment[0].courseId;
+  
+  // Get total lessons for this course
+  const totalLessons = await db.select({ count: sql<number>`count(*)` })
+    .from(lessons)
+    .where(eq(lessons.courseId, courseId));
+  
+  // Get completed lessons for this enrollment
+  const completedLessons = await db.select({ count: sql<number>`count(*)` })
+    .from(lessonProgress)
+    .where(and(
+      eq(lessonProgress.enrollmentId, enrollmentId),
+      eq(lessonProgress.completed, true)
+    ));
+  
+  const total = Number(totalLessons[0]?.count) || 0;
+  const completed = Number(completedLessons[0]?.count) || 0;
+  
+  // Calculate progress percentage
+  const progressPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+  
+  // Update enrollment progress
+  await db.update(enrollments)
+    .set({ 
+      progressPercent,
+      lastAccessedAt: new Date(),
+      ...(progressPercent === 100 ? { completedAt: new Date(), status: 'completed' as const } : {})
+    })
+    .where(eq(enrollments.id, enrollmentId));
 }
 
 // ============ STUDENT NOTES HELPERS ============

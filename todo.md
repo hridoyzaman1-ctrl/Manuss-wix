@@ -255,3 +255,7 @@
 - [x] Create UI for managing lesson materials (add, remove, view, delete)
 - [x] Update API to handle multiple materials per lesson (added pptx type)
 - [ ] Display all materials in course player
+
+## Bug Fixes - My Courses Page
+- [x] Fix course cards to be clickable and navigate to respective course lessons
+- [x] Fix progress calculation to update after marking lessons as complete
