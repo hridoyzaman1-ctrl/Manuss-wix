@@ -225,3 +225,8 @@
 - [x] Section-based group chat
 - [x] Class-based group chat
 - [x] Admin/teacher group management (add/remove members)
+
+
+## Bug Fixes - Lesson Management
+- [x] Fix admin lesson management mobile layout overlap (responsive layout with dropdown menu on mobile)
+- [x] Remove 4 lesson limit - confirmed no limit exists, the 4 lessons were just demo data

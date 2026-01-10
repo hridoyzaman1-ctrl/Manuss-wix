@@ -368,33 +368,74 @@ export default function AdminLessons() {
                     {filteredLessons.map((lesson: Lesson, index: number) => (
                       <div
                         key={lesson.id}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                        className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                       >
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <GripVertical className="h-5 w-5 cursor-grab" />
-                          <span className="font-mono text-sm w-6">{lesson.orderIndex || index + 1}</span>
+                        {/* Lesson number and title row */}
+                        <div className="flex items-center gap-3 w-full md:w-auto">
+                          <div className="flex items-center gap-2 text-slate-400 shrink-0">
+                            <GripVertical className="h-5 w-5 cursor-grab hidden md:block" />
+                            <span className="font-mono text-sm w-6">{lesson.orderIndex || index + 1}</span>
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {getContentTypeIcon(lesson.contentType || 'mixed')}
+                              <h3 className="font-medium text-slate-900 dark:text-white truncate">
+                                {lesson.title}
+                              </h3>
+                              {lesson.isPreview && (
+                                <Badge variant="secondary" className="text-xs">Preview</Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 md:gap-4 mt-1 text-sm text-slate-500 flex-wrap">
+                              {lesson.titleBn && <span className="truncate">{lesson.titleBn}</span>}
+                              <span>{formatDuration(lesson.duration)}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {lesson.contentType}
+                              </Badge>
+                            </div>
+                          </div>
+                          
+                          {/* Mobile: Dropdown menu on the right */}
+                          <div className="md:hidden">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem 
+                                  onClick={() => {
+                                    setSelectedLessonForMaterial(lesson.id);
+                                    setMaterialDialogOpen(true);
+                                  }}
+                                >
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  Add Material
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setEditingLesson(lesson)}>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  className="text-red-600"
+                                  onClick={() => {
+                                    if (confirm('Are you sure you want to delete this lesson?')) {
+                                      deleteMutation.mutate({ id: lesson.id });
+                                    }
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
                         
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            {getContentTypeIcon(lesson.contentType || 'mixed')}
-                            <h3 className="font-medium text-slate-900 dark:text-white truncate">
-                              {lesson.title}
-                            </h3>
-                            {lesson.isPreview && (
-                              <Badge variant="secondary" className="text-xs">Preview</Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-4 mt-1 text-sm text-slate-500">
-                            {lesson.titleBn && <span>{lesson.titleBn}</span>}
-                            <span>{formatDuration(lesson.duration)}</span>
-                            <Badge variant="outline" className="text-xs">
-                              {lesson.contentType}
-                            </Badge>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
+                        {/* Desktop: Action buttons */}
+                        <div className="hidden md:flex items-center gap-2 shrink-0">
                           <Button
                             variant="outline"
                             size="sm"
