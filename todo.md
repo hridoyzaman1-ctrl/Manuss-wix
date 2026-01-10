@@ -172,3 +172,4 @@
 ## Bug Fixes (Ongoing)
 - [x] Fix admin signup JSON error - unexpected end of JSON input
 - [x] Fix dashboard auth to recognize email/password login
+- [x] Fix signup redirect - admin should go to /admin not /student

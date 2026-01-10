@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function Login() {
@@ -17,17 +18,21 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  const { refresh } = useAuth();
+  
   const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.success) {
-        // Redirect based on role
+        // Refresh auth state to pick up the new cookie
+        await refresh();
+        // Redirect based on role with full page reload
         const role = data.user?.role;
         if (role === "admin") {
-          setLocation("/admin");
+          window.location.href = "/admin";
         } else if (role === "parent") {
-          setLocation("/parent");
+          window.location.href = "/parent";
         } else {
-          setLocation("/student");
+          window.location.href = "/student";
         }
       } else {
         setError(data.error || "Login failed");

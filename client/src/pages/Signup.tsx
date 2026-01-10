@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function Signup() {
@@ -20,14 +21,18 @@ export default function Signup() {
   const [showAdminCode, setShowAdminCode] = useState(false);
   const [error, setError] = useState("");
 
+  const { refresh } = useAuth();
+  
   const signupMutation = trpc.auth.signup.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.success) {
+        // Refresh auth state to pick up the new cookie
+        await refresh();
         // Redirect based on role
         if (data.user?.role === "admin") {
-          setLocation("/admin");
+          window.location.href = "/admin";
         } else {
-          setLocation("/student");
+          window.location.href = "/student";
         }
       } else {
         setError(data.error || "Signup failed");
