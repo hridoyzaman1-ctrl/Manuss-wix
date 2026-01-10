@@ -149,3 +149,7 @@
 - [x] Create signup page
 - [x] Create login page
 - [x] Update session management with JWT
+
+## Chatbot Draggable Feature
+- [x] Make chatbot draggable with mouse (desktop)
+- [x] Make chatbot draggable with touch (mobile)

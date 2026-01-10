@@ -47,6 +47,12 @@ export default function Chatbot() {
     const [isThinking, setIsThinking] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    
+    // Draggable state
+    const [position, setPosition] = useState({ x: 24, y: 24 }); // bottom-left default
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartRef = useRef({ x: 0, y: 0, posX: 0, posY: 0 });
+    const hasDraggedRef = useRef(false);
 
     // Monitor scroll for visibility
     useEffect(() => {
@@ -63,6 +69,84 @@ export default function Chatbot() {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    // --- Drag Handlers ---
+    const handleDragStart = (clientX: number, clientY: number) => {
+        setIsDragging(true);
+        hasDraggedRef.current = false;
+        dragStartRef.current = {
+            x: clientX,
+            y: clientY,
+            posX: position.x,
+            posY: position.y
+        };
+    };
+
+    const handleDragMove = (clientX: number, clientY: number) => {
+        if (!isDragging) return;
+        
+        const deltaX = dragStartRef.current.x - clientX;
+        const deltaY = dragStartRef.current.y - clientY;
+        
+        // Check if actually dragged (more than 5px)
+        if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+            hasDraggedRef.current = true;
+        }
+        
+        const newX = Math.max(10, Math.min(window.innerWidth - 80, dragStartRef.current.posX + deltaX));
+        const newY = Math.max(10, Math.min(window.innerHeight - 80, dragStartRef.current.posY + deltaY));
+        
+        setPosition({ x: newX, y: newY });
+    };
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+    };
+
+    // Mouse events
+    const handleMouseDown = (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleDragStart(e.clientX, e.clientY);
+    };
+
+    // Touch events
+    const handleTouchStart = (e: React.TouchEvent) => {
+        const touch = e.touches[0];
+        handleDragStart(touch.clientX, touch.clientY);
+    };
+
+    // Global mouse/touch move and end
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => handleDragMove(e.clientX, e.clientY);
+        const handleMouseUp = () => handleDragEnd();
+        const handleTouchMove = (e: TouchEvent) => {
+            const touch = e.touches[0];
+            handleDragMove(touch.clientX, touch.clientY);
+        };
+        const handleTouchEnd = () => handleDragEnd();
+
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+            window.addEventListener('touchmove', handleTouchMove, { passive: false });
+            window.addEventListener('touchend', handleTouchEnd);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [isDragging, position]);
+
+    // Handle button click - only toggle if not dragged
+    const handleButtonClick = () => {
+        if (!hasDraggedRef.current) {
+            setIsOpen(!isOpen);
+        }
+        hasDraggedRef.current = false;
+    };
 
     // --- STT Logic ---
     useEffect(() => {
@@ -338,10 +422,18 @@ export default function Chatbot() {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                    className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-4"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    style={{
+                        position: 'fixed',
+                        left: position.x,
+                        bottom: position.y,
+                        zIndex: 50,
+                        cursor: isDragging ? 'grabbing' : 'grab',
+                        touchAction: 'none',
+                    }}
+                    className="flex flex-col items-start gap-4"
                 >
                     {/* Chat Window */}
                     <AnimatePresence>
@@ -531,7 +623,7 @@ export default function Chatbot() {
                             )}
                         </AnimatePresence>
 
-                        {/* Main Button */}
+                        {/* Main Button - Draggable */}
                         <motion.button
                             animate={isOpen ? {} : {
                                 scale: [1, 1.05, 1],
@@ -543,13 +635,15 @@ export default function Chatbot() {
                                 repeatType: "loop",
                                 ease: "easeInOut"
                             }}
-                            whileHover={{ scale: 1.1, rotate: 0 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => setIsOpen(!isOpen)}
-                            className={`relative w-16 h-16 rounded-full shadow-[0_10px_30_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-300 border-[3px] border-white/20 backdrop-blur-sm ${isOpen
+                            whileHover={isDragging ? {} : { scale: 1.1, rotate: 0 }}
+                            whileTap={isDragging ? {} : { scale: 0.9 }}
+                            onMouseDown={handleMouseDown}
+                            onTouchStart={handleTouchStart}
+                            onClick={handleButtonClick}
+                            className={`relative w-16 h-16 rounded-full shadow-[0_10px_30_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-300 border-[3px] border-white/20 backdrop-blur-sm select-none ${isOpen
                                 ? "bg-slate-800 rotate-90"
                                 : "bg-gradient-to-br from-primary to-primary/80 hover:brightness-110"
-                                }`}
+                                } ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
                         >
                             {isOpen ? <X className="h-7 w-7 text-white" /> : <MessageCircle className="h-8 w-8 text-white fill-white/20" />}
                         </motion.button>
