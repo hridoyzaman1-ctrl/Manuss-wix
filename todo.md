@@ -147,3 +147,9 @@
 - [x] Implement advanced preloading for hero assets (index.html + main.tsx)
 - [x] Add blur placeholder for lazy-loaded images
 - [x] Optimize video loading strategy
+
+## Chathead & Mobile Optimization
+- [x] Make chathead draggable with mouse
+- [x] Make chathead draggable with touch
+- [x] Optimize mobile loading speed
+- [x] Preserve desktop view exactly

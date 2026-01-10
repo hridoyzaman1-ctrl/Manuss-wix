@@ -1,6 +1,6 @@
 import { motion, useTransform, useMotionValue } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
@@ -21,6 +21,12 @@ export default function Hero() {
   const [imagesLoaded, setImagesLoaded] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   
+  // Detect mobile for conditional rendering
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }, []);
+  
   // Mouse parallax state
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -36,8 +42,14 @@ export default function Hero() {
     });
   }, []);
 
-  // Handle video load
+  // Handle video load - only on desktop
   useEffect(() => {
+    if (isMobile) {
+      // On mobile, skip video loading entirely for faster page load
+      setVideoLoaded(true);
+      return;
+    }
+    
     const video = videoRef.current;
     if (video) {
       // Try to preload video
@@ -53,7 +65,7 @@ export default function Hero() {
       
       return () => video.removeEventListener('canplaythrough', handleCanPlay);
     }
-  }, []);
+  }, [isMobile]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     // Only apply parallax on desktop
@@ -140,25 +152,36 @@ export default function Hero() {
 
         {/* Panel 2: Video Background - Mouse Parallax Only on Desktop */}
         <motion.div
-          style={{ x: typeof window !== 'undefined' && window.innerWidth >= 768 ? xMoveReverse : 0 }}
+          style={{ x: !isMobile ? xMoveReverse : 0 }}
           className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden order-3 md:order-none"
         >
           {/* Video placeholder while loading */}
           {!videoLoaded && (
             <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 animate-pulse" />
           )}
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className={`h-full w-full object-cover transition-opacity duration-500 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
-            poster="/images/hero/panel-1-texture.webp"
-          >
-            <source src="/images/hero/hero-video.mp4" type="video/mp4" />
-          </video>
+          {/* On mobile, show static image instead of video for faster loading */}
+          {isMobile ? (
+            <img
+              src="/images/hero/book-pages-hands.webp"
+              alt="Reading"
+              className="h-full w-full object-cover"
+              loading="eager"
+              decoding="async"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className={`h-full w-full object-cover transition-opacity duration-500 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+              poster="/images/hero/book-pages-hands.webp"
+            >
+              <source src="/images/hero/hero-video.mp4" type="video/mp4" />
+            </video>
+          )}
         </motion.div>
 
         {/* Panel 3: White Background + Title + CTA - STATIC */}
@@ -222,7 +245,7 @@ export default function Hero() {
 
         {/* Panel 4: Books Image */}
         <motion.div
-          style={{ x: typeof window !== 'undefined' && window.innerWidth >= 768 ? xMoveReverse : 0 }}
+          style={{ x: !isMobile ? xMoveReverse : 0 }}
           className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden border border-border/10 shadow-sm order-4 md:order-none"
         >
           <img
