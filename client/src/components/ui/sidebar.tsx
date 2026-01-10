@@ -130,6 +130,7 @@ function SidebarProvider({
       <TooltipProvider delayDuration={0}>
         <div
           data-slot="sidebar-wrapper"
+          data-mobile={isMobile ? "true" : "false"}
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH,
@@ -181,6 +182,7 @@ function Sidebar({
     );
   }
 
+  // MOBILE: Always use Sheet for mobile
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
@@ -206,6 +208,7 @@ function Sidebar({
     );
   }
 
+  // DESKTOP: Regular sidebar
   return (
     <div
       className="group peer text-sidebar-foreground hidden md:block"
@@ -312,6 +315,22 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 }
 
 function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
+  const { isMobile } = useSidebar();
+  
+  // On mobile, don't add any margin/padding that assumes sidebar exists
+  if (isMobile) {
+    return (
+      <main
+        data-slot="sidebar-inset"
+        className={cn(
+          "bg-background relative flex w-full flex-1 flex-col",
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+  
   return (
     <main
       data-slot="sidebar-inset"
@@ -412,7 +431,7 @@ function SidebarGroupLabel({
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
-        "text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         className
       )}
@@ -729,6 +748,5 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar
+  useSidebar,
 };
-

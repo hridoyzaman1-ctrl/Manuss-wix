@@ -175,3 +175,4 @@
 - [x] Fix signup redirect - admin should go to /admin not /student
 - [x] Fix auth cookie not recognized - infinite login loop
 - [x] Fix auth cookie still not recognized after login (added cookie-parser middleware)
+- [x] Fix Admin Dashboard mobile layout - sidebar overlapping with main content

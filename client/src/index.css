@@ -255,3 +255,41 @@
 .font-cormorant {
   font-family: 'Cormorant Garamond', serif !important;
 }
+
+/* Mobile sidebar fix - force hide desktop sidebar on mobile */
+@media (max-width: 767px) {
+  /* Hide the desktop sidebar completely on mobile */
+  [data-slot="sidebar"]:not([data-mobile="true"]) {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+  }
+  
+  /* Hide sidebar gap/spacer on mobile */
+  [data-slot="sidebar-gap"] {
+    display: none !important;
+    width: 0 !important;
+  }
+  
+  /* Hide sidebar container on mobile */
+  [data-slot="sidebar-container"] {
+    display: none !important;
+    width: 0 !important;
+  }
+  
+  /* Ensure main content takes full width on mobile */
+  [data-slot="sidebar-inset"] {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Hide the sidebar wrapper's peer element effects on mobile */
+  .peer[data-slot="sidebar"] {
+    display: none !important;
+  }
+}
