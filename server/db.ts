@@ -32,6 +32,9 @@ import {
   chatGroupMembers, InsertChatGroupMember,
   groupMessages, InsertGroupMessage,
   groupMessageReads,
+  courseCategories, InsertCourseCategory, CourseCategory,
+  courseSubcategories, InsertCourseSubcategory, CourseSubcategory,
+  courseSections, InsertCourseSection, CourseSection,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 import { nanoid } from 'nanoid';
@@ -1261,3 +1264,170 @@ export async function markMessagesAsRead(messageIds: number[], userId: number) {
     ));
 }
 
+
+// ============ CATEGORY HELPERS ============
+
+// Course Categories
+export async function getAllCategories() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(courseCategories).where(eq(courseCategories.isActive, true)).orderBy(asc(courseCategories.orderIndex));
+}
+
+export async function getCategoryById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(courseCategories).where(eq(courseCategories.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getCategoryBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(courseCategories).where(eq(courseCategories.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createCategory(data: InsertCourseCategory) {
+  const db = await getDb();
+  if (!db) return;
+  const result = await db.insert(courseCategories).values(data);
+  return result[0].insertId;
+}
+
+export async function updateCategory(id: number, data: Partial<InsertCourseCategory>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(courseCategories).set(data).where(eq(courseCategories.id, id));
+}
+
+export async function deleteCategory(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  // Soft delete by setting isActive to false
+  await db.update(courseCategories).set({ isActive: false }).where(eq(courseCategories.id, id));
+}
+
+// Course Subcategories
+export async function getSubcategoriesByCategory(categoryId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(courseSubcategories)
+    .where(and(eq(courseSubcategories.categoryId, categoryId), eq(courseSubcategories.isActive, true)))
+    .orderBy(asc(courseSubcategories.orderIndex));
+}
+
+export async function getSubcategoryById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(courseSubcategories).where(eq(courseSubcategories.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createSubcategory(data: InsertCourseSubcategory) {
+  const db = await getDb();
+  if (!db) return;
+  const result = await db.insert(courseSubcategories).values(data);
+  return result[0].insertId;
+}
+
+export async function updateSubcategory(id: number, data: Partial<InsertCourseSubcategory>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(courseSubcategories).set(data).where(eq(courseSubcategories.id, id));
+}
+
+export async function deleteSubcategory(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(courseSubcategories).set({ isActive: false }).where(eq(courseSubcategories.id, id));
+}
+
+// Course Sections
+export async function getSectionsBySubcategory(subcategoryId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(courseSections)
+    .where(and(eq(courseSections.subcategoryId, subcategoryId), eq(courseSections.isActive, true)))
+    .orderBy(asc(courseSections.orderIndex));
+}
+
+export async function getSectionById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(courseSections).where(eq(courseSections.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createSection(data: InsertCourseSection) {
+  const db = await getDb();
+  if (!db) return;
+  const result = await db.insert(courseSections).values(data);
+  return result[0].insertId;
+}
+
+export async function updateSection(id: number, data: Partial<InsertCourseSection>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(courseSections).set(data).where(eq(courseSections.id, id));
+}
+
+export async function deleteSection(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(courseSections).set({ isActive: false }).where(eq(courseSections.id, id));
+}
+
+// Get full category hierarchy
+export async function getCategoryHierarchy() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const categories = await getAllCategories();
+  const result = [];
+  
+  for (const category of categories) {
+    const subcategories = await getSubcategoriesByCategory(category.id);
+    const subcatsWithSections = [];
+    
+    for (const subcat of subcategories) {
+      const sections = await getSectionsBySubcategory(subcat.id);
+      subcatsWithSections.push({
+        ...subcat,
+        sections
+      });
+    }
+    
+    result.push({
+      ...category,
+      subcategories: subcatsWithSections
+    });
+  }
+  
+  return result;
+}
+
+// Get courses by category
+export async function getCoursesByCategory(categoryId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(courses)
+    .where(and(eq(courses.categoryId, categoryId), eq(courses.status, 'published')))
+    .orderBy(desc(courses.createdAt));
+}
+
+export async function getCoursesBySubcategory(subcategoryId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(courses)
+    .where(and(eq(courses.subcategoryId, subcategoryId), eq(courses.status, 'published')))
+    .orderBy(desc(courses.createdAt));
+}
+
+export async function getCoursesBySection(sectionId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(courses)
+    .where(and(eq(courses.sectionId, sectionId), eq(courses.status, 'published')))
+    .orderBy(desc(courses.createdAt));
+}

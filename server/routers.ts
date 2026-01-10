@@ -127,6 +127,9 @@ export const appRouter = router({
       price: z.string().optional(),
       durationMonths: z.number().default(3),
       category: z.string().optional(),
+      categoryId: z.number().optional(),
+      subcategoryId: z.number().optional(),
+      sectionId: z.number().optional(),
       level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
       status: z.enum(['draft', 'published', 'archived']).optional(),
     })).mutation(async ({ input }) => {
@@ -144,12 +147,30 @@ export const appRouter = router({
       price: z.string().optional(),
       durationMonths: z.number().optional(),
       category: z.string().optional(),
+      categoryId: z.number().optional(),
+      subcategoryId: z.number().optional(),
+      sectionId: z.number().optional(),
       level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
       status: z.enum(['draft', 'published', 'archived']).optional(),
     })).mutation(async ({ input }) => {
       const { id, ...data } = input;
       await db.updateCourse(id, data);
       return { success: true };
+    }),
+    
+    // Get courses by category
+    getByCategory: publicProcedure.input(z.object({ categoryId: z.number() })).query(async ({ input }) => {
+      return db.getCoursesByCategory(input.categoryId);
+    }),
+    
+    // Get courses by subcategory
+    getBySubcategory: publicProcedure.input(z.object({ subcategoryId: z.number() })).query(async ({ input }) => {
+      return db.getCoursesBySubcategory(input.subcategoryId);
+    }),
+    
+    // Get courses by section
+    getBySection: publicProcedure.input(z.object({ sectionId: z.number() })).query(async ({ input }) => {
+      return db.getCoursesBySection(input.sectionId);
     }),
     
     delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
@@ -914,6 +935,168 @@ export const appRouter = router({
     
     studentStats: studentProcedure.query(async ({ ctx }) => {
       return db.getStudentDashboardStats(ctx.user.id);
+    }),
+  }),
+
+  // ============ CATEGORY ROUTER ============
+  category: router({
+    // Get all categories
+    getAll: publicProcedure.query(async () => {
+      return db.getAllCategories();
+    }),
+    
+    // Get category by ID
+    getById: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      return db.getCategoryById(input.id);
+    }),
+    
+    // Get category by slug
+    getBySlug: publicProcedure.input(z.object({ slug: z.string() })).query(async ({ input }) => {
+      return db.getCategoryBySlug(input.slug);
+    }),
+    
+    // Get full category hierarchy (categories -> subcategories -> sections)
+    getHierarchy: publicProcedure.query(async () => {
+      return db.getCategoryHierarchy();
+    }),
+    
+    // Create category (admin only)
+    create: adminProcedure.input(z.object({
+      name: z.string(),
+      nameBn: z.string().optional(),
+      slug: z.string(),
+      description: z.string().optional(),
+      descriptionBn: z.string().optional(),
+      icon: z.string().optional(),
+      color: z.string().optional(),
+      orderIndex: z.number().optional(),
+    })).mutation(async ({ input }) => {
+      const id = await db.createCategory(input);
+      return { success: true, id };
+    }),
+    
+    // Update category (admin only)
+    update: adminProcedure.input(z.object({
+      id: z.number(),
+      name: z.string().optional(),
+      nameBn: z.string().optional(),
+      slug: z.string().optional(),
+      description: z.string().optional(),
+      descriptionBn: z.string().optional(),
+      icon: z.string().optional(),
+      color: z.string().optional(),
+      orderIndex: z.number().optional(),
+      isActive: z.boolean().optional(),
+    })).mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      await db.updateCategory(id, data);
+      return { success: true };
+    }),
+    
+    // Delete category (admin only)
+    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      await db.deleteCategory(input.id);
+      return { success: true };
+    }),
+  }),
+
+  // ============ SUBCATEGORY ROUTER ============
+  subcategory: router({
+    // Get subcategories by category
+    getByCategory: publicProcedure.input(z.object({ categoryId: z.number() })).query(async ({ input }) => {
+      return db.getSubcategoriesByCategory(input.categoryId);
+    }),
+    
+    // Get subcategory by ID
+    getById: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      return db.getSubcategoryById(input.id);
+    }),
+    
+    // Create subcategory (admin only)
+    create: adminProcedure.input(z.object({
+      categoryId: z.number(),
+      name: z.string(),
+      nameBn: z.string().optional(),
+      slug: z.string(),
+      description: z.string().optional(),
+      descriptionBn: z.string().optional(),
+      orderIndex: z.number().optional(),
+    })).mutation(async ({ input }) => {
+      const id = await db.createSubcategory(input);
+      return { success: true, id };
+    }),
+    
+    // Update subcategory (admin only)
+    update: adminProcedure.input(z.object({
+      id: z.number(),
+      name: z.string().optional(),
+      nameBn: z.string().optional(),
+      slug: z.string().optional(),
+      description: z.string().optional(),
+      descriptionBn: z.string().optional(),
+      orderIndex: z.number().optional(),
+      isActive: z.boolean().optional(),
+    })).mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      await db.updateSubcategory(id, data);
+      return { success: true };
+    }),
+    
+    // Delete subcategory (admin only)
+    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      await db.deleteSubcategory(input.id);
+      return { success: true };
+    }),
+  }),
+
+  // ============ SECTION ROUTER ============
+  section: router({
+    // Get sections by subcategory
+    getBySubcategory: publicProcedure.input(z.object({ subcategoryId: z.number() })).query(async ({ input }) => {
+      return db.getSectionsBySubcategory(input.subcategoryId);
+    }),
+    
+    // Get section by ID
+    getById: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      return db.getSectionById(input.id);
+    }),
+    
+    // Create section (admin only)
+    create: adminProcedure.input(z.object({
+      subcategoryId: z.number(),
+      name: z.string(),
+      nameBn: z.string().optional(),
+      slug: z.string(),
+      description: z.string().optional(),
+      classLevel: z.string().optional(),
+      sectionName: z.string().optional(),
+      orderIndex: z.number().optional(),
+    })).mutation(async ({ input }) => {
+      const id = await db.createSection(input);
+      return { success: true, id };
+    }),
+    
+    // Update section (admin only)
+    update: adminProcedure.input(z.object({
+      id: z.number(),
+      name: z.string().optional(),
+      nameBn: z.string().optional(),
+      slug: z.string().optional(),
+      description: z.string().optional(),
+      classLevel: z.string().optional(),
+      sectionName: z.string().optional(),
+      orderIndex: z.number().optional(),
+      isActive: z.boolean().optional(),
+    })).mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      await db.updateSection(id, data);
+      return { success: true };
+    }),
+    
+    // Delete section (admin only)
+    delete: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      await db.deleteSection(input.id);
+      return { success: true };
     }),
   }),
 });

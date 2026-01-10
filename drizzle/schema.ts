@@ -57,7 +57,12 @@ export const courses = mysqlTable("courses", {
   price: decimal("price", { precision: 10, scale: 2 }).default("0.00").notNull(),
   currency: varchar("currency", { length: 10 }).default("BDT").notNull(),
   durationMonths: int("durationMonths").default(3).notNull(), // Course tenure
+  // Legacy category field (kept for backward compatibility)
   category: varchar("category", { length: 100 }),
+  // New category hierarchy references
+  categoryId: int("categoryId"), // Reference to course_categories
+  subcategoryId: int("subcategoryId"), // Reference to course_subcategories
+  sectionId: int("sectionId"), // Reference to course_sections (optional)
   level: mysqlEnum("level", ["beginner", "intermediate", "advanced"]).default("beginner"),
   status: mysqlEnum("status", ["draft", "published", "archived"]).default("draft").notNull(),
   totalLessons: int("totalLessons").default(0),
@@ -617,3 +622,78 @@ export const groupMessageReads = mysqlTable("group_message_reads", {
 
 export type GroupMessageRead = typeof groupMessageReads.$inferSelect;
 export type InsertGroupMessageRead = typeof groupMessageReads.$inferInsert;
+
+
+/**
+ * Course Categories - Main categories for organizing courses
+ * Examples: Academic, Tiny Explorers, Special Needs, Skills and Creativities, Spoken English & Grammar
+ */
+export const courseCategories = mysqlTable("course_categories", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameBn: varchar("nameBn", { length: 255 }), // Bengali name
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  descriptionBn: text("descriptionBn"),
+  icon: varchar("icon", { length: 100 }), // Icon name or URL
+  color: varchar("color", { length: 20 }), // Theme color for the category
+  orderIndex: int("orderIndex").default(0),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CourseCategory = typeof courseCategories.$inferSelect;
+export type InsertCourseCategory = typeof courseCategories.$inferInsert;
+
+/**
+ * Course Subcategories - Subcategories within main categories
+ * Examples: 
+ * - Academic: English Medium, Bangla Medium, English Version
+ * - Tiny Explorers: Preschoolers, Kindergartners
+ * - Special Needs: Autism Level 1, Autism Level 2, Autism Level 3, Undefined
+ * - Skills and Creativities: Kids, Young adults, Youths, Adults, Everyone
+ * - Spoken English & Grammar: Kids, Beginners, Intermediate, Advanced, General
+ */
+export const courseSubcategories = mysqlTable("course_subcategories", {
+  id: int("id").autoincrement().primaryKey(),
+  categoryId: int("categoryId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameBn: varchar("nameBn", { length: 255 }),
+  slug: varchar("slug", { length: 255 }).notNull(),
+  description: text("description"),
+  descriptionBn: text("descriptionBn"),
+  orderIndex: int("orderIndex").default(0),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CourseSubcategory = typeof courseSubcategories.$inferSelect;
+export type InsertCourseSubcategory = typeof courseSubcategories.$inferInsert;
+
+/**
+ * Course Sections - Optional sections within subcategories
+ * Examples:
+ * - Academic > English Medium > Class 1-10
+ * - Academic > English Medium > Class 5 > Section A, Section B
+ */
+export const courseSections = mysqlTable("course_sections", {
+  id: int("id").autoincrement().primaryKey(),
+  subcategoryId: int("subcategoryId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameBn: varchar("nameBn", { length: 255 }),
+  slug: varchar("slug", { length: 255 }).notNull(),
+  description: text("description"),
+  // For Academic category - class selection
+  classLevel: varchar("classLevel", { length: 20 }), // e.g., "1", "2", ... "10"
+  // For sections within a class
+  sectionName: varchar("sectionName", { length: 50 }), // e.g., "A", "B", "C"
+  orderIndex: int("orderIndex").default(0),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CourseSection = typeof courseSections.$inferSelect;
+export type InsertCourseSection = typeof courseSections.$inferInsert;

@@ -1,7 +1,7 @@
 import AdminDashboardLayout from "@/components/AdminDashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { BookOpen, Plus, Search, MoreVertical, Edit, Trash2, Eye, Users, Upload, Image, X, Loader2 } from "lucide-react";
+import { BookOpen, Plus, Search, MoreVertical, Edit, Trash2, Eye, Users, Upload, Image, X, Loader2, FolderTree, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
 export default function AdminCourses() {
@@ -43,13 +43,63 @@ export default function AdminCourses() {
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const editThumbnailInputRef = useRef<HTMLInputElement>(null);
   
+  // Category selection state for create form
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<number | null>(null);
+  const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
+  
+  // Category selection state for edit form
+  const [editCategoryId, setEditCategoryId] = useState<number | null>(null);
+  const [editSubcategoryId, setEditSubcategoryId] = useState<number | null>(null);
+  const [editSectionId, setEditSectionId] = useState<number | null>(null);
+  
   const { data: courses, isLoading, refetch } = trpc.course.getAll.useQuery();
+  const { data: categoryHierarchy } = trpc.category.getHierarchy.useQuery();
+  
+  // Get subcategories for selected category
+  const selectedCategory = categoryHierarchy?.find(c => c.id === selectedCategoryId);
+  const editCategory = categoryHierarchy?.find(c => c.id === editCategoryId);
+  
+  // Get sections for selected subcategory
+  const selectedSubcategory = selectedCategory?.subcategories?.find(s => s.id === selectedSubcategoryId);
+  const editSubcategory = editCategory?.subcategories?.find(s => s.id === editSubcategoryId);
+  
+  // Reset subcategory and section when category changes
+  useEffect(() => {
+    setSelectedSubcategoryId(null);
+    setSelectedSectionId(null);
+  }, [selectedCategoryId]);
+  
+  useEffect(() => {
+    setSelectedSectionId(null);
+  }, [selectedSubcategoryId]);
+  
+  useEffect(() => {
+    setEditSubcategoryId(null);
+    setEditSectionId(null);
+  }, [editCategoryId]);
+  
+  useEffect(() => {
+    setEditSectionId(null);
+  }, [editSubcategoryId]);
+  
+  // Initialize edit form category values when editing course
+  useEffect(() => {
+    if (editingCourse) {
+      setEditCategoryId(editingCourse.categoryId || null);
+      setEditSubcategoryId(editingCourse.subcategoryId || null);
+      setEditSectionId(editingCourse.sectionId || null);
+    }
+  }, [editingCourse]);
   
   const createMutation = trpc.course.create.useMutation({
     onSuccess: () => {
       toast.success("Course created successfully");
       setIsCreateOpen(false);
       setThumbnailPreview(null);
+      setSelectedCategoryId(null);
+      setSelectedSubcategoryId(null);
+      setSelectedSectionId(null);
       refetch();
     },
     onError: (error) => {
@@ -96,6 +146,32 @@ export default function AdminCourses() {
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
+  };
+
+  // Get category path display
+  const getCategoryPath = (course: any) => {
+    if (!categoryHierarchy || !course.categoryId) return null;
+    
+    const category = categoryHierarchy.find(c => c.id === course.categoryId);
+    if (!category) return null;
+    
+    const parts = [category.name];
+    
+    if (course.subcategoryId) {
+      const subcategory = category.subcategories?.find(s => s.id === course.subcategoryId);
+      if (subcategory) {
+        parts.push(subcategory.name);
+        
+        if (course.sectionId) {
+          const section = subcategory.sections?.find(sec => sec.id === course.sectionId);
+          if (section) {
+            parts.push(section.name);
+          }
+        }
+      }
+    }
+    
+    return parts;
   };
 
   const handleThumbnailUpload = async (file: File, isEdit: boolean = false) => {
@@ -148,11 +224,22 @@ export default function AdminCourses() {
   };
 
   const handleCreate = (formData: FormData) => {
+    if (!selectedCategoryId) {
+      toast.error("Please select a category");
+      return;
+    }
+    if (!selectedSubcategoryId) {
+      toast.error("Please select a subcategory");
+      return;
+    }
+    
     createMutation.mutate({
       title: formData.get('title') as string,
       titleBn: formData.get('titleBn') as string || undefined,
       description: formData.get('description') as string || undefined,
-      category: formData.get('category') as string || undefined,
+      categoryId: selectedCategoryId,
+      subcategoryId: selectedSubcategoryId,
+      sectionId: selectedSectionId || undefined,
       level: formData.get('level') as 'beginner' | 'intermediate' | 'advanced' || undefined,
       price: formData.get('price') as string || undefined,
       durationMonths: parseInt(formData.get('durationMonths') as string) || 3,
@@ -168,7 +255,9 @@ export default function AdminCourses() {
       title: formData.get('title') as string,
       titleBn: formData.get('titleBn') as string || undefined,
       description: formData.get('description') as string || undefined,
-      category: formData.get('category') as string || undefined,
+      categoryId: editCategoryId || undefined,
+      subcategoryId: editSubcategoryId || undefined,
+      sectionId: editSectionId || undefined,
       level: formData.get('level') as 'beginner' | 'intermediate' | 'advanced' || undefined,
       price: formData.get('price') as string || undefined,
       durationMonths: parseInt(formData.get('durationMonths') as string) || 3,
@@ -242,6 +331,133 @@ export default function AdminCourses() {
     );
   };
 
+  // Category Selection Component
+  const CategorySelector = ({ 
+    categoryId, 
+    subcategoryId, 
+    sectionId,
+    onCategoryChange,
+    onSubcategoryChange,
+    onSectionChange
+  }: {
+    categoryId: number | null;
+    subcategoryId: number | null;
+    sectionId: number | null;
+    onCategoryChange: (id: number | null) => void;
+    onSubcategoryChange: (id: number | null) => void;
+    onSectionChange: (id: number | null) => void;
+  }) => {
+    const category = categoryHierarchy?.find(c => c.id === categoryId);
+    const subcategory = category?.subcategories?.find(s => s.id === subcategoryId);
+    
+    return (
+      <div className="space-y-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <FolderTree className="h-4 w-4" />
+          Category Selection *
+        </div>
+        
+        {/* Category Path Display */}
+        {categoryId && (
+          <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400 flex-wrap">
+            <span className="font-medium" style={{ color: category?.color || '#3B82F6' }}>
+              {category?.name}
+            </span>
+            {subcategoryId && (
+              <>
+                <ChevronRight className="h-3 w-3" />
+                <span>{subcategory?.name}</span>
+              </>
+            )}
+            {sectionId && subcategory?.sections && (
+              <>
+                <ChevronRight className="h-3 w-3" />
+                <span>{subcategory.sections.find(s => s.id === sectionId)?.name}</span>
+              </>
+            )}
+          </div>
+        )}
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Main Category */}
+          <div className="space-y-2">
+            <Label>Main Category *</Label>
+            <Select 
+              value={categoryId?.toString() || ''} 
+              onValueChange={(v) => onCategoryChange(v ? parseInt(v) : null)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categoryHierarchy?.map(cat => (
+                  <SelectItem key={cat.id} value={cat.id.toString()}>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-2 h-2 rounded-full" 
+                        style={{ backgroundColor: cat.color || '#3B82F6' }}
+                      />
+                      {cat.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Subcategory */}
+          <div className="space-y-2">
+            <Label>Subcategory *</Label>
+            <Select 
+              value={subcategoryId?.toString() || ''} 
+              onValueChange={(v) => onSubcategoryChange(v ? parseInt(v) : null)}
+              disabled={!categoryId}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={categoryId ? "Select subcategory" : "Select category first"} />
+              </SelectTrigger>
+              <SelectContent>
+                {category?.subcategories?.map(sub => (
+                  <SelectItem key={sub.id} value={sub.id.toString()}>
+                    {sub.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Section (Optional) */}
+          <div className="space-y-2">
+            <Label>Section (Optional)</Label>
+            <Select 
+              value={sectionId?.toString() || ''} 
+              onValueChange={(v) => onSectionChange(v ? parseInt(v) : null)}
+              disabled={!subcategoryId || !subcategory?.sections?.length}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={
+                  !subcategoryId 
+                    ? "Select subcategory first" 
+                    : !subcategory?.sections?.length 
+                      ? "No sections available" 
+                      : "Select section"
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">None</SelectItem>
+                {subcategory?.sections?.map(sec => (
+                  <SelectItem key={sec.id} value={sec.id.toString()}>
+                    {sec.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <AdminDashboardLayout>
       <div className="space-y-6">
@@ -257,7 +473,12 @@ export default function AdminCourses() {
           </div>
           <Dialog open={isCreateOpen} onOpenChange={(open) => {
             setIsCreateOpen(open);
-            if (!open) setThumbnailPreview(null);
+            if (!open) {
+              setThumbnailPreview(null);
+              setSelectedCategoryId(null);
+              setSelectedSubcategoryId(null);
+              setSelectedSectionId(null);
+            }
           }}>
             <DialogTrigger asChild>
               <Button className="gap-2">
@@ -269,11 +490,21 @@ export default function AdminCourses() {
               <DialogHeader>
                 <DialogTitle>Create New Course</DialogTitle>
                 <DialogDescription>
-                  Fill in the details to create a new course
+                  Select a category and fill in the details to create a new course
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={(e) => { e.preventDefault(); handleCreate(new FormData(e.currentTarget)); }}>
                 <div className="grid gap-4 py-4">
+                  {/* Category Selection */}
+                  <CategorySelector
+                    categoryId={selectedCategoryId}
+                    subcategoryId={selectedSubcategoryId}
+                    sectionId={selectedSectionId}
+                    onCategoryChange={setSelectedCategoryId}
+                    onSubcategoryChange={setSelectedSubcategoryId}
+                    onSectionChange={setSelectedSectionId}
+                  />
+                  
                   {/* Thumbnail Upload */}
                   <ThumbnailUploader
                     preview={thumbnailPreview}
@@ -296,11 +527,7 @@ export default function AdminCourses() {
                     <Label htmlFor="description">Description</Label>
                     <Textarea id="description" name="description" rows={3} />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Input id="category" name="category" placeholder="e.g., Mathematics" />
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="level">Level</Label>
                       <Select name="level" defaultValue="beginner">
@@ -352,130 +579,124 @@ export default function AdminCourses() {
         </div>
 
         {/* Search */}
-        <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-          <CardContent className="pt-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search courses by title or category..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Courses Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {isLoading ? (
-            [...Array(6)].map((_, i) => (
-              <Card key={i} className="bg-white dark:bg-slate-800">
-                <CardContent className="pt-6">
-                  <Skeleton className="h-40 w-full rounded-lg mb-4" />
-                  <Skeleton className="h-6 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
-                </CardContent>
-              </Card>
-            ))
-          ) : filteredCourses && filteredCourses.length > 0 ? (
-            filteredCourses.map((course) => (
-              <Card key={course.id} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow overflow-hidden">
-                {/* Course Thumbnail */}
-                <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/5 relative">
-                  {course.thumbnail ? (
-                    <img 
-                      src={course.thumbnail} 
-                      alt={course.title} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <BookOpen className="h-16 w-16 text-primary/30" />
-                    </div>
-                  )}
-                  <div className="absolute top-2 right-2">
-                    {getStatusBadge(course.status || 'draft')}
-                  </div>
-                </div>
-                
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white line-clamp-1">
-                        {course.title}
-                      </CardTitle>
-                      {course.titleBn && (
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                          {course.titleBn}
-                        </p>
-                      )}
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => {
-                          setEditingCourse(course);
-                          setEditThumbnailPreview(course.thumbnail || null);
-                        }}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Eye className="h-4 w-4 mr-2" />
-                          Preview
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="text-red-600"
-                          onClick={() => {
-                            if (confirm('Are you sure you want to delete this course?')) {
-                              deleteMutation.mutate({ id: course.id });
-                            }
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4">
-                    {course.description || 'No description available'}
-                  </p>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4">
-                      {course.category && (
-                        <Badge variant="outline">{course.category}</Badge>
-                      )}
-                      {course.level && (
-                        <span className="text-slate-500 capitalize">{course.level}</span>
-                      )}
-                    </div>
-                    <span className="font-semibold text-primary">
-                      {course.price && parseFloat(course.price) > 0 
-                        ? `৳${course.price}` 
-                        : 'Free'}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
-              <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p className="font-medium">No courses found</p>
-              <p className="text-sm">Create your first course to get started</p>
-            </div>
-          )}
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Search courses..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
         </div>
 
-        {/* Edit Course Dialog */}
+        {/* Course Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-64 rounded-xl" />
+            ))}
+          </div>
+        ) : filteredCourses?.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <BookOpen className="h-12 w-12 text-slate-300 mb-4" />
+              <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No courses found</h3>
+              <p className="text-slate-500 text-center max-w-sm">
+                {searchQuery ? "Try a different search term" : "Create your first course to get started"}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCourses?.map((course) => {
+              const categoryPath = getCategoryPath(course);
+              return (
+                <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-video bg-slate-100 dark:bg-slate-800 relative">
+                    {course.thumbnail ? (
+                      <img 
+                        src={course.thumbnail} 
+                        alt={course.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <BookOpen className="h-12 w-12 text-slate-300" />
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2">
+                      {getStatusBadge(course.status)}
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-slate-900 dark:text-white truncate">
+                          {course.title}
+                        </h3>
+                        {course.titleBn && (
+                          <p className="text-sm text-slate-500 truncate">{course.titleBn}</p>
+                        )}
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => {
+                            setEditingCourse(course);
+                            setEditThumbnailPreview(null);
+                          }}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => {
+                              if (confirm("Are you sure you want to delete this course?")) {
+                                deleteMutation.mutate({ id: course.id });
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    
+                    {/* Category Path */}
+                    {categoryPath && (
+                      <div className="flex items-center gap-1 mt-2 text-xs text-slate-500 flex-wrap">
+                        <FolderTree className="h-3 w-3" />
+                        {categoryPath.map((part, i) => (
+                          <span key={i} className="flex items-center gap-1">
+                            {i > 0 && <ChevronRight className="h-3 w-3" />}
+                            {part}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center gap-4 mt-3 text-sm text-slate-500">
+                      <span>{course.totalLessons || 0} lessons</span>
+                      <span>{course.durationMonths} months</span>
+                    </div>
+                    <div className="mt-2 font-semibold text-primary">
+                      {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Edit Dialog */}
         <Dialog open={!!editingCourse} onOpenChange={(open) => {
           if (!open) {
             setEditingCourse(null);
@@ -492,6 +713,16 @@ export default function AdminCourses() {
             {editingCourse && (
               <form onSubmit={(e) => { e.preventDefault(); handleUpdate(new FormData(e.currentTarget)); }}>
                 <div className="grid gap-4 py-4">
+                  {/* Category Selection */}
+                  <CategorySelector
+                    categoryId={editCategoryId}
+                    subcategoryId={editSubcategoryId}
+                    sectionId={editSectionId}
+                    onCategoryChange={setEditCategoryId}
+                    onSubcategoryChange={setEditSubcategoryId}
+                    onSectionChange={setEditSectionId}
+                  />
+                  
                   {/* Thumbnail Upload */}
                   <ThumbnailUploader
                     preview={editThumbnailPreview}
@@ -503,25 +734,21 @@ export default function AdminCourses() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-title">Title (English) *</Label>
-                      <Input id="edit-title" name="title" defaultValue={editingCourse.title} required />
+                      <Label htmlFor="editTitle">Title (English) *</Label>
+                      <Input id="editTitle" name="title" required defaultValue={editingCourse.title} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-titleBn">Title (Bengali)</Label>
-                      <Input id="edit-titleBn" name="titleBn" defaultValue={editingCourse.titleBn || ''} />
+                      <Label htmlFor="editTitleBn">Title (Bengali)</Label>
+                      <Input id="editTitleBn" name="titleBn" defaultValue={editingCourse.titleBn || ''} />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit-description">Description</Label>
-                    <Textarea id="edit-description" name="description" rows={3} defaultValue={editingCourse.description || ''} />
+                    <Label htmlFor="editDescription">Description</Label>
+                    <Textarea id="editDescription" name="description" rows={3} defaultValue={editingCourse.description || ''} />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-category">Category</Label>
-                      <Input id="edit-category" name="category" defaultValue={editingCourse.category || ''} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-level">Level</Label>
+                      <Label htmlFor="editLevel">Level</Label>
                       <Select name="level" defaultValue={editingCourse.level || 'beginner'}>
                         <SelectTrigger>
                           <SelectValue />
@@ -534,7 +761,7 @@ export default function AdminCourses() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-status">Status</Label>
+                      <Label htmlFor="editStatus">Status</Label>
                       <Select name="status" defaultValue={editingCourse.status || 'draft'}>
                         <SelectTrigger>
                           <SelectValue />
@@ -549,12 +776,12 @@ export default function AdminCourses() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-price">Price (BDT)</Label>
-                      <Input id="edit-price" name="price" type="number" defaultValue={editingCourse.price || 0} />
+                      <Label htmlFor="editPrice">Price (BDT)</Label>
+                      <Input id="editPrice" name="price" type="number" defaultValue={editingCourse.price || '0'} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-durationMonths">Duration (Months)</Label>
-                      <Input id="edit-durationMonths" name="durationMonths" type="number" defaultValue={editingCourse.durationMonths || 3} />
+                      <Label htmlFor="editDurationMonths">Duration (Months)</Label>
+                      <Input id="editDurationMonths" name="durationMonths" type="number" defaultValue={editingCourse.durationMonths || 3} />
                     </div>
                   </div>
                 </div>

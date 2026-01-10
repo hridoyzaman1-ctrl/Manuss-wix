@@ -34,7 +34,8 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  FolderTree
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
@@ -45,6 +46,7 @@ import NotificationCenter from "./NotificationCenter";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Users, label: "Users", path: "/admin/users" },
+  { icon: FolderTree, label: "Categories", path: "/admin/categories" },
   { icon: BookOpen, label: "Courses", path: "/admin/courses" },
   { icon: GraduationCap, label: "Enrollments", path: "/admin/enrollments" },
   { icon: FileText, label: "Lessons", path: "/admin/lessons" },

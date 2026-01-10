@@ -235,3 +235,14 @@
 - [x] Add course thumbnail upload option in admin course management
 - [x] Fix course thumbnail upload - use S3 storage instead of base64 data URL
 - [x] Add document upload support (PDF, DOC, DOCX, TXT, PPTX) to lesson form based on content type selection
+
+## Category System for Course Management
+
+- [x] Create database schema for categories (main categories, subcategories, sections)
+- [x] Seed initial categories: Academic, Tiny Explorers, Special Needs, Skills and Creativities, Spoken English & Grammar
+- [x] Create API endpoints for category CRUD operations
+- [x] Build admin UI for category management
+- [x] Add category selection flow before course creation
+- [x] Update course model to link with categories
+- [x] Display courses by category on main site
+- [x] Allow admins to add new categories
