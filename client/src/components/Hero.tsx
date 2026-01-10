@@ -30,7 +30,7 @@ export default function Hero() {
       className="relative w-full overflow-hidden bg-white dark:bg-background"
       onMouseMove={handleMouseMove}
     >
-      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-2 p-2 h-auto md:h-[800px] bg-white dark:bg-background">
+      <div className="grid w-full grid-cols-1 md:grid-cols-4 gap-2 p-2 h-auto md:h-[800px] bg-white dark:bg-background overflow-hidden">
 
         {/* Panel 1: Texture Background + Tagline - STATIC */}
         <div
