@@ -233,3 +233,4 @@
 
 - [ ] Add 'Add Lesson' button to AdminLessons page for creating new lessons
 - [x] Add course thumbnail upload option in admin course management
+- [x] Fix course thumbnail upload - use S3 storage instead of base64 data URL

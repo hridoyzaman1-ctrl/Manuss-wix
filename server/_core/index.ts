@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
+import multer from "multer";
+import { storagePut } from "../storage";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -39,6 +41,31 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
+  // File upload endpoint
+  const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+  });
+  
+  app.post('/api/upload', upload.single('file'), async (req: any, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+      
+      const file = req.file;
+      const ext = file.originalname.split('.').pop() || 'bin';
+      const filename = `uploads/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+      
+      const { url } = await storagePut(filename, file.buffer, file.mimetype);
+      
+      res.json({ url, filename });
+    } catch (error) {
+      console.error('Upload error:', error);
+      res.status(500).json({ error: 'Upload failed' });
+    }
+  });
   
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
