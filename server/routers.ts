@@ -4,16 +4,59 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, studentProcedure, parentProcedure, staffProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import * as auth from "./auth";
 
 export const appRouter = router({
   system: systemRouter,
   
   // ============ AUTH ROUTER ============
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(async ({ ctx }) => {
+      // Check for JWT token in cookie first (email/password auth)
+      const authToken = ctx.req.cookies['auth_token'];
+      if (authToken) {
+        const user = await auth.getUserFromToken(authToken);
+        if (user) return user;
+      }
+      // Fall back to OAuth user
+      return ctx.user;
+    }),
+    
+    signup: publicProcedure.input(z.object({
+      email: z.string().email(),
+      password: z.string().min(6),
+      name: z.string().min(1),
+      phone: z.string().optional(),
+      adminCode: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const result = await auth.signupUser(input);
+      if (result.success && result.token) {
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie('auth_token', result.token, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 days
+      }
+      return result;
+    }),
+    
+    login: publicProcedure.input(z.object({
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      password: z.string(),
+    })).mutation(async ({ ctx, input }) => {
+      if (!input.email && !input.phone) {
+        return { success: false, error: 'Email or phone is required' };
+      }
+      const result = await auth.loginUser(input);
+      if (result.success && result.token) {
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie('auth_token', result.token, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 days
+      }
+      return result;
+    }),
+    
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      ctx.res.clearCookie('auth_token', { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
   }),

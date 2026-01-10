@@ -140,3 +140,12 @@
 - [x] Fix failing user tests (tests assume empty DB but real user exists)
 - [x] Fix Chatbot speech synthesis errors (getVoices, cancel undefined)
 - [x] Fix nested anchor tag HTML error
+
+## Authentication System Replacement
+- [x] Replace Manus OAuth with email/password auth
+- [x] Add password hashing with bcrypt
+- [x] Add admin registration code 'Youknowwho1@'
+- [x] Add optional phone number field for signup/login
+- [x] Create signup page
+- [x] Create login page
+- [x] Update session management with JWT

@@ -14,6 +14,8 @@ import { DashboardLayoutSkeleton } from "./components/DashboardLayoutSkeleton";
 import AIVoicePage from "@/pages/AIVoicePage";
 import Auth from "@/pages/Auth";
 import Chatbot from "./components/Chatbot";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 
 // Lazy load dashboard pages for better performance
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
@@ -51,6 +53,8 @@ function Router() {
         <Route path={"/"} component={Home} />
         <Route path={"/ai-voice"} component={AIVoicePage} />
         <Route path={"/auth"} component={Auth} />
+        <Route path={"/login"} component={Login} />
+        <Route path={"/signup"} component={Signup} />
         
         {/* Admin routes */}
         <Route path={"/admin"} component={AdminDashboard} />
@@ -96,6 +100,7 @@ function AppContent() {
   
   // Check if we're on a dashboard route
   const isDashboardRoute = location.startsWith('/admin') || location.startsWith('/student') || location.startsWith('/parent');
+  const isAuthRoute = location === '/login' || location === '/signup' || location === '/auth';
 
   useEffect(() => {
     // Skip Lenis smooth scroll on dashboard routes for better UX

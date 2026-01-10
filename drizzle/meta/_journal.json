@@ -15,6 +15,13 @@
       "when": 1768005597212,
       "tag": "0001_serious_malice",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1768013815540,
+      "tag": "0002_white_zaran",
+      "breakpoints": true
     }
   ]
 }

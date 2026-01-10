@@ -50,10 +50,6 @@ export async function getDb() {
 // ============ USER HELPERS ============
 
 export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
-  }
-
   const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot upsert user: database not available");
@@ -61,19 +57,22 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 
   try {
+    // For OAuth users (legacy), generate placeholder email/password if not provided
     const values: InsertUser = {
-      openId: user.openId,
+      openId: user.openId || nanoid(16),
+      email: user.email || `oauth_${nanoid(8)}@placeholder.local`,
+      passwordHash: user.passwordHash || 'oauth-user-no-password',
     };
     const updateSet: Record<string, unknown> = {};
 
-    const textFields = ["name", "email", "loginMethod"] as const;
+    const textFields = ["name", "loginMethod", "phone"] as const;
     type TextField = (typeof textFields)[number];
 
     const assignNullable = (field: TextField) => {
       const value = user[field];
       if (value === undefined) return;
       const normalized = value ?? null;
-      values[field] = normalized;
+      (values as any)[field] = normalized;
       updateSet[field] = normalized;
     };
 

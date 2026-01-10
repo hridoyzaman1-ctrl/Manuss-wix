@@ -1,0 +1,212 @@
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { eq, or } from "drizzle-orm";
+import { users } from "../drizzle/schema";
+import { getDb } from "./db";
+import { ENV } from './_core/env';
+import { nanoid } from 'nanoid';
+
+const JWT_SECRET = ENV.jwtSecret || 'fallback-secret-change-me';
+const ADMIN_CODE = 'Youknowwho1@';
+
+export interface JWTPayload {
+  userId: number;
+  email: string;
+  role: string;
+}
+
+// Hash password
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
+}
+
+// Verify password
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+
+// Generate JWT token
+export function generateToken(payload: JWTPayload): string {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+}
+
+// Verify JWT token
+export function verifyToken(token: string): JWTPayload | null {
+  try {
+    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+  } catch {
+    return null;
+  }
+}
+
+// Signup user
+export async function signupUser(data: {
+  email: string;
+  password: string;
+  name: string;
+  phone?: string;
+  adminCode?: string;
+}): Promise<{ success: boolean; error?: string; token?: string; user?: any }> {
+  const db = await getDb();
+  if (!db) {
+    return { success: false, error: 'Database not available' };
+  }
+
+  try {
+    // Check if email already exists
+    const existingUser = await db.select().from(users).where(eq(users.email, data.email)).limit(1);
+    if (existingUser.length > 0) {
+      return { success: false, error: 'Email already registered' };
+    }
+
+    // Hash password
+    const passwordHash = await hashPassword(data.password);
+
+    // Determine role based on admin code
+    let role: 'user' | 'admin' | 'student' | 'parent' | 'teacher' = 'student';
+    if (data.adminCode === ADMIN_CODE) {
+      role = 'admin';
+    }
+
+    // Generate student UID for students
+    const studentUid = role === 'student' ? nanoid(12) : null;
+
+    // Insert user
+    const result = await db.insert(users).values({
+      email: data.email,
+      passwordHash,
+      name: data.name,
+      phone: data.phone || null,
+      role,
+      studentUid,
+      openId: nanoid(16), // Generate a random openId for compatibility
+      lastSignedIn: new Date(),
+    });
+
+    const userId = result[0].insertId;
+
+    // Get the created user
+    const newUser = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+
+    if (newUser.length === 0) {
+      return { success: false, error: 'Failed to create user' };
+    }
+
+    // Generate token
+    const token = generateToken({
+      userId: newUser[0].id,
+      email: newUser[0].email!,
+      role: newUser[0].role,
+    });
+
+    return {
+      success: true,
+      token,
+      user: {
+        id: newUser[0].id,
+        email: newUser[0].email,
+        name: newUser[0].name,
+        role: newUser[0].role,
+        phone: newUser[0].phone,
+        studentUid: newUser[0].studentUid,
+      },
+    };
+  } catch (error) {
+    console.error('[Auth] Signup error:', error);
+    return { success: false, error: 'Failed to create account' };
+  }
+}
+
+// Login user
+export async function loginUser(data: {
+  email?: string;
+  phone?: string;
+  password: string;
+}): Promise<{ success: boolean; error?: string; token?: string; user?: any }> {
+  const db = await getDb();
+  if (!db) {
+    return { success: false, error: 'Database not available' };
+  }
+
+  try {
+    // Find user by email or phone
+    let user;
+    if (data.email) {
+      const result = await db.select().from(users).where(eq(users.email, data.email)).limit(1);
+      user = result[0];
+    } else if (data.phone) {
+      const result = await db.select().from(users).where(eq(users.phone, data.phone)).limit(1);
+      user = result[0];
+    }
+
+    if (!user) {
+      return { success: false, error: 'Invalid email/phone or password' };
+    }
+
+    // Verify password
+    const isValid = await verifyPassword(data.password, user.passwordHash);
+    if (!isValid) {
+      return { success: false, error: 'Invalid email/phone or password' };
+    }
+
+    // Update last signed in
+    await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, user.id));
+
+    // Generate token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email!,
+      role: user.role,
+    });
+
+    return {
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        phone: user.phone,
+        studentUid: user.studentUid,
+      },
+    };
+  } catch (error) {
+    console.error('[Auth] Login error:', error);
+    return { success: false, error: 'Login failed' };
+  }
+}
+
+// Get user from token
+export async function getUserFromToken(token: string): Promise<any | null> {
+  const payload = verifyToken(token);
+  if (!payload) {
+    return null;
+  }
+
+  const db = await getDb();
+  if (!db) {
+    return null;
+  }
+
+  try {
+    const result = await db.select().from(users).where(eq(users.id, payload.userId)).limit(1);
+    if (result.length === 0) {
+      return null;
+    }
+
+    const user = result[0];
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      phone: user.phone,
+      studentUid: user.studentUid,
+      avatarUrl: user.avatarUrl,
+    };
+  } catch (error) {
+    console.error('[Auth] Get user from token error:', error);
+    return null;
+  }
+}
