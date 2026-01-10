@@ -159,24 +159,24 @@ export default function AIMVerse() {
   // --------------------
 
   return (
-    <section ref={containerRef} className="py-24 bg-background text-foreground relative overflow-hidden">
+    <section ref={containerRef} className="py-12 sm:py-16 md:py-24 bg-background text-foreground relative overflow-hidden">
       {/* Subtle Texture Background */}
       <motion.div style={{ y: bgY }} className="absolute inset-0 opacity-5 h-[120%] -top-[10%]">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] dark:invert dark:opacity-10"></div>
       </motion.div>
 
       <div className="container relative z-10">
-        <div className="text-center max-w-4xl mx-auto mb-16">
+        <div className="text-center max-w-4xl mx-auto mb-8 sm:mb-12 md:mb-16 px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <span className="text-muted-foreground font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.tag")}</span>
-            <h2 className="text-4xl md:text-7xl font-serif font-bold mt-4 mb-6 text-foreground">
+            <span className="text-muted-foreground font-medium tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-sm">{t("aimverse.tag")}</span>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-serif font-bold mt-3 sm:mt-4 mb-4 sm:mb-6 text-foreground">
               {t("aimverse.title")}
             </h2>
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed">
               {t("aimverse.desc")}
             </p>
           </motion.div>
@@ -187,7 +187,7 @@ export default function AIMVerse() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative aspect-video w-full max-w-5xl mx-auto bg-gray-100 rounded-none overflow-hidden shadow-xl mb-16 group"
+          className="relative aspect-video w-full max-w-5xl mx-auto bg-gray-100 rounded-none overflow-hidden shadow-xl mb-8 sm:mb-12 md:mb-16 group"
         >
           <img
             src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2094&auto=format&fit=crop"
@@ -203,28 +203,28 @@ export default function AIMVerse() {
               <Play className="h-8 w-8 ml-1 fill-current" />
             </Button>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent text-white">
-            <h3 className="text-2xl font-bold mb-2 font-serif">Episode 1: The Quantum Realm</h3>
-            <p className="text-gray-200">Discover the secrets of subatomic particles with Captain Quantum.</p>
+          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 bg-gradient-to-t from-black/80 to-transparent text-white">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 font-serif">Episode 1: The Quantum Realm</h3>
+            <p className="text-gray-200 text-xs sm:text-sm md:text-base">Discover the secrets of subatomic particles with Captain Quantum.</p>
           </div>
         </motion.div>
 
         {/* Countdown Timer */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center max-w-5xl mx-auto">
           <div>
-            <h3 className="text-3xl font-serif font-bold mb-4 flex items-center gap-3 text-foreground">
-              <Timer className="h-8 w-8" />
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3 text-foreground">
+              <Timer className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />
               {t("aimverse.nextEpisode")}
             </h3>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8">
               {t("aimverse.nextEpisodeDesc")}
             </p>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none px-10 py-7 text-lg uppercase tracking-widest transition-all duration-300 hover:scale-105">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-none px-6 sm:px-10 py-5 sm:py-7 text-sm sm:text-base md:text-lg uppercase tracking-wider sm:tracking-widest transition-all duration-300 hover:scale-105 touch-manipulation active:scale-95">
               {t("aimverse.reminder")}
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {[
               { label: t("aimverse.days"), value: timeLeft.days },
               { label: t("aimverse.hours"), value: timeLeft.hours },
@@ -232,7 +232,7 @@ export default function AIMVerse() {
               { label: t("aimverse.seconds"), value: timeLeft.seconds }
             ].map((item, index) => (
               <div key={index} className="bg-card border border-border p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
-                <div className="text-3xl md:text-4xl font-bold font-serif text-foreground mb-2">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-foreground mb-1 sm:mb-2">
                   {item.value.toString().padStart(2, '0')}
                 </div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">{item.label}</div>
@@ -242,16 +242,16 @@ export default function AIMVerse() {
         </div>
 
         {/* Power Glossary Section */}
-        <div className="mt-32 max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+        <div className="mt-16 sm:mt-24 md:mt-32 max-w-6xl mx-auto">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16 px-4">
             <span className="text-muted-foreground font-medium tracking-[0.3em] uppercase text-sm">{t("aimverse.glossaryTag")}</span>
-            <h3 className="text-3xl md:text-5xl font-serif font-bold mt-2 text-foreground">{t("aimverse.glossaryTitle")}</h3>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mt-2 text-foreground">{t("aimverse.glossaryTitle")}</h3>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
               {t("aimverse.glossaryDesc")}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
             {/* Hero Profile */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}

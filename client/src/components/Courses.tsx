@@ -99,7 +99,7 @@ export default function Courses() {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden bg-transparent">
+    <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden bg-transparent">
       <div className="container relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
@@ -116,7 +116,7 @@ export default function Courses() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-serif font-bold mt-2"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold mt-2"
             >
               {t("courses.title")}
             </motion.h2>
@@ -126,7 +126,7 @@ export default function Courses() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative w-full md:w-72"
+            className="relative w-full md:w-72 mt-4 md:mt-0"
           >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -139,7 +139,7 @@ export default function Courses() {
         </div>
 
         <Tabs defaultValue="All" className="w-full" onValueChange={setActiveCategory}>
-          <TabsList className="flex flex-wrap justify-start gap-2 bg-transparent p-0 mb-12 h-auto">
+          <TabsList className="flex flex-wrap justify-start gap-1 sm:gap-2 bg-transparent p-0 mb-8 sm:mb-12 h-auto overflow-x-auto scrollbar-hide">
             {categories.map((category, index) => (
               <motion.div
                 key={category}
@@ -150,7 +150,7 @@ export default function Courses() {
               >
                 <TabsTrigger
                   value={category}
-                  className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all duration-300 hover:text-primary hover:bg-primary/5 hover:-translate-y-0.5"
+                  className="rounded-none border-b-2 border-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none transition-all duration-300 hover:text-primary hover:bg-primary/5 hover:-translate-y-0.5 touch-manipulation whitespace-nowrap"
                 >
                   {category}
                 </TabsTrigger>
@@ -160,7 +160,7 @@ export default function Courses() {
 
           <TabsContent value={activeCategory} className="mt-0">
             {/* Main Course Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-12 sm:mb-16 md:mb-24">
               {filteredCourses.map((course, index) => (
                 <motion.div
                   key={course.id}
@@ -169,10 +169,10 @@ export default function Courses() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 flex flex-col cursor-pointer active:border-primary"
+                  className="group relative bg-card border border-border overflow-hidden hover-lift transition-all duration-500 flex flex-col cursor-pointer active:border-primary touch-manipulation"
                 >
                   {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden flex-shrink-0">
+                  <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden flex-shrink-0">
                     <img
                       src={course.image}
                       alt={course.title}
@@ -235,7 +235,7 @@ export default function Courses() {
             <div className="flex justify-center mb-16">
               <Button
                 variant="outline"
-                className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground px-12 py-7 text-sm uppercase tracking-[0.2em] font-medium transition-all duration-300 hover-magnetic"
+                className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 sm:px-12 py-5 sm:py-7 text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] font-medium transition-all duration-300 hover-magnetic touch-manipulation active:scale-95"
               >
                 View More Courses
                 <ArrowRight className="ml-3 h-4 w-4" />

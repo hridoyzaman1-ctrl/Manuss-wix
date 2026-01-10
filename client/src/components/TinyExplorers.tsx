@@ -108,7 +108,7 @@ export default function TinyExplorers() {
   };
 
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section className="py-12 sm:py-16 md:py-24 bg-background relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -118,17 +118,17 @@ export default function TinyExplorers() {
       ></div>
 
       <div className="container relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16 px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-primary font-medium tracking-widest uppercase text-sm">Preschool & Kindergarten</span>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold mt-2 mb-6">
+            <span className="text-primary font-medium tracking-widest uppercase text-xs sm:text-sm">Preschool & Kindergarten</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-serif font-bold mt-2 mb-4 sm:mb-6">
               Tiny Explorers
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
               A magical journey of discovery where every play session is a lesson in disguise.
               Interactive workshops and games designed to spark curiosity in our youngest learners.
             </p>
@@ -136,7 +136,7 @@ export default function TinyExplorers() {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-16 sm:mb-24 md:mb-32">
           {[
             {
               icon: Rocket,
@@ -164,7 +164,7 @@ export default function TinyExplorers() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
               whileTap={{ scale: 0.98 }}
-              className="group relative h-[400px] overflow-hidden border border-border hover-lift cursor-pointer rounded-2xl"
+              className="group relative h-[280px] sm:h-[350px] md:h-[400px] overflow-hidden border border-border hover-lift cursor-pointer rounded-2xl touch-manipulation"
             >
               <img
                 src={item.image}
@@ -173,15 +173,15 @@ export default function TinyExplorers() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
 
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 text-white transform translate-y-4 group-hover:translate-y-0 group-active:translate-y-0 transition-transform duration-500">
                 <div className="mb-4 p-3 bg-white/10 backdrop-blur-md w-fit rounded-full">
                   <item.icon className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-serif text-2xl font-bold mb-2">{item.title}</h3>
-                <p className="text-white/80 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-bold mb-2">{item.title}</h3>
+                <p className="text-white/80 text-sm mb-4 sm:mb-6 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500 delay-100">
                   {item.desc}
                 </p>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500 delay-200 touch-manipulation active:scale-95 text-xs sm:text-sm">
                   Explore More
                 </Button>
               </div>
@@ -190,14 +190,14 @@ export default function TinyExplorers() {
         </div>
 
         {/* Improved Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center mb-16 sm:mb-24 md:mb-32">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <h3 className="text-3xl font-serif font-bold">Nurturing Little Minds</h3>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold">Nurturing Little Minds</h3>
             <div className="space-y-6">
               {[
                 { title: "Social Interaction", desc: "Building confidence through collaborative play and group activities." },
@@ -231,13 +231,13 @@ export default function TinyExplorers() {
         </div>
 
         {/* Game Section */}
-        <div className="max-w-4xl mx-auto bg-card border rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+        <div className="max-w-4xl mx-auto bg-card border rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-12 shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Gamepad2 className="w-32 h-32 rotate-12" />
           </div>
 
           <div className="text-center mb-10 relative z-10">
-            <h3 className="text-3xl font-serif font-bold mb-4 flex items-center justify-center gap-3">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold mb-3 sm:mb-4 flex items-center justify-center gap-2 sm:gap-3">
               <Sparkles className="text-yellow-500" />
               Memory Match Challenge
               <Sparkles className="text-yellow-500" />
@@ -258,7 +258,7 @@ export default function TinyExplorers() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 relative z-10">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4 relative z-10">
             {cards.map((card) => (
               <motion.div
                 key={card.id}
