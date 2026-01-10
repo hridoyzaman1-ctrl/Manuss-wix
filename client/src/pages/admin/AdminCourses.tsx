@@ -431,7 +431,7 @@ export default function AdminCourses() {
             <Label>Section (Optional)</Label>
             <Select 
               value={sectionId?.toString() || ''} 
-              onValueChange={(v) => onSectionChange(v ? parseInt(v) : null)}
+              onValueChange={(v) => onSectionChange(v && v !== 'none' ? parseInt(v) : null)}
               disabled={!subcategoryId || !subcategory?.sections?.length}
             >
               <SelectTrigger>
@@ -444,7 +444,7 @@ export default function AdminCourses() {
                 } />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="none">None</SelectItem>
                 {subcategory?.sections?.map(sec => (
                   <SelectItem key={sec.id} value={sec.id.toString()}>
                     {sec.name}

@@ -246,3 +246,6 @@
 - [x] Update course model to link with categories
 - [x] Display courses by category on main site
 - [x] Allow admins to add new categories
+
+## Bug Fixes - Category System
+- [x] Fix SelectItem empty value error in course creation form
