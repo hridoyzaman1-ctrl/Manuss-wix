@@ -407,16 +407,16 @@ export default function Courses() {
                 >
                   <motion.div
                     className="flex gap-4 sm:gap-6 cursor-grab active:cursor-grabbing"
-                    animate={{ x: -carouselIndex * (isMobile ? 100 : 33.333) + "%" }}
+                    animate={{ x: -carouselIndex * (isMobile ? 74 : 25) + "%" }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     {filteredCourses.map((course) => (
                       <div
                         key={`carousel-${course.id}`}
-                        className="min-w-[calc(100%-1rem)] sm:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] flex-shrink-0 bg-card border border-border overflow-hidden hover:border-primary transition-all duration-500"
+                        className="min-w-[70%] sm:min-w-[35%] lg:min-w-[23%] flex-shrink-0 bg-card border border-border rounded-lg overflow-hidden hover:border-primary transition-all duration-500 hover:shadow-lg"
                       >
-                        {/* Image Container - matching main cards */}
-                        <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                        {/* Image Container - compact */}
+                        <div className="relative h-32 sm:h-36 md:h-40 overflow-hidden">
                           <img
                             src={course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
                             alt={course.title}
@@ -424,27 +424,27 @@ export default function Courses() {
                             className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                           />
                           <div className="absolute inset-0 bg-black/20 hover:bg-black/40 transition-colors duration-500"></div>
-                          <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
+                          <div className="absolute top-2 left-2 bg-background/90 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded">
                             {course.categoryName}
                           </div>
                         </div>
-                        {/* Content - matching main cards */}
-                        <div className="p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <h4 className="font-serif text-xl font-bold line-clamp-2">{course.title}</h4>
-                            <span className="font-bold text-primary">
+                        {/* Content - compact */}
+                        <div className="p-3 sm:p-4">
+                          <div className="flex justify-between items-start gap-2 mb-2">
+                            <h4 className="font-serif text-sm sm:text-base font-bold line-clamp-2 leading-tight">{course.title}</h4>
+                            <span className="font-bold text-primary text-xs sm:text-sm whitespace-nowrap">
                               {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
                             </span>
                           </div>
-                          <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
+                          <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
                             {course.description || "Explore this comprehensive course."}
                           </p>
-                          <div className="flex items-center justify-between pt-4 border-t border-border">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <BookOpen className="h-4 w-4" />
+                          <div className="flex items-center justify-between pt-2 border-t border-border">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <BookOpen className="h-3 w-3" />
                               <span>{(course as any).totalLessons || 0} Lessons</span>
                             </div>
-                            <span className="text-primary text-xs">View Details →</span>
+                            <span className="text-primary text-[10px] sm:text-xs">View Details →</span>
                           </div>
                         </div>
                       </div>
