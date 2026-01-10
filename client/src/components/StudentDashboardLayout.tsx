@@ -20,7 +20,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { getLoginUrl } from "@/const";
+// import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { 
   LayoutDashboard, 
@@ -108,7 +108,7 @@ export default function StudentDashboardLayout({
           </div>
           <Button
             onClick={() => {
-              window.location.href = getLoginUrl();
+              setLocation("/login");
             }}
             size="lg"
             className="w-full bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all"

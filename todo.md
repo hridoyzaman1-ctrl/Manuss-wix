@@ -168,3 +168,7 @@
 - [x] Add demo course with sample video, PDF, doc, image
 - [x] Add instructor mockup details
 - [x] Add course quiz for demo course
+
+## Bug Fixes (Ongoing)
+- [x] Fix admin signup JSON error - unexpected end of JSON input
+- [x] Fix dashboard auth to recognize email/password login
