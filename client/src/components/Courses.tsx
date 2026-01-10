@@ -413,23 +413,26 @@ export default function Courses() {
                     {filteredCourses.map((course) => (
                       <div
                         key={`carousel-${course.id}`}
-                        className="min-w-[80%] sm:min-w-[45%] lg:min-w-[30%] flex-shrink-0 bg-card border border-border p-3 sm:p-4 hover:border-primary transition-colors rounded-lg"
+                        className="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] flex-shrink-0 bg-card border border-border p-4 sm:p-5 lg:p-6 hover:border-primary transition-colors rounded-lg shadow-sm hover:shadow-md"
                       >
-                        <div className="aspect-video bg-muted mb-3 sm:mb-4 overflow-hidden rounded-md">
+                        <div className="aspect-[4/3] bg-muted mb-4 overflow-hidden rounded-md">
                           <img
                             src={course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
                             alt={course.title}
                             loading="lazy"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           />
                         </div>
-                        <h4 className="font-medium mb-2 text-sm sm:text-base line-clamp-2">{course.title}</h4>
-                        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
+                        <h4 className="font-semibold mb-2 text-base sm:text-lg line-clamp-2">{course.title}</h4>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                           {course.description || "Explore this comprehensive course."}
                         </p>
-                        <div className="mt-3 pt-3 border-t border-border">
-                          <span className="font-bold text-primary text-sm">
+                        <div className="pt-4 border-t border-border flex items-center justify-between">
+                          <span className="font-bold text-primary text-base sm:text-lg">
                             {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {(course as any).totalLessons || 0} Lessons
                           </span>
                         </div>
                       </div>
