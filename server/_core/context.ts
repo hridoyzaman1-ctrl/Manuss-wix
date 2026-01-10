@@ -1,6 +1,7 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User } from "../../drizzle/schema";
 import { sdk } from "./sdk";
+import * as auth from "../auth";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -13,11 +14,28 @@ export async function createContext(
 ): Promise<TrpcContext> {
   let user: User | null = null;
 
-  try {
-    user = await sdk.authenticateRequest(opts.req);
-  } catch (error) {
-    // Authentication is optional for public procedures.
-    user = null;
+  // First, check for JWT auth token (email/password login)
+  const authToken = opts.req.cookies?.['auth_token'];
+  if (authToken) {
+    try {
+      const jwtUser = await auth.getUserFromToken(authToken);
+      if (jwtUser) {
+        user = jwtUser as User;
+      }
+    } catch (error) {
+      // JWT auth failed, will try OAuth below
+      console.warn("[Auth] JWT auth failed:", error);
+    }
+  }
+
+  // If no JWT user, try OAuth authentication
+  if (!user) {
+    try {
+      user = await sdk.authenticateRequest(opts.req);
+    } catch (error) {
+      // Authentication is optional for public procedures.
+      user = null;
+    }
   }
 
   return {

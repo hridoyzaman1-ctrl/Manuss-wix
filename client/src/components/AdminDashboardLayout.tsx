@@ -89,6 +89,9 @@ export default function AdminDashboardLayout({
     location === item.path || (item.path !== '/admin' && location.startsWith(item.path))
   ) || menuItems[0];
 
+  // Check if we're on a sub-page (not the main dashboard)
+  const isSubPage = location !== '/admin';
+
   // Handle logout - redirect to landing page
   const handleLogout = () => {
     logout();
@@ -224,16 +227,18 @@ export default function AdminDashboardLayout({
         {/* Mobile Header */}
         <header className="sticky top-0 z-50 flex h-14 items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-2">
           <div className="flex items-center gap-1">
-            {/* Back Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleBack}
-              className="h-9 w-9"
-              title="Go back"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
+            {/* Back Button - only show on sub-pages */}
+            {isSubPage && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBack}
+                className="h-9 w-9"
+                title="Go back"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            )}
             {/* Menu Button */}
             <Button
               variant="ghost"

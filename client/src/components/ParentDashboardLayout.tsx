@@ -82,6 +82,9 @@ export default function ParentDashboardLayout({
     location === item.path || (item.path !== '/parent' && location.startsWith(item.path))
   ) || menuItems[0];
 
+  // Check if we're on a sub-page (not the main dashboard)
+  const isSubPage = location !== '/parent';
+
   // Handle logout - redirect to landing page
   const handleLogout = () => {
     logout();
@@ -222,9 +225,11 @@ export default function ParentDashboardLayout({
         {/* Mobile Header */}
         <header className="sticky top-0 z-50 flex h-14 items-center justify-between bg-white dark:bg-slate-900 border-b border-emerald-100 dark:border-slate-700 px-2">
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={handleBack} className="h-9 w-9" title="Go back">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
+            {isSubPage && (
+              <Button variant="ghost" size="icon" onClick={handleBack} className="h-9 w-9" title="Go back">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            )}
             <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} className="h-9 w-9">
               <Menu className="h-5 w-5" />
             </Button>
