@@ -140,3 +140,10 @@
 - [x] Fix failing user tests (tests assume empty DB but real user exists)
 - [x] Fix Chatbot speech synthesis errors (getVoices, cancel undefined)
 - [x] Fix nested anchor tag HTML error
+
+## Image & Video Optimization
+- [x] Convert hero images to WebP format (resized to 1920px, ~670KB from 3.9MB)
+- [x] Convert all section images to WebP (optimized sizes)
+- [x] Implement advanced preloading for hero assets (index.html + main.tsx)
+- [x] Add blur placeholder for lazy-loaded images
+- [x] Optimize video loading strategy

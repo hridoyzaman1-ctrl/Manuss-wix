@@ -17,16 +17,21 @@ export default function Hero() {
   const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  // Start with images loaded true to show immediately (they're preloaded in index.html and main.tsx)
+  const [imagesLoaded, setImagesLoaded] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   
   // Mouse parallax state
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Preload images on mount
+  // Images are preloaded in index.html and main.tsx, so we just ensure they're marked as loaded
   useEffect(() => {
+    // Double-check images are loaded (they should be from preload)
     preloadImages(HERO_IMAGES).then(() => {
+      setImagesLoaded(true);
+    }).catch(() => {
+      // Even on error, show images (browser will handle fallback)
       setImagesLoaded(true);
     });
   }, []);

@@ -8,6 +8,15 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { preloadCriticalImages } from "./hooks/useOptimizedImage";
+
+// Preload critical hero images immediately
+preloadCriticalImages([
+  '/images/hero/panel-1-texture.webp',
+  '/images/hero/panel-1-texture-dark.webp',
+  '/images/hero/panel-4-books.webp',
+  '/images/hero/book-pages-hands.webp',
+]);
 
 const queryClient = new QueryClient();
 
