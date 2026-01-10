@@ -18,12 +18,11 @@
     
     <!-- Critical Resource Preloading for Instant Load -->
     <!-- Preload Hero Images - Highest Priority -->
-    <link rel="preload" href="/images/hero/panel-1-texture.webp" as="image" type="image/webp" fetchpriority="high" />
-    <link rel="preload" href="/images/hero/panel-4-books.webp" as="image" type="image/webp" fetchpriority="high" />
-    <link rel="preload" href="/images/hero/book-pages-hands.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preload" href="/images/hero/panel-1-texture.jpg" as="image" type="image/jpeg" fetchpriority="high" />
+    <link rel="preload" href="/images/hero/panel-4-books.jpg" as="image" type="image/jpeg" fetchpriority="high" />
     
     <!-- Preload Dark Mode Texture (lower priority) -->
-    <link rel="preload" href="/images/hero/panel-1-texture-dark.webp" as="image" type="image/webp" />
+    <link rel="preload" href="/images/hero/panel-1-texture-dark.jpg" as="image" type="image/jpeg" />
     
     <!-- Preload Hero Video -->
     <link rel="preload" href="/images/hero/hero-video.mp4" as="video" type="video/mp4" />
@@ -70,9 +69,8 @@
       // Preload images via JavaScript for better browser support
       (function() {
         var criticalImages = [
-          '/images/hero/panel-1-texture.webp',
-          '/images/hero/panel-4-books.webp',
-          '/images/hero/book-pages-hands.webp'
+          '/images/hero/panel-1-texture.jpg',
+          '/images/hero/panel-4-books.jpg'
         ];
         
         criticalImages.forEach(function(src) {

@@ -12,10 +12,9 @@ import { preloadCriticalImages } from "./hooks/useOptimizedImage";
 
 // Preload critical hero images immediately
 preloadCriticalImages([
-  '/images/hero/panel-1-texture.webp',
-  '/images/hero/panel-1-texture-dark.webp',
-  '/images/hero/panel-4-books.webp',
-  '/images/hero/book-pages-hands.webp',
+  '/images/hero/panel-1-texture.jpg',
+  '/images/hero/panel-1-texture-dark.jpg',
+  '/images/hero/panel-4-books.jpg',
 ]);
 
 const queryClient = new QueryClient();

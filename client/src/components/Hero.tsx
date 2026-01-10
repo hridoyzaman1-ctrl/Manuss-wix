@@ -8,9 +8,9 @@ import { preloadImages } from "@/hooks/useOptimizedImage";
 
 // Critical hero images to preload immediately
 const HERO_IMAGES = [
-  '/images/hero/panel-1-texture.webp',
-  '/images/hero/panel-1-texture-dark.webp',
-  '/images/hero/panel-4-books.webp',
+  '/images/hero/panel-1-texture.jpg',
+  '/images/hero/panel-1-texture-dark.jpg',
+  '/images/hero/panel-4-books.jpg',
 ];
 
 export default function Hero() {
@@ -107,7 +107,7 @@ export default function Hero() {
         >
           <div className="absolute inset-0">
             <img
-              src="/images/hero/panel-1-texture.webp"
+              src="/images/hero/panel-1-texture.jpg"
               alt="Paper Texture"
               className="h-full w-full object-cover dark:hidden"
               fetchPriority="high"
@@ -115,7 +115,7 @@ export default function Hero() {
               decoding="async"
             />
             <img
-              src="/images/hero/panel-1-texture-dark.webp"
+              src="/images/hero/panel-1-texture-dark.jpg"
               alt="Dark Paper Texture"
               className="h-full w-full object-cover hidden dark:block"
               fetchPriority="high"
@@ -155,7 +155,7 @@ export default function Hero() {
             playsInline
             preload="auto"
             className={`h-full w-full object-cover transition-opacity duration-500 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
-            poster="/images/hero/panel-1-texture.webp"
+            poster="/images/hero/panel-1-texture.jpg"
           >
             <source src="/images/hero/hero-video.mp4" type="video/mp4" />
           </video>
@@ -226,7 +226,7 @@ export default function Hero() {
           className="relative min-h-[250px] sm:min-h-[300px] md:h-[99%] overflow-hidden border border-border/10 shadow-sm order-4 md:order-none"
         >
           <img
-            src="/images/hero/panel-4-books.webp"
+            src="/images/hero/panel-4-books.jpg"
             alt="Stacked Books"
             className="h-full w-full object-cover"
             fetchPriority="high"
