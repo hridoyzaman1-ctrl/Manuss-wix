@@ -1,7 +1,7 @@
 import AdminDashboardLayout from "@/components/AdminDashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { BookOpen, Plus, Search, MoreVertical, Edit, Trash2, Eye, Users } from "lucide-react";
+import { BookOpen, Plus, Search, MoreVertical, Edit, Trash2, Eye, Users, Upload, Image, X, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,13 +30,18 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 
 export default function AdminCourses() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<any>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [editThumbnailPreview, setEditThumbnailPreview] = useState<string | null>(null);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const editThumbnailInputRef = useRef<HTMLInputElement>(null);
   
   const { data: courses, isLoading, refetch } = trpc.course.getAll.useQuery();
   
@@ -44,6 +49,7 @@ export default function AdminCourses() {
     onSuccess: () => {
       toast.success("Course created successfully");
       setIsCreateOpen(false);
+      setThumbnailPreview(null);
       refetch();
     },
     onError: (error) => {
@@ -55,6 +61,7 @@ export default function AdminCourses() {
     onSuccess: () => {
       toast.success("Course updated successfully");
       setEditingCourse(null);
+      setEditThumbnailPreview(null);
       refetch();
     },
     onError: (error) => {
@@ -91,6 +98,55 @@ export default function AdminCourses() {
     );
   };
 
+  const handleThumbnailUpload = async (file: File, isEdit: boolean = false) => {
+    setIsUploadingThumbnail(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const data = await response.json();
+      if (isEdit) {
+        setEditThumbnailPreview(data.url);
+      } else {
+        setThumbnailPreview(data.url);
+      }
+      toast.success("Thumbnail uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload thumbnail");
+      console.error(error);
+    } finally {
+      setIsUploadingThumbnail(false);
+    }
+  };
+
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>, isEdit: boolean = false) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Show local preview immediately
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (isEdit) {
+          setEditThumbnailPreview(reader.result as string);
+        } else {
+          setThumbnailPreview(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+      
+      // Upload to server
+      handleThumbnailUpload(file, isEdit);
+    }
+  };
+
   const handleCreate = (formData: FormData) => {
     createMutation.mutate({
       title: formData.get('title') as string,
@@ -101,6 +157,7 @@ export default function AdminCourses() {
       price: formData.get('price') as string || undefined,
       durationMonths: parseInt(formData.get('durationMonths') as string) || 3,
       status: formData.get('status') as 'draft' | 'published' | 'archived' || 'draft',
+      thumbnail: thumbnailPreview || undefined,
     });
   };
 
@@ -116,7 +173,73 @@ export default function AdminCourses() {
       price: formData.get('price') as string || undefined,
       durationMonths: parseInt(formData.get('durationMonths') as string) || 3,
       status: formData.get('status') as 'draft' | 'published' | 'archived' || 'draft',
+      thumbnail: editThumbnailPreview || editingCourse.thumbnail || undefined,
     });
+  };
+
+  const ThumbnailUploader = ({ 
+    preview, 
+    onRemove, 
+    inputRef, 
+    onChange,
+    existingUrl 
+  }: { 
+    preview: string | null; 
+    onRemove: () => void; 
+    inputRef: React.RefObject<HTMLInputElement | null>;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    existingUrl?: string | null;
+  }) => {
+    const displayUrl = preview || existingUrl;
+    
+    return (
+      <div className="space-y-2">
+        <Label>Course Thumbnail</Label>
+        {displayUrl ? (
+          <div className="relative w-full h-40 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+            <img 
+              src={displayUrl} 
+              alt="Course thumbnail" 
+              className="w-full h-full object-cover"
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="absolute top-2 right-2 h-8 w-8"
+              onClick={onRemove}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <div 
+            className="w-full h-40 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
+            onClick={() => inputRef.current?.click()}
+          >
+            {isUploadingThumbnail ? (
+              <>
+                <Loader2 className="h-10 w-10 text-slate-400 animate-spin mb-2" />
+                <p className="text-sm text-slate-500">Uploading...</p>
+              </>
+            ) : (
+              <>
+                <Image className="h-10 w-10 text-slate-400 mb-2" />
+                <p className="text-sm text-slate-500">Click to upload thumbnail</p>
+                <p className="text-xs text-slate-400 mt-1">PNG, JPG up to 5MB</p>
+              </>
+            )}
+          </div>
+        )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={onChange}
+        />
+      </div>
+    );
   };
 
   return (
@@ -132,14 +255,17 @@ export default function AdminCourses() {
               Create and manage courses for your students
             </p>
           </div>
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <Dialog open={isCreateOpen} onOpenChange={(open) => {
+            setIsCreateOpen(open);
+            if (!open) setThumbnailPreview(null);
+          }}>
             <DialogTrigger asChild>
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
                 Create Course
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New Course</DialogTitle>
                 <DialogDescription>
@@ -148,7 +274,15 @@ export default function AdminCourses() {
               </DialogHeader>
               <form onSubmit={(e) => { e.preventDefault(); handleCreate(new FormData(e.currentTarget)); }}>
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* Thumbnail Upload */}
+                  <ThumbnailUploader
+                    preview={thumbnailPreview}
+                    onRemove={() => setThumbnailPreview(null)}
+                    inputRef={thumbnailInputRef}
+                    onChange={(e) => handleThumbnailChange(e, false)}
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Title (English) *</Label>
                       <Input id="title" name="title" required />
@@ -162,7 +296,7 @@ export default function AdminCourses() {
                     <Label htmlFor="description">Description</Label>
                     <Textarea id="description" name="description" rows={3} />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="category">Category</Label>
                       <Input id="category" name="category" placeholder="e.g., Mathematics" />
@@ -208,7 +342,7 @@ export default function AdminCourses() {
                   <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={createMutation.isPending}>
+                  <Button type="submit" disabled={createMutation.isPending || isUploadingThumbnail}>
                     {createMutation.isPending ? "Creating..." : "Create Course"}
                   </Button>
                 </DialogFooter>
@@ -246,7 +380,25 @@ export default function AdminCourses() {
             ))
           ) : filteredCourses && filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <Card key={course.id} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
+              <Card key={course.id} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow overflow-hidden">
+                {/* Course Thumbnail */}
+                <div className="h-40 bg-gradient-to-br from-primary/20 to-primary/5 relative">
+                  {course.thumbnail ? (
+                    <img 
+                      src={course.thumbnail} 
+                      alt={course.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <BookOpen className="h-16 w-16 text-primary/30" />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    {getStatusBadge(course.status || 'draft')}
+                  </div>
+                </div>
+                
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -266,21 +418,24 @@ export default function AdminCourses() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditingCourse(course)}>
+                        <DropdownMenuItem onClick={() => {
+                          setEditingCourse(course);
+                          setEditThumbnailPreview(course.thumbnail || null);
+                        }}>
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Eye className="h-4 w-4 mr-2" />
-                          View Lessons
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Users className="h-4 w-4 mr-2" />
-                          View Enrollments
+                          Preview
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="text-red-600"
-                          onClick={() => deleteMutation.mutate({ id: course.id })}
+                          onClick={() => {
+                            if (confirm('Are you sure you want to delete this course?')) {
+                              deleteMutation.mutate({ id: course.id });
+                            }
+                          }}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete
@@ -291,40 +446,43 @@ export default function AdminCourses() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-4">
-                    {course.description || "No description provided"}
+                    {course.description || 'No description available'}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {getStatusBadge(course.status)}
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-4">
+                      {course.category && (
+                        <Badge variant="outline">{course.category}</Badge>
+                      )}
                       {course.level && (
-                        <Badge variant="outline" className="text-xs">
-                          {course.level}
-                        </Badge>
+                        <span className="text-slate-500 capitalize">{course.level}</span>
                       )}
                     </div>
-                    <span className="text-sm font-medium text-slate-900 dark:text-white">
-                      {course.price ? `৳${course.price}` : 'Free'}
+                    <span className="font-semibold text-primary">
+                      {course.price && parseFloat(course.price) > 0 
+                        ? `৳${course.price}` 
+                        : 'Free'}
                     </span>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
-                    <span>{course.category || 'Uncategorized'}</span>
-                    <span>{course.durationMonths} months</span>
                   </div>
                 </CardContent>
               </Card>
             ))
           ) : (
             <div className="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
-              <BookOpen className="h-16 w-16 mx-auto mb-4 opacity-30" />
-              <p className="text-lg font-medium">No courses found</p>
+              <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <p className="font-medium">No courses found</p>
               <p className="text-sm">Create your first course to get started</p>
             </div>
           )}
         </div>
 
-        {/* Edit Dialog */}
-        <Dialog open={!!editingCourse} onOpenChange={(open) => !open && setEditingCourse(null)}>
-          <DialogContent className="max-w-2xl">
+        {/* Edit Course Dialog */}
+        <Dialog open={!!editingCourse} onOpenChange={(open) => {
+          if (!open) {
+            setEditingCourse(null);
+            setEditThumbnailPreview(null);
+          }
+        }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit Course</DialogTitle>
               <DialogDescription>
@@ -334,7 +492,16 @@ export default function AdminCourses() {
             {editingCourse && (
               <form onSubmit={(e) => { e.preventDefault(); handleUpdate(new FormData(e.currentTarget)); }}>
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* Thumbnail Upload */}
+                  <ThumbnailUploader
+                    preview={editThumbnailPreview}
+                    onRemove={() => setEditThumbnailPreview(null)}
+                    inputRef={editThumbnailInputRef}
+                    onChange={(e) => handleThumbnailChange(e, true)}
+                    existingUrl={editingCourse.thumbnail}
+                  />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="edit-title">Title (English) *</Label>
                       <Input id="edit-title" name="title" defaultValue={editingCourse.title} required />
@@ -348,7 +515,7 @@ export default function AdminCourses() {
                     <Label htmlFor="edit-description">Description</Label>
                     <Textarea id="edit-description" name="description" rows={3} defaultValue={editingCourse.description || ''} />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="edit-category">Category</Label>
                       <Input id="edit-category" name="category" defaultValue={editingCourse.category || ''} />
@@ -383,7 +550,7 @@ export default function AdminCourses() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="edit-price">Price (BDT)</Label>
-                      <Input id="edit-price" name="price" type="number" defaultValue={editingCourse.price || ''} />
+                      <Input id="edit-price" name="price" type="number" defaultValue={editingCourse.price || 0} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="edit-durationMonths">Duration (Months)</Label>
@@ -395,7 +562,7 @@ export default function AdminCourses() {
                   <Button type="button" variant="outline" onClick={() => setEditingCourse(null)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={updateMutation.isPending}>
+                  <Button type="submit" disabled={updateMutation.isPending || isUploadingThumbnail}>
                     {updateMutation.isPending ? "Saving..." : "Save Changes"}
                   </Button>
                 </DialogFooter>

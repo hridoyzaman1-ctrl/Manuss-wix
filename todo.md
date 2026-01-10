@@ -230,3 +230,6 @@
 ## Bug Fixes - Lesson Management
 - [x] Fix admin lesson management mobile layout overlap (responsive layout with dropdown menu on mobile)
 - [x] Remove 4 lesson limit - confirmed no limit exists, the 4 lessons were just demo data
+
+- [ ] Add 'Add Lesson' button to AdminLessons page for creating new lessons
+- [x] Add course thumbnail upload option in admin course management
