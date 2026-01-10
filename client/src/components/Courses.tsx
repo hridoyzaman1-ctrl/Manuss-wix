@@ -116,7 +116,12 @@ export default function Courses() {
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Minimum swipe distance (in px) to trigger navigation
+  const minSwipeDistance = 50;
 
   // Track window size for responsive carousel
   useEffect(() => {
@@ -175,6 +180,29 @@ export default function Courses() {
 
   const handleNext = () => {
     setCarouselIndex((prev) => Math.min(maxIndex, prev + 1));
+  };
+
+  // Touch swipe handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
   };
 
   const isLoading = categoriesLoading || coursesLoading;
@@ -370,9 +398,15 @@ export default function Courses() {
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden -mx-4 px-4 sm:mx-0 sm:px-0" ref={carouselRef}>
+                <div 
+                  className="relative overflow-hidden -mx-4 px-4 sm:mx-0 sm:px-0 touch-pan-y" 
+                  ref={carouselRef}
+                  onTouchStart={onTouchStart}
+                  onTouchMove={onTouchMove}
+                  onTouchEnd={onTouchEnd}
+                >
                   <motion.div
-                    className="flex gap-3 sm:gap-6"
+                    className="flex gap-3 sm:gap-6 cursor-grab active:cursor-grabbing"
                     animate={{ x: -carouselIndex * (isMobile ? 83 : 100 / 3) + "%" }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >

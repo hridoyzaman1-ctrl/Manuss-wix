@@ -266,3 +266,4 @@
 
 ## Bug Fixes - Course Carousel
 - [x] Fix carousel card responsive layout on mobile (cards getting cut off)
+- [x] Add touch swipe left-right support for carousel on mobile
