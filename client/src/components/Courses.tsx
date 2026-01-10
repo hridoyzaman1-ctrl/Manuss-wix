@@ -399,41 +399,53 @@ export default function Courses() {
                 </div>
 
                 <div 
-                  className="relative overflow-hidden -mx-4 px-4 sm:mx-0 sm:px-0 touch-pan-y" 
+                  className="relative overflow-hidden touch-pan-y" 
                   ref={carouselRef}
                   onTouchStart={onTouchStart}
                   onTouchMove={onTouchMove}
                   onTouchEnd={onTouchEnd}
                 >
                   <motion.div
-                    className="flex gap-3 sm:gap-6 cursor-grab active:cursor-grabbing"
-                    animate={{ x: -carouselIndex * (isMobile ? 83 : 100 / 3) + "%" }}
+                    className="flex gap-4 sm:gap-6 cursor-grab active:cursor-grabbing"
+                    animate={{ x: -carouselIndex * (isMobile ? 100 : 33.333) + "%" }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     {filteredCourses.map((course) => (
                       <div
                         key={`carousel-${course.id}`}
-                        className="min-w-[280px] sm:min-w-[300px] lg:min-w-[320px] flex-shrink-0 bg-card border border-border p-4 sm:p-5 lg:p-6 hover:border-primary transition-colors rounded-lg shadow-sm hover:shadow-md"
+                        className="min-w-[calc(100%-1rem)] sm:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] flex-shrink-0 bg-card border border-border overflow-hidden hover:border-primary transition-all duration-500"
                       >
-                        <div className="aspect-[4/3] bg-muted mb-4 overflow-hidden rounded-md">
+                        {/* Image Container - matching main cards */}
+                        <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
                           <img
                             src={course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
                             alt={course.title}
                             loading="lazy"
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                           />
+                          <div className="absolute inset-0 bg-black/20 hover:bg-black/40 transition-colors duration-500"></div>
+                          <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 text-xs font-medium uppercase tracking-wider">
+                            {course.categoryName}
+                          </div>
                         </div>
-                        <h4 className="font-semibold mb-2 text-base sm:text-lg line-clamp-2">{course.title}</h4>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                          {course.description || "Explore this comprehensive course."}
-                        </p>
-                        <div className="pt-4 border-t border-border flex items-center justify-between">
-                          <span className="font-bold text-primary text-base sm:text-lg">
-                            {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {(course as any).totalLessons || 0} Lessons
-                          </span>
+                        {/* Content - matching main cards */}
+                        <div className="p-6">
+                          <div className="flex justify-between items-start mb-4">
+                            <h4 className="font-serif text-xl font-bold line-clamp-2">{course.title}</h4>
+                            <span className="font-bold text-primary">
+                              {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
+                            </span>
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-6 line-clamp-2">
+                            {course.description || "Explore this comprehensive course."}
+                          </p>
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <BookOpen className="h-4 w-4" />
+                              <span>{(course as any).totalLessons || 0} Lessons</span>
+                            </div>
+                            <span className="text-primary text-xs">View Details →</span>
+                          </div>
                         </div>
                       </div>
                     ))}
