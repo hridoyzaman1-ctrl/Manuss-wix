@@ -33,6 +33,8 @@ const AdminEvents = lazy(() => import("@/pages/admin/AdminEvents"));
 const AdminAIMVerse = lazy(() => import("@/pages/admin/AdminAIMVerse"));
 const AdminLiveClasses = lazy(() => import("@/pages/admin/AdminLiveClasses"));
 const AdminAchievements = lazy(() => import("@/pages/admin/AdminAchievements"));
+const AdminLessons = lazy(() => import("@/pages/admin/AdminLessons"));
+const AdminChatGroups = lazy(() => import("@/pages/admin/AdminChatGroups"));
 const AdminProfile = lazy(() => import("@/pages/admin/AdminProfile"));
 
 // Student pages
@@ -78,10 +80,12 @@ function Router() {
         <Route path={"/admin/quizzes"} component={AdminQuizzes} />
         <Route path={"/admin/assignments"} component={AdminAssignments} />
         <Route path={"/admin/announcements"} component={AdminAnnouncements} />
+        <Route path={"/admin/lessons"} component={AdminLessons} />
         <Route path={"/admin/events"} component={AdminEvents} />
         <Route path={"/admin/aimverse"} component={AdminAIMVerse} />
         <Route path={"/admin/live-classes"} component={AdminLiveClasses} />
         <Route path={"/admin/achievements"} component={AdminAchievements} />
+        <Route path={"/admin/chat-groups"} component={AdminChatGroups} />
         <Route path={"/admin/profile"} component={AdminProfile} />
         
         {/* Student routes */}

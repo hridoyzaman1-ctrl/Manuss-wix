@@ -550,3 +550,70 @@ export const aimversePrizes = mysqlTable("aimverse_prizes", {
 
 export type AimversePrize = typeof aimversePrizes.$inferSelect;
 export type InsertAimversePrize = typeof aimversePrizes.$inferInsert;
+
+
+/**
+ * Chat Groups for group messaging
+ */
+export const chatGroups = mysqlTable("chat_groups", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["course", "section", "class", "custom"]).default("custom").notNull(),
+  courseId: int("courseId"), // If type is 'course', links to the course
+  createdBy: int("createdBy").notNull(),
+  avatarUrl: text("avatarUrl"),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatGroup = typeof chatGroups.$inferSelect;
+export type InsertChatGroup = typeof chatGroups.$inferInsert;
+
+/**
+ * Chat Group Members
+ */
+export const chatGroupMembers = mysqlTable("chat_group_members", {
+  id: int("id").autoincrement().primaryKey(),
+  groupId: int("groupId").notNull(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["admin", "moderator", "member"]).default("member").notNull(),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+  leftAt: timestamp("leftAt"),
+  isActive: boolean("isActive").default(true),
+});
+
+export type ChatGroupMember = typeof chatGroupMembers.$inferSelect;
+export type InsertChatGroupMember = typeof chatGroupMembers.$inferInsert;
+
+/**
+ * Group Messages
+ */
+export const groupMessages = mysqlTable("group_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  groupId: int("groupId").notNull(),
+  senderId: int("senderId").notNull(),
+  content: text("content").notNull(),
+  attachmentUrl: text("attachmentUrl"),
+  attachmentType: varchar("attachmentType", { length: 50 }),
+  isEdited: boolean("isEdited").default(false),
+  editedAt: timestamp("editedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type GroupMessage = typeof groupMessages.$inferSelect;
+export type InsertGroupMessage = typeof groupMessages.$inferInsert;
+
+/**
+ * Group Message Read Status
+ */
+export const groupMessageReads = mysqlTable("group_message_reads", {
+  id: int("id").autoincrement().primaryKey(),
+  messageId: int("messageId").notNull(),
+  userId: int("userId").notNull(),
+  readAt: timestamp("readAt").defaultNow().notNull(),
+});
+
+export type GroupMessageRead = typeof groupMessageReads.$inferSelect;
+export type InsertGroupMessageRead = typeof groupMessageReads.$inferInsert;

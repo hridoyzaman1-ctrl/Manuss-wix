@@ -56,6 +56,7 @@ const menuItems = [
   { icon: Bell, label: "Announcements", path: "/admin/announcements" },
   { icon: Calendar, label: "Events", path: "/admin/events" },
   { icon: Sparkles, label: "AIMVerse", path: "/admin/aimverse" },
+  { icon: Users, label: "Chat Groups", path: "/admin/chat-groups" },
   { icon: MessageSquare, label: "Messages", path: "/admin/messages" },
   { icon: User, label: "Profile", path: "/admin/profile" },
   { icon: Settings, label: "Settings", path: "/admin/settings" },

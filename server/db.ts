@@ -28,6 +28,10 @@ import {
   aimverseEpisodes, InsertAimverseEpisode,
   aimverseCards, InsertAimverseCard,
   aimversePrizes, InsertAimversePrize,
+  chatGroups, InsertChatGroup, ChatGroup,
+  chatGroupMembers, InsertChatGroupMember,
+  groupMessages, InsertGroupMessage,
+  groupMessageReads,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 import { nanoid } from 'nanoid';
@@ -1060,3 +1064,200 @@ export async function getStudentDashboardStats(userId: number) {
     achievementsEarned: achievementsEarned[0]?.count || 0,
   };
 }
+
+
+// ============ CHAT GROUP HELPERS ============
+
+export async function createChatGroup(data: {
+  name: string;
+  type: 'course' | 'section' | 'class' | 'custom';
+  courseId?: number;
+  createdBy: number;
+  memberIds: number[];
+  description?: string;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.insert(chatGroups).values({
+    name: data.name,
+    type: data.type,
+    courseId: data.courseId,
+    createdBy: data.createdBy,
+    description: data.description,
+  });
+  
+  const groupId = result[0].insertId;
+  
+  // Add creator as admin
+  await db.insert(chatGroupMembers).values({
+    groupId,
+    userId: data.createdBy,
+    role: 'admin',
+  });
+  
+  // Add other members
+  if (data.memberIds.length > 0) {
+    const memberValues = data.memberIds
+      .filter(id => id !== data.createdBy)
+      .map(userId => ({
+        groupId,
+        userId,
+        role: 'member' as const,
+      }));
+    
+    if (memberValues.length > 0) {
+      await db.insert(chatGroupMembers).values(memberValues);
+    }
+  }
+  
+  return { id: groupId, ...data };
+}
+
+export async function getChatGroup(groupId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.select().from(chatGroups).where(eq(chatGroups.id, groupId)).limit(1);
+  if (result.length === 0) return null;
+  
+  const members = await db.select({
+    userId: chatGroupMembers.userId,
+    role: chatGroupMembers.role,
+    userName: users.name,
+  })
+  .from(chatGroupMembers)
+  .leftJoin(users, eq(chatGroupMembers.userId, users.id))
+  .where(and(eq(chatGroupMembers.groupId, groupId), eq(chatGroupMembers.isActive, true)));
+  
+  return { ...result[0], members };
+}
+
+export async function getUserChatGroups(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const memberGroups = await db.select({
+    groupId: chatGroupMembers.groupId,
+  })
+  .from(chatGroupMembers)
+  .where(and(eq(chatGroupMembers.userId, userId), eq(chatGroupMembers.isActive, true)));
+  
+  if (memberGroups.length === 0) return [];
+  
+  const groupIds = memberGroups.map(m => m.groupId);
+  const groups = await db.select().from(chatGroups).where(inArray(chatGroups.id, groupIds));
+  
+  return groups;
+}
+
+export async function addGroupMembers(groupId: number, memberIds: number[]) {
+  const db = await getDb();
+  if (!db) return;
+  
+  const values = memberIds.map(userId => ({
+    groupId,
+    userId,
+    role: 'member' as const,
+  }));
+  
+  await db.insert(chatGroupMembers).values(values);
+}
+
+export async function removeGroupMembers(groupId: number, memberIds: number[]) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(chatGroupMembers)
+    .set({ isActive: false, leftAt: new Date() })
+    .where(and(
+      eq(chatGroupMembers.groupId, groupId),
+      inArray(chatGroupMembers.userId, memberIds)
+    ));
+}
+
+export async function saveDirectMessage(data: { fromUserId: number; toUserId: number; content: string }) {
+  const db = await getDb();
+  if (!db) return { id: 0 };
+  
+  const result = await db.insert(messages).values({
+    fromUserId: data.fromUserId,
+    toUserId: data.toUserId,
+    content: data.content,
+  });
+  
+  return { id: result[0].insertId };
+}
+
+export async function saveGroupMessage(data: { groupId: number; senderId: number; content: string }) {
+  const db = await getDb();
+  if (!db) return { id: 0 };
+  
+  const result = await db.insert(groupMessages).values({
+    groupId: data.groupId,
+    senderId: data.senderId,
+    content: data.content,
+  });
+  
+  return { id: result[0].insertId };
+}
+
+export async function getDirectMessages(userId1: number, userId2: number, limit = 50, before?: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  let query = db.select({
+    id: messages.id,
+    fromUserId: messages.fromUserId,
+    toUserId: messages.toUserId,
+    content: messages.content,
+    createdAt: messages.createdAt,
+    isRead: messages.isRead,
+    senderName: users.name,
+  })
+  .from(messages)
+  .leftJoin(users, eq(messages.fromUserId, users.id))
+  .where(
+    or(
+      and(eq(messages.fromUserId, userId1), eq(messages.toUserId, userId2)),
+      and(eq(messages.fromUserId, userId2), eq(messages.toUserId, userId1))
+    )
+  )
+  .orderBy(desc(messages.createdAt))
+  .limit(limit);
+  
+  return query;
+}
+
+export async function getGroupMessages(groupId: number, limit = 50, before?: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select({
+    id: groupMessages.id,
+    groupId: groupMessages.groupId,
+    senderId: groupMessages.senderId,
+    content: groupMessages.content,
+    createdAt: groupMessages.createdAt,
+    senderName: users.name,
+  })
+  .from(groupMessages)
+  .leftJoin(users, eq(groupMessages.senderId, users.id))
+  .where(eq(groupMessages.groupId, groupId))
+  .orderBy(desc(groupMessages.createdAt))
+  .limit(limit);
+}
+
+export async function markMessagesAsRead(messageIds: number[], userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Mark direct messages as read
+  await db.update(messages)
+    .set({ isRead: true, readAt: new Date() })
+    .where(and(
+      inArray(messages.id, messageIds),
+      eq(messages.toUserId, userId)
+    ));
+}
+

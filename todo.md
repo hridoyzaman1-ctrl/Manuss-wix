@@ -211,3 +211,17 @@
 - [x] Assignment submission page with file upload
 - [x] Deadline enforcement for assignments
 - [x] Assignment status tracking (pending/submitted/graded)
+
+
+## Admin Lesson Management & Real-time Messaging
+- [x] Admin lesson management page with CRUD operations
+- [x] Video upload for lessons
+- [x] PDF attachment upload for lessons
+- [x] Lesson ordering/reordering within courses
+- [x] WebSocket server setup for real-time messaging
+- [x] Direct messaging between students and teachers
+- [x] Group chat functionality
+- [x] Course-based group chat (all enrolled students)
+- [x] Section-based group chat
+- [x] Class-based group chat
+- [x] Admin/teacher group management (add/remove members)
