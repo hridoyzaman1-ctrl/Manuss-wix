@@ -153,3 +153,6 @@
 ## Chatbot Draggable Feature
 - [x] Make chatbot draggable with mouse (desktop)
 - [x] Make chatbot draggable with touch (mobile)
+
+## Bug Fixes
+- [x] Fix signup JSON error - unexpected end of JSON input

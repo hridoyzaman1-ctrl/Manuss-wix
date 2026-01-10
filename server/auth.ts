@@ -72,7 +72,7 @@ export async function signupUser(data: {
     const studentUid = role === 'student' ? nanoid(12) : null;
 
     // Insert user
-    const result = await db.insert(users).values({
+    await db.insert(users).values({
       email: data.email,
       passwordHash,
       name: data.name,
@@ -83,10 +83,8 @@ export async function signupUser(data: {
       lastSignedIn: new Date(),
     });
 
-    const userId = result[0].insertId;
-
-    // Get the created user
-    const newUser = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    // Get the created user by email (since we just inserted it)
+    const newUser = await db.select().from(users).where(eq(users.email, data.email)).limit(1);
 
     if (newUser.length === 0) {
       return { success: false, error: 'Failed to create user' };
