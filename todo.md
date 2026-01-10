@@ -263,3 +263,6 @@
 ## Homepage Course Carousel
 - [x] Restore fake sample courses on homepage course carousel (12 sample courses)
 - [x] Restore auto-scroll functionality for course carousel (4 second interval)
+
+## Bug Fixes - Course Carousel
+- [x] Fix carousel card responsive layout on mobile (cards getting cut off)

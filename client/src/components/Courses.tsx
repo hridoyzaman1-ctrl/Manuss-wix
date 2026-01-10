@@ -115,7 +115,16 @@ export default function Courses() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Track window size for responsive carousel
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fetch categories and courses from database
   const { data: categoryHierarchy, isLoading: categoriesLoading } = trpc.category.getHierarchy.useQuery();
@@ -146,23 +155,26 @@ export default function Courses() {
     return matchesCategory && matchesSearch;
   });
 
+  // Calculate visible items based on screen size
+  const visibleItems = isMobile ? 1 : 3;
+  const maxIndex = Math.max(0, filteredCourses.length - visibleItems);
+
   // Auto-swipe functionality for carousel
   useEffect(() => {
-    const maxIndex = Math.max(0, filteredCourses.length - 3);
     const interval = setInterval(() => {
-      if (filteredCourses.length > 3) {
+      if (filteredCourses.length > visibleItems) {
         setCarouselIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
       }
     }, 4000); // Auto-scroll every 4 seconds
     return () => clearInterval(interval);
-  }, [filteredCourses.length]);
+  }, [filteredCourses.length, maxIndex, visibleItems]);
 
   const handlePrev = () => {
     setCarouselIndex((prev) => Math.max(0, prev - 1));
   };
 
   const handleNext = () => {
-    setCarouselIndex((prev) => Math.min(filteredCourses.length - 3, prev + 1));
+    setCarouselIndex((prev) => Math.min(maxIndex, prev + 1));
   };
 
   const isLoading = categoriesLoading || coursesLoading;
@@ -335,15 +347,15 @@ export default function Courses() {
 
             {/* Extra Courses Carousel Section */}
             {filteredCourses.length > 3 && (
-              <div className="border-t border-border pt-16">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-2xl font-serif font-bold">More to Explore</h3>
+              <div className="border-t border-border pt-8 sm:pt-16">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold">More to Explore</h3>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={handlePrev}
-                      className="rounded-full hover:bg-primary hover:text-white transition-colors"
+                      className="rounded-full hover:bg-primary hover:text-white transition-colors h-8 w-8 sm:h-10 sm:w-10"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
@@ -351,35 +363,41 @@ export default function Courses() {
                       variant="outline"
                       size="icon"
                       onClick={handleNext}
-                      className="rounded-full hover:bg-primary hover:text-white transition-colors"
+                      className="rounded-full hover:bg-primary hover:text-white transition-colors h-8 w-8 sm:h-10 sm:w-10"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden" ref={carouselRef}>
+                <div className="relative overflow-hidden -mx-4 px-4 sm:mx-0 sm:px-0" ref={carouselRef}>
                   <motion.div
-                    className="flex gap-6"
-                    animate={{ x: -carouselIndex * (100 / 3) + "%" }}
+                    className="flex gap-3 sm:gap-6"
+                    animate={{ x: -carouselIndex * (isMobile ? 83 : 100 / 3) + "%" }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     {filteredCourses.map((course) => (
                       <div
                         key={`carousel-${course.id}`}
-                        className="min-w-[calc(33.333%-1rem)] bg-card border border-border p-4 hover:border-primary transition-colors"
+                        className="min-w-[80%] sm:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] flex-shrink-0 bg-card border border-border p-3 sm:p-4 hover:border-primary transition-colors rounded-lg"
                       >
-                        <div className="aspect-video bg-muted mb-4 overflow-hidden">
+                        <div className="aspect-video bg-muted mb-3 sm:mb-4 overflow-hidden rounded-md">
                           <img
                             src={course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
                             alt={course.title}
+                            loading="lazy"
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <h4 className="font-medium mb-2">{course.title}</h4>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
+                        <h4 className="font-medium mb-2 text-sm sm:text-base line-clamp-2">{course.title}</h4>
+                        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                           {course.description || "Explore this comprehensive course."}
                         </p>
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <span className="font-bold text-primary text-sm">
+                            {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </motion.div>
