@@ -33,7 +33,8 @@ import {
   GraduationCap,
   User,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ArrowLeft
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
@@ -87,6 +88,17 @@ export default function AdminDashboardLayout({
   const activeMenuItem = menuItems.find(item => 
     location === item.path || (item.path !== '/admin' && location.startsWith(item.path))
   ) || menuItems[0];
+
+  // Handle logout - redirect to landing page
+  const handleLogout = () => {
+    logout();
+    setLocation("/");
+  };
+
+  // Handle back button - go to previous page
+  const handleBack = () => {
+    window.history.back();
+  };
 
   if (loading) {
     return <DashboardLayoutSkeleton />
@@ -194,10 +206,10 @@ export default function AdminDashboardLayout({
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem onClick={() => setLocation("/")} className="cursor-pointer">
           <Home className="mr-2 h-4 w-4" />
-          <span>Back to Site</span>
+          <span>Back to Home</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-600 dark:text-red-400">
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
         </DropdownMenuItem>
@@ -210,8 +222,19 @@ export default function AdminDashboardLayout({
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
         {/* Mobile Header */}
-        <header className="sticky top-0 z-50 flex h-14 items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-50 flex h-14 items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-2">
+          <div className="flex items-center gap-1">
+            {/* Back Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleBack}
+              className="h-9 w-9"
+              title="Go back"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            {/* Menu Button */}
             <Button
               variant="ghost"
               size="icon"
@@ -220,32 +243,44 @@ export default function AdminDashboardLayout({
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <span className="font-medium text-slate-900 dark:text-white">
+            <span className="font-medium text-slate-900 dark:text-white text-sm">
               {activeMenuItem?.label ?? "Admin"}
             </span>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="rounded-full">
-                <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-700">
-                  <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
-                    {user?.name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={() => setLocation("/")} className="cursor-pointer">
-                <Home className="mr-2 h-4 w-4" />
-                <span>Back to Site</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-600 dark:text-red-400">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Sign out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            {/* Home Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setLocation("/")}
+              className="h-9 w-9"
+              title="Back to Home"
+            >
+              <Home className="h-5 w-5" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="rounded-full">
+                  <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-700">
+                    <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
+                      {user?.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => setLocation("/")} className="cursor-pointer">
+                  <Home className="mr-2 h-4 w-4" />
+                  <span>Back to Home</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
 
         {/* Mobile Sidebar Sheet */}
@@ -256,8 +291,17 @@ export default function AdminDashboardLayout({
               <SheetDescription>Admin navigation</SheetDescription>
             </SheetHeader>
             <div className="flex flex-col h-full bg-white dark:bg-slate-900">
-              <div className="h-14 flex items-center px-4 border-b border-slate-200 dark:border-slate-700">
+              <div className="h-14 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-700">
                 <span className="font-bold text-slate-900 dark:text-white">AIM Admin</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLocation("/")}
+                  className="text-xs gap-1"
+                >
+                  <Home className="h-3 w-3" />
+                  Home
+                </Button>
               </div>
               <NavigationContent onNavigate={() => setMobileMenuOpen(false)} />
               <div className="p-3 border-t border-slate-200 dark:border-slate-700">
@@ -294,6 +338,19 @@ export default function AdminDashboardLayout({
           >
             {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
+        </div>
+
+        {/* Back to Home Button */}
+        <div className="px-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLocation("/")}
+            className={`w-full justify-start gap-2 ${sidebarCollapsed ? 'px-2' : ''}`}
+          >
+            <Home className="h-4 w-4" />
+            {!sidebarCollapsed && <span>Back to Home</span>}
+          </Button>
         </div>
 
         {/* Navigation */}

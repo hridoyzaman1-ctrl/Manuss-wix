@@ -176,3 +176,11 @@
 - [x] Fix auth cookie not recognized - infinite login loop
 - [x] Fix auth cookie still not recognized after login (added cookie-parser middleware)
 - [x] Fix Admin Dashboard mobile layout - sidebar overlapping with main content
+
+## Dashboard Integration with Landing Page
+- [x] Show 'Dashboard' in header menu after login (replaces Login/Sign Up)
+- [x] Route Dashboard link to correct portal based on role (student/admin/parent)
+- [x] Add 'Back to Home' button on all dashboards
+- [x] Add mobile back button to go to previous page in dashboards
+- [x] Logout redirects to landing page (logged out state)
+- [ ] Show enrolled courses as accessible on landing page for logged-in students (future enhancement)

@@ -1,17 +1,42 @@
+import { useAuth } from "@/_core/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, Moon, Sun, Globe, X } from "lucide-react";
+import { Menu, Moon, Sun, Globe, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "./ui/button";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { language, toggleLanguage, t } = useLanguage();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const { user, loading, logout } = useAuth();
+
+  // Get dashboard path based on user role
+  const getDashboardPath = () => {
+    if (!user) return "/login";
+    switch (user.role) {
+      case "admin":
+        return "/admin";
+      case "student":
+        return "/student";
+      case "parent":
+        return "/parent";
+      default:
+        return "/student";
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,6 +93,11 @@ export default function Header() {
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    setLocation("/");
+  };
 
   return (
     <motion.header
@@ -159,18 +189,62 @@ export default function Header() {
 
           <div className="hidden md:block h-6 w-[1px] bg-border mx-1 sm:mx-2"></div>
 
-          {/* Auth Buttons (Hidden on Mobile) */}
+          {/* Auth Section - Shows Dashboard if logged in, Login/Signup if not */}
           <div className="hidden md:flex items-center gap-2 lg:gap-4">
-            <Link href="/login">
-              <Button asChild variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground text-sm">
-                <span>{t("nav.login")}</span>
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button asChild className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 lg:px-6 text-sm">
-                <span>{t("nav.signup")}</span>
-              </Button>
-            </Link>
+            {!loading && user ? (
+              // Logged in state - show Dashboard button and user menu
+              <>
+                <Link href={getDashboardPath()}>
+                  <Button asChild className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 lg:px-6 text-sm gap-2">
+                    <span>
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </span>
+                  </Button>
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="rounded-full focus:outline-none focus:ring-2 focus:ring-ring">
+                      <Avatar className="h-9 w-9 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                        <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
+                          {user.name?.charAt(0).toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <div className="px-2 py-1.5">
+                      <p className="text-sm font-medium">{user.name}</p>
+                      <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setLocation(getDashboardPath())} className="cursor-pointer">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              // Logged out state - show Login/Signup buttons
+              <>
+                <Link href="/login">
+                  <Button asChild variant="ghost" className="font-medium hover:bg-transparent hover:text-primary text-foreground text-sm">
+                    <span>{t("nav.login")}</span>
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button asChild className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 lg:px-6 text-sm">
+                    <span>{t("nav.signup")}</span>
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle - Hamburger Button */}
@@ -226,6 +300,26 @@ export default function Header() {
               transition={{ duration: 0.3, delay: 0.1 }}
               className="container py-6 sm:py-8 flex flex-col gap-4 sm:gap-6 min-h-[calc(100vh-57px)] sm:min-h-[calc(100vh-65px)]"
             >
+              {/* User Info (if logged in) */}
+              {!loading && user && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex items-center gap-3 pb-4 border-b border-border"
+                >
+                  <Avatar className="h-12 w-12 border-2 border-primary/20">
+                    <AvatarFallback className="text-lg font-medium bg-primary/10 text-primary">
+                      {user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium text-foreground">{user.name}</p>
+                    <p className="text-sm text-muted-foreground capitalize">{user.role}</p>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Navigation Links */}
               <nav className="flex flex-col gap-1">
                 {navLinks.map((link, index) => (
@@ -250,16 +344,44 @@ export default function Header() {
                 transition={{ duration: 0.3, delay: 0.4 }}
                 className="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6"
               >
-                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button asChild className="w-full rounded-full bg-foreground text-background py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
-                    <span>{t("nav.signup")}</span>
-                  </Button>
-                </Link>
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button asChild variant="outline" className="w-full rounded-full border-foreground text-foreground py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
-                    <span>{t("nav.login")}</span>
-                  </Button>
-                </Link>
+                {!loading && user ? (
+                  // Logged in - show Dashboard and Logout
+                  <>
+                    <Link href={getDashboardPath()} onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button asChild className="w-full rounded-full bg-primary text-primary-foreground py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform gap-2">
+                        <span>
+                          <LayoutDashboard className="h-5 w-5" />
+                          Dashboard
+                        </span>
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="outline" 
+                      className="w-full rounded-full border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform gap-2"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      <LogOut className="h-5 w-5" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  // Logged out - show Signup and Login
+                  <>
+                    <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button asChild className="w-full rounded-full bg-foreground text-background py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
+                        <span>{t("nav.signup")}</span>
+                      </Button>
+                    </Link>
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button asChild variant="outline" className="w-full rounded-full border-foreground text-foreground py-5 sm:py-6 text-base sm:text-lg touch-manipulation active:scale-[0.98] transition-transform">
+                        <span>{t("nav.login")}</span>
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </motion.div>
 
               {/* Spacer to push content up */}
