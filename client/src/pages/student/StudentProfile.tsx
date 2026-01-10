@@ -3,13 +3,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { Camera, Loader2, Save, User } from "lucide-react";
+import { ArrowLeft, Camera, Loader2, Save, User, Upload, Check } from "lucide-react";
+
+// Pre-made avatars - fun cartoon style avatars
+const PRESET_AVATARS = [
+  { id: 'avatar1', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4', name: 'Felix' },
+  { id: 'avatar2', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede', name: 'Aneka' },
+  { id: 'avatar3', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Milo&backgroundColor=d1d4f9', name: 'Milo' },
+  { id: 'avatar4', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Luna&backgroundColor=ffd5dc', name: 'Luna' },
+  { id: 'avatar5', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Max&backgroundColor=ffdfbf', name: 'Max' },
+  { id: 'avatar6', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zoe&backgroundColor=c1f4c5', name: 'Zoe' },
+  { id: 'avatar7', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Happy&backgroundColor=b6e3f4', name: 'Happy' },
+  { id: 'avatar8', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Cool&backgroundColor=c0aede', name: 'Cool' },
+  { id: 'avatar9', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Robot1&backgroundColor=d1d4f9', name: 'Robot' },
+  { id: 'avatar10', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Robot2&backgroundColor=ffd5dc', name: 'Bot' },
+  { id: 'avatar11', url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Teacher&backgroundColor=ffdfbf', name: 'Teacher' },
+  { id: 'avatar12', url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Student&backgroundColor=c1f4c5', name: 'Student' },
+];
 
 export default function StudentProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isAvatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { data: profile, isLoading, refetch } = trpc.user.getProfile.useQuery();
@@ -38,20 +56,27 @@ export default function StudentProfile() {
   }, [profile]);
 
   const handleAvatarClick = () => {
-    fileInputRef.current?.click();
+    if (isEditing) {
+      setIsAvatarDialogOpen(true);
+    }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Convert to base64 for simple storage (in production, use proper file upload)
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64 = reader.result as string;
       setFormData(prev => ({ ...prev, avatarUrl: base64 }));
+      setIsAvatarDialogOpen(false);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleSelectAvatar = (avatarUrl: string) => {
+    setFormData(prev => ({ ...prev, avatarUrl }));
+    setIsAvatarDialogOpen(false);
   };
 
   const handleSave = async () => {
@@ -87,7 +112,17 @@ export default function StudentProfile() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto px-4 py-4">
+      {/* Back Button */}
+      <Button
+        variant="ghost"
+        onClick={() => window.history.back()}
+        className="mb-4 -ml-2 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back
+      </Button>
+
       <div className="bg-white dark:bg-stone-800 rounded-2xl shadow-lg border border-stone-200 dark:border-stone-700 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-8 text-white">
@@ -95,8 +130,8 @@ export default function StudentProfile() {
             {/* Avatar */}
             <div className="relative">
               <div 
-                onClick={isEditing ? handleAvatarClick : undefined}
-                className={`w-24 h-24 rounded-full bg-white/20 flex items-center justify-center overflow-hidden ${isEditing ? 'cursor-pointer hover:bg-white/30 transition-colors' : ''}`}
+                onClick={handleAvatarClick}
+                className={`w-24 h-24 rounded-full bg-white/20 flex items-center justify-center overflow-hidden ${isEditing ? 'cursor-pointer hover:bg-white/30 transition-colors ring-4 ring-white/30' : ''}`}
               >
                 {formData.avatarUrl ? (
                   <img src={formData.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
@@ -105,17 +140,10 @@ export default function StudentProfile() {
                 )}
               </div>
               {isEditing && (
-                <div className="absolute bottom-0 right-0 bg-white rounded-full p-1.5 shadow-lg">
+                <div className="absolute bottom-0 right-0 bg-white rounded-full p-1.5 shadow-lg cursor-pointer" onClick={handleAvatarClick}>
                   <Camera className="w-4 h-4 text-stone-600" />
                 </div>
               )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
             </div>
             
             {/* Name & Role */}
@@ -268,6 +296,70 @@ export default function StudentProfile() {
           </div>
         </div>
       </div>
+
+      {/* Avatar Selection Dialog */}
+      <Dialog open={isAvatarDialogOpen} onOpenChange={setIsAvatarDialogOpen}>
+        <DialogContent className="w-[95vw] max-w-md mx-auto max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Choose Your Avatar</DialogTitle>
+            <DialogDescription>
+              Select a pre-made avatar or upload your own photo
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Upload Option */}
+            <div>
+              <Button
+                variant="outline"
+                className="w-full h-12"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Your Photo
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or choose an avatar</span>
+              </div>
+            </div>
+
+            {/* Pre-made Avatars Grid */}
+            <div className="grid grid-cols-4 gap-3">
+              {PRESET_AVATARS.map((avatar) => (
+                <button
+                  key={avatar.id}
+                  onClick={() => handleSelectAvatar(avatar.url)}
+                  className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${
+                    formData.avatarUrl === avatar.url 
+                      ? 'border-primary ring-2 ring-primary/30' 
+                      : 'border-stone-200 dark:border-stone-700 hover:border-primary/50'
+                  }`}
+                >
+                  <img src={avatar.url} alt={avatar.name} className="w-full h-full object-cover" />
+                  {formData.avatarUrl === avatar.url && (
+                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                      <Check className="h-6 w-6 text-primary" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -273,3 +273,11 @@
 - [x] Update chatbot to use Google Gemini API (primary)
 - [x] Add GEMINI_API_KEY with user's key
 - [ ] Test chatbot responses with Gemini
+
+
+## Profile Page Improvements
+- [x] Add back button to profile page
+- [x] Add profile picture upload option
+- [x] Add pre-made avatar selection option (12 DiceBear avatars)
+- [x] Database already stores avatarUrl
+- [x] Applied to admin and student profiles
