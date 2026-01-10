@@ -4,7 +4,8 @@ import { trpc } from "@/lib/trpc";
 import { 
   BookOpen, Plus, Search, MoreVertical, Edit, Trash2, Eye, 
   Video, FileText, GripVertical, Upload, File, X, Play,
-  ChevronDown, ChevronRight, Loader2
+  ChevronDown, ChevronRight, Loader2, Presentation, Image as ImageIcon,
+  Music, Link as LinkIcon, FileSpreadsheet
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -64,7 +65,7 @@ interface Material {
   fileUrl: string;
   fileName?: string | null;
   fileSize?: number | null;
-  orderIndex: number;
+  orderIndex: number | null;
 }
 
 interface Course {
@@ -85,6 +86,8 @@ export default function AdminLessons() {
   const [createContentType, setCreateContentType] = useState<string>('video');
   const [editContentType, setEditContentType] = useState<string>('video');
   const [isUploadingDocument, setIsUploadingDocument] = useState(false);
+  const [expandedLessons, setExpandedLessons] = useState<Set<number>>(new Set());
+  const [materialType, setMaterialType] = useState<string>('pdf');
   
   const videoInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
@@ -142,6 +145,16 @@ export default function AdminLessons() {
     },
   });
 
+  const deleteMaterialMutation = trpc.lesson.deleteMaterial.useMutation({
+    onSuccess: () => {
+      toast.success("Material deleted successfully");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete material: ${error.message}`);
+    },
+  });
+
   const filteredLessons = lessons?.filter((lesson: Lesson) => 
     lesson.title?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -149,11 +162,9 @@ export default function AdminLessons() {
   const handleVideoUpload = async (file: File): Promise<string> => {
     setIsUploadingVideo(true);
     try {
-      // Create form data for upload
       const formData = new FormData();
       formData.append('file', file);
       
-      // Upload to server storage
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
@@ -166,7 +177,6 @@ export default function AdminLessons() {
       const data = await response.json();
       return data.url;
     } catch (error) {
-      // For now, return a placeholder URL - in production this would be S3
       console.error('Upload error:', error);
       return URL.createObjectURL(file);
     } finally {
@@ -237,7 +247,6 @@ export default function AdminLessons() {
       documentUrl = await handleDocumentUpload(documentFile);
     }
     
-    // Use documentUrl as videoUrl for non-video content types (stored in same field)
     const contentUrl = createContentType === 'video' ? videoUrl : (documentUrl || videoUrl);
     
     createMutation.mutate({
@@ -268,7 +277,6 @@ export default function AdminLessons() {
       documentUrl = await handleDocumentUpload(documentFile);
     }
     
-    // Use documentUrl as videoUrl for non-video content types
     const contentUrl = editContentType === 'video' ? videoUrl : (documentUrl || videoUrl);
     
     updateMutation.mutate({
@@ -297,12 +305,10 @@ export default function AdminLessons() {
       fileSize = result.size;
     }
     
-    const type = formData.get('type') as string;
-    
     addMaterialMutation.mutate({
       lessonId: selectedLessonForMaterial,
       title: formData.get('title') as string,
-      type: type as 'pdf' | 'doc' | 'image' | 'video' | 'audio' | 'link',
+      type: materialType as 'pdf' | 'doc' | 'pptx' | 'image' | 'video' | 'audio' | 'link',
       fileUrl: fileUrl,
       fileName: file?.name || undefined,
       fileSize: fileSize,
@@ -315,6 +321,44 @@ export default function AdminLessons() {
       case 'pdf': return <FileText className="h-4 w-4 text-blue-500" />;
       case 'text': return <FileText className="h-4 w-4 text-green-500" />;
       default: return <File className="h-4 w-4 text-slate-500" />;
+    }
+  };
+
+  const getMaterialTypeIcon = (type: string) => {
+    switch (type) {
+      case 'video': return <Video className="h-4 w-4 text-red-500" />;
+      case 'pdf': return <FileText className="h-4 w-4 text-red-600" />;
+      case 'doc': return <FileText className="h-4 w-4 text-blue-600" />;
+      case 'pptx': return <Presentation className="h-4 w-4 text-orange-500" />;
+      case 'image': return <ImageIcon className="h-4 w-4 text-green-500" />;
+      case 'audio': return <Music className="h-4 w-4 text-purple-500" />;
+      case 'link': return <LinkIcon className="h-4 w-4 text-cyan-500" />;
+      default: return <File className="h-4 w-4 text-slate-500" />;
+    }
+  };
+
+  const getMaterialTypeLabel = (type: string) => {
+    switch (type) {
+      case 'video': return 'Video';
+      case 'pdf': return 'PDF';
+      case 'doc': return 'Document';
+      case 'pptx': return 'Slides';
+      case 'image': return 'Image';
+      case 'audio': return 'Audio';
+      case 'link': return 'Link';
+      default: return 'File';
+    }
+  };
+
+  const getAcceptedFileTypes = (type: string) => {
+    switch (type) {
+      case 'video': return 'video/*';
+      case 'pdf': return '.pdf';
+      case 'doc': return '.doc,.docx,.txt,.rtf';
+      case 'pptx': return '.ppt,.pptx';
+      case 'image': return 'image/*';
+      case 'audio': return 'audio/*';
+      default: return '*';
     }
   };
 
@@ -332,6 +376,76 @@ export default function AdminLessons() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
+  const toggleLessonExpand = (lessonId: number) => {
+    const newExpanded = new Set(expandedLessons);
+    if (newExpanded.has(lessonId)) {
+      newExpanded.delete(lessonId);
+    } else {
+      newExpanded.add(lessonId);
+    }
+    setExpandedLessons(newExpanded);
+  };
+
+  // Get materials for a lesson
+  const LessonMaterials = ({ lessonId }: { lessonId: number }) => {
+    const { data: materials, isLoading } = trpc.lesson.getMaterials.useQuery({ lessonId });
+    
+    if (isLoading) {
+      return <div className="p-2"><Loader2 className="h-4 w-4 animate-spin" /></div>;
+    }
+    
+    if (!materials || materials.length === 0) {
+      return (
+        <div className="text-sm text-slate-500 dark:text-slate-400 p-2">
+          No additional materials. Click "Add Material" to upload files.
+        </div>
+      );
+    }
+    
+    return (
+      <div className="space-y-2">
+        {materials.map((material: Material) => (
+          <div 
+            key={material.id}
+            className="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-700/50"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              {getMaterialTypeIcon(material.type)}
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{material.title}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {getMaterialTypeLabel(material.type)} • {formatFileSize(material.fileSize)}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => window.open(material.fileUrl, '_blank')}
+              >
+                <Eye className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-red-500 hover:text-red-600"
+                onClick={() => {
+                  if (confirm('Delete this material?')) {
+                    deleteMaterialMutation.mutate({ id: material.id });
+                  }
+                }}
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <AdminDashboardLayout>
       <div className="space-y-6">
@@ -342,7 +456,7 @@ export default function AdminLessons() {
               Lesson Management
             </h1>
             <p className="text-slate-600 dark:text-slate-400">
-              Create and manage lessons with video and PDF content
+              Create and manage lessons with multiple materials (video, PDF, slides, etc.)
             </p>
           </div>
           {selectedCourseId && (
@@ -361,8 +475,8 @@ export default function AdminLessons() {
           </CardHeader>
           <CardContent>
             <Select 
-              value={selectedCourseId?.toString() || ""} 
-              onValueChange={(val) => setSelectedCourseId(parseInt(val))}
+              value={selectedCourseId?.toString() || ''} 
+              onValueChange={(v) => setSelectedCourseId(v ? parseInt(v) : null)}
             >
               <SelectTrigger className="w-full md:w-[400px]">
                 <SelectValue placeholder="Select a course..." />
@@ -370,7 +484,7 @@ export default function AdminLessons() {
               <SelectContent>
                 {courses?.map((course: Course) => (
                   <SelectItem key={course.id} value={course.id.toString()}>
-                    {course.title} {course.titleBn && `(${course.titleBn})`}
+                    {course.title}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -415,36 +529,106 @@ export default function AdminLessons() {
                     {filteredLessons.map((lesson: Lesson, index: number) => (
                       <div
                         key={lesson.id}
-                        className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                        className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden"
                       >
-                        {/* Lesson number and title row */}
-                        <div className="flex items-center gap-3 w-full md:w-auto">
-                          <div className="flex items-center gap-2 text-slate-400 shrink-0">
-                            <GripVertical className="h-5 w-5 cursor-grab hidden md:block" />
-                            <span className="font-mono text-sm w-6">{lesson.orderIndex || index + 1}</span>
+                        {/* Lesson Header */}
+                        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                          {/* Lesson number and title row */}
+                          <div className="flex items-center gap-3 w-full md:w-auto flex-1">
+                            <div className="flex items-center gap-2 text-slate-400 shrink-0">
+                              <GripVertical className="h-5 w-5 cursor-grab hidden md:block" />
+                              <span className="font-mono text-sm w-6">{lesson.orderIndex || index + 1}</span>
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                {getContentTypeIcon(lesson.contentType || 'mixed')}
+                                <h3 className="font-medium text-slate-900 dark:text-white truncate">
+                                  {lesson.title}
+                                </h3>
+                                {lesson.isPreview && (
+                                  <Badge variant="secondary" className="text-xs">Preview</Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 md:gap-4 mt-1 text-sm text-slate-500 flex-wrap">
+                                {lesson.titleBn && <span className="truncate">{lesson.titleBn}</span>}
+                                <span>{formatDuration(lesson.duration)}</span>
+                                <Badge variant="outline" className="text-xs">
+                                  {lesson.contentType}
+                                </Badge>
+                              </div>
+                            </div>
+                            
+                            {/* Mobile: Dropdown menu on the right */}
+                            <div className="md:hidden">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      setSelectedLessonForMaterial(lesson.id);
+                                      setMaterialDialogOpen(true);
+                                    }}
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Add Material
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => toggleLessonExpand(lesson.id)}>
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    {expandedLessons.has(lesson.id) ? 'Hide' : 'View'} Materials
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    setEditingLesson(lesson);
+                                    setEditContentType(lesson.contentType || 'video');
+                                  }}>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    className="text-red-600"
+                                    onClick={() => {
+                                      if (confirm('Are you sure you want to delete this lesson?')) {
+                                        deleteMutation.mutate({ id: lesson.id });
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           </div>
                           
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              {getContentTypeIcon(lesson.contentType || 'mixed')}
-                              <h3 className="font-medium text-slate-900 dark:text-white truncate">
-                                {lesson.title}
-                              </h3>
-                              {lesson.isPreview && (
-                                <Badge variant="secondary" className="text-xs">Preview</Badge>
+                          {/* Desktop: Action buttons */}
+                          <div className="hidden md:flex items-center gap-2 shrink-0">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => toggleLessonExpand(lesson.id)}
+                            >
+                              {expandedLessons.has(lesson.id) ? (
+                                <ChevronDown className="h-4 w-4 mr-1" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4 mr-1" />
                               )}
-                            </div>
-                            <div className="flex items-center gap-2 md:gap-4 mt-1 text-sm text-slate-500 flex-wrap">
-                              {lesson.titleBn && <span className="truncate">{lesson.titleBn}</span>}
-                              <span>{formatDuration(lesson.duration)}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {lesson.contentType}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          {/* Mobile: Dropdown menu on the right */}
-                          <div className="md:hidden">
+                              Materials
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedLessonForMaterial(lesson.id);
+                                setMaterialDialogOpen(true);
+                              }}
+                            >
+                              <Plus className="h-4 w-4 mr-1" />
+                              Add
+                            </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -452,19 +636,10 @@ export default function AdminLessons() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem 
-                                  onClick={() => {
-                                    setSelectedLessonForMaterial(lesson.id);
-                                    setMaterialDialogOpen(true);
-                                  }}
-                                >
-                                  <Upload className="h-4 w-4 mr-2" />
-                                  Add Material
-                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => {
-                                setEditingLesson(lesson);
-                                setEditContentType(lesson.contentType || 'video');
-                              }}>
+                                  setEditingLesson(lesson);
+                                  setEditContentType(lesson.contentType || 'video');
+                                }}>
                                   <Edit className="h-4 w-4 mr-2" />
                                   Edit
                                 </DropdownMenuItem>
@@ -484,47 +659,28 @@ export default function AdminLessons() {
                           </div>
                         </div>
                         
-                        {/* Desktop: Action buttons */}
-                        <div className="hidden md:flex items-center gap-2 shrink-0">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedLessonForMaterial(lesson.id);
-                              setMaterialDialogOpen(true);
-                            }}
-                          >
-                            <Upload className="h-4 w-4 mr-1" />
-                            Add Material
-                          </Button>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => {
-                                setEditingLesson(lesson);
-                                setEditContentType(lesson.contentType || 'video');
-                              }}>
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                className="text-red-600"
+                        {/* Materials Section (Expandable) */}
+                        {expandedLessons.has(lesson.id) && (
+                          <div className="border-t border-slate-200 dark:border-slate-700 p-4 bg-slate-50/50 dark:bg-slate-800/50">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Lesson Materials
+                              </h4>
+                              <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => {
-                                  if (confirm('Are you sure you want to delete this lesson?')) {
-                                    deleteMutation.mutate({ id: lesson.id });
-                                  }
+                                  setSelectedLessonForMaterial(lesson.id);
+                                  setMaterialDialogOpen(true);
                                 }}
                               >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add Material
+                              </Button>
+                            </div>
+                            <LessonMaterials lessonId={lesson.id} />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -546,7 +702,7 @@ export default function AdminLessons() {
             <DialogHeader>
               <DialogTitle>Add New Lesson</DialogTitle>
               <DialogDescription>
-                Create a new lesson with video or PDF content
+                Create a new lesson. You can add multiple materials (videos, PDFs, slides) after creating the lesson.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={(e) => { e.preventDefault(); handleCreate(new FormData(e.currentTarget)); }}>
@@ -569,16 +725,16 @@ export default function AdminLessons() {
                 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="contentType">Content Type</Label>
+                    <Label htmlFor="contentType">Primary Content Type</Label>
                     <Select name="contentType" defaultValue="video" onValueChange={(value) => setCreateContentType(value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="pdf">PDF</SelectItem>
+                        <SelectItem value="pdf">PDF/Document</SelectItem>
                         <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="mixed">Mixed</SelectItem>
+                        <SelectItem value="mixed">Mixed Content</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -599,7 +755,7 @@ export default function AdminLessons() {
                 
                 {createContentType === 'video' ? (
                   <div className="space-y-2">
-                    <Label>Video</Label>
+                    <Label>Primary Video</Label>
                     <div className="flex gap-2">
                       <Input 
                         id="videoUrl" 
@@ -629,10 +785,13 @@ export default function AdminLessons() {
                         className="hidden"
                       />
                     </div>
+                    <p className="text-xs text-slate-500">
+                      You can add more materials (PDF, slides, etc.) after creating the lesson.
+                    </p>
                   </div>
                 ) : createContentType === 'pdf' || createContentType === 'text' ? (
                   <div className="space-y-2">
-                    <Label>Document ({createContentType === 'pdf' ? 'PDF, DOC, DOCX, PPTX' : 'TXT, MD, RTF'})</Label>
+                    <Label>Primary Document</Label>
                     <div className="flex gap-2">
                       <Input 
                         id="documentUrl" 
@@ -658,75 +817,20 @@ export default function AdminLessons() {
                         ref={documentInputRef}
                         id="documentFile"
                         type="file"
-                        accept={createContentType === 'pdf' ? '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx' : '.txt,.md,.rtf'}
+                        accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.rtf"
                         className="hidden"
                       />
                     </div>
+                    <p className="text-xs text-slate-500">
+                      Supports PDF, DOC, DOCX, PPTX, TXT. Add more materials after creating.
+                    </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Video (Optional)</Label>
-                      <div className="flex gap-2">
-                        <Input 
-                          id="videoUrl" 
-                          name="videoUrl" 
-                          placeholder="Video URL" 
-                          className="flex-1"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => videoInputRef.current?.click()}
-                          disabled={isUploadingVideo}
-                        >
-                          {isUploadingVideo ? (
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          ) : (
-                            <Upload className="h-4 w-4 mr-2" />
-                          )}
-                          Upload
-                        </Button>
-                        <input
-                          ref={videoInputRef}
-                          id="videoFile"
-                          type="file"
-                          accept="video/*"
-                          className="hidden"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Document (Optional)</Label>
-                      <div className="flex gap-2">
-                        <Input 
-                          id="documentUrl" 
-                          name="documentUrl" 
-                          placeholder="Document URL" 
-                          className="flex-1"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => documentInputRef.current?.click()}
-                          disabled={isUploadingDocument}
-                        >
-                          {isUploadingDocument ? (
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          ) : (
-                            <Upload className="h-4 w-4 mr-2" />
-                          )}
-                          Upload
-                        </Button>
-                        <input
-                          ref={documentInputRef}
-                          id="documentFile"
-                          type="file"
-                          accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.rtf"
-                          className="hidden"
-                        />
-                      </div>
-                    </div>
+                  <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      <strong>Mixed Content:</strong> Create the lesson first, then add multiple materials 
+                      (videos, PDFs, slides, images) using the "Add Material" button.
+                    </p>
                   </div>
                 )}
                 
@@ -739,7 +843,7 @@ export default function AdminLessons() {
                 <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending || isUploadingVideo}>
+                <Button type="submit" disabled={createMutation.isPending || isUploadingVideo || isUploadingDocument}>
                   {createMutation.isPending ? "Creating..." : "Create Lesson"}
                 </Button>
               </DialogFooter>
@@ -753,7 +857,7 @@ export default function AdminLessons() {
             <DialogHeader>
               <DialogTitle>Edit Lesson</DialogTitle>
               <DialogDescription>
-                Update lesson details and content
+                Update lesson details. Use "Add Material" to manage additional files.
               </DialogDescription>
             </DialogHeader>
             {editingLesson && (
@@ -777,16 +881,16 @@ export default function AdminLessons() {
                   
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="editContentType">Content Type</Label>
+                      <Label htmlFor="editContentType">Primary Content Type</Label>
                       <Select name="contentType" defaultValue={editingLesson.contentType || 'video'} onValueChange={(value) => setEditContentType(value)}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="video">Video</SelectItem>
-                          <SelectItem value="pdf">PDF</SelectItem>
+                          <SelectItem value="pdf">PDF/Document</SelectItem>
                           <SelectItem value="text">Text</SelectItem>
-                          <SelectItem value="mixed">Mixed</SelectItem>
+                          <SelectItem value="mixed">Mixed Content</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -801,18 +905,13 @@ export default function AdminLessons() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="editDuration">Duration (seconds)</Label>
-                      <Input 
-                        id="editDuration" 
-                        name="duration" 
-                        type="number" 
-                        defaultValue={editingLesson.duration || ''}
-                      />
+                      <Input id="editDuration" name="duration" type="number" defaultValue={editingLesson.duration || ''} />
                     </div>
                   </div>
                   
                   {editContentType === 'video' ? (
                     <div className="space-y-2">
-                      <Label>Video</Label>
+                      <Label>Primary Video</Label>
                       <div className="flex gap-2">
                         <Input 
                           id="editVideoUrl" 
@@ -846,7 +945,7 @@ export default function AdminLessons() {
                     </div>
                   ) : editContentType === 'pdf' || editContentType === 'text' ? (
                     <div className="space-y-2">
-                      <Label>Document ({editContentType === 'pdf' ? 'PDF, DOC, DOCX, PPTX' : 'TXT, MD, RTF'})</Label>
+                      <Label>Primary Document</Label>
                       <div className="flex gap-2">
                         <Input 
                           id="editDocumentUrl" 
@@ -873,76 +972,16 @@ export default function AdminLessons() {
                           ref={editDocumentInputRef}
                           id="editDocumentFile"
                           type="file"
-                          accept={editContentType === 'pdf' ? '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx' : '.txt,.md,.rtf'}
+                          accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.rtf"
                           className="hidden"
                         />
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Video (Optional)</Label>
-                        <div className="flex gap-2">
-                          <Input 
-                            id="editVideoUrl" 
-                            name="videoUrl" 
-                            placeholder="Video URL" 
-                            defaultValue={editingLesson.videoUrl || ''}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => editVideoInputRef.current?.click()}
-                            disabled={isUploadingVideo}
-                          >
-                            {isUploadingVideo ? (
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                            ) : (
-                              <Upload className="h-4 w-4 mr-2" />
-                            )}
-                            Upload
-                          </Button>
-                          <input
-                            ref={editVideoInputRef}
-                            id="editVideoFile"
-                            type="file"
-                            accept="video/*"
-                            className="hidden"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Document (Optional)</Label>
-                        <div className="flex gap-2">
-                          <Input 
-                            id="editDocumentUrl" 
-                            name="documentUrl" 
-                            placeholder="Document URL" 
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => editDocumentInputRef.current?.click()}
-                            disabled={isUploadingDocument}
-                          >
-                            {isUploadingDocument ? (
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                            ) : (
-                              <Upload className="h-4 w-4 mr-2" />
-                            )}
-                            Upload
-                          </Button>
-                          <input
-                            ref={editDocumentInputRef}
-                            id="editDocumentFile"
-                            type="file"
-                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.md,.rtf"
-                            className="hidden"
-                          />
-                        </div>
-                      </div>
+                    <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        <strong>Mixed Content:</strong> Manage materials using the "Materials" button on the lesson card.
+                      </p>
                     </div>
                   )}
                   
@@ -955,7 +994,7 @@ export default function AdminLessons() {
                   <Button type="button" variant="outline" onClick={() => setEditingLesson(null)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={updateMutation.isPending || isUploadingVideo}>
+                  <Button type="submit" disabled={updateMutation.isPending || isUploadingVideo || isUploadingDocument}>
                     {updateMutation.isPending ? "Saving..." : "Save Changes"}
                   </Button>
                 </DialogFooter>
@@ -970,29 +1009,65 @@ export default function AdminLessons() {
             <DialogHeader>
               <DialogTitle>Add Lesson Material</DialogTitle>
               <DialogDescription>
-                Upload PDF, document, or other materials for this lesson
+                Upload additional materials for this lesson (PDF, slides, documents, images, etc.)
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={(e) => { e.preventDefault(); handleAddMaterial(new FormData(e.currentTarget)); }}>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="materialTitle">Title *</Label>
-                  <Input id="materialTitle" name="title" required placeholder="e.g., Lecture Notes" />
+                  <Input id="materialTitle" name="title" required placeholder="e.g., Lecture Slides, Worksheet" />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="materialType">Type *</Label>
-                  <Select name="type" defaultValue="pdf">
+                  <Label htmlFor="materialType">Material Type *</Label>
+                  <Select name="type" defaultValue="pdf" onValueChange={setMaterialType}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="pdf">PDF Document</SelectItem>
-                      <SelectItem value="doc">Word Document</SelectItem>
-                      <SelectItem value="image">Image</SelectItem>
-                      <SelectItem value="video">Video</SelectItem>
-                      <SelectItem value="audio">Audio</SelectItem>
-                      <SelectItem value="link">External Link</SelectItem>
+                      <SelectItem value="video">
+                        <div className="flex items-center gap-2">
+                          <Video className="h-4 w-4 text-red-500" />
+                          Video
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="pdf">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-red-600" />
+                          PDF Document
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="pptx">
+                        <div className="flex items-center gap-2">
+                          <Presentation className="h-4 w-4 text-orange-500" />
+                          PowerPoint Slides
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="doc">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-blue-600" />
+                          Word Document
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="image">
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="h-4 w-4 text-green-500" />
+                          Image
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="audio">
+                        <div className="flex items-center gap-2">
+                          <Music className="h-4 w-4 text-purple-500" />
+                          Audio
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="link">
+                        <div className="flex items-center gap-2">
+                          <LinkIcon className="h-4 w-4 text-cyan-500" />
+                          External Link
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1003,30 +1078,44 @@ export default function AdminLessons() {
                     <Input 
                       id="materialUrl" 
                       name="fileUrl" 
-                      placeholder="URL or upload file" 
+                      placeholder={materialType === 'link' ? 'Enter URL' : 'URL or upload file'} 
                       className="flex-1"
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => materialInputRef.current?.click()}
-                      disabled={isUploadingMaterial}
-                    >
-                      {isUploadingMaterial ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      ) : (
-                        <Upload className="h-4 w-4 mr-2" />
-                      )}
-                      Upload
-                    </Button>
+                    {materialType !== 'link' && (
+                      <>
+                        <span className="text-slate-400 self-center">or</span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => materialInputRef.current?.click()}
+                          disabled={isUploadingMaterial}
+                        >
+                          {isUploadingMaterial ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Upload
+                        </Button>
+                      </>
+                    )}
                     <input
                       ref={materialInputRef}
                       id="materialFile"
                       type="file"
-                      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.wav"
+                      accept={getAcceptedFileTypes(materialType)}
                       className="hidden"
                     />
                   </div>
+                  <p className="text-xs text-slate-500">
+                    {materialType === 'video' && 'Supports MP4, WebM, MOV (max 50MB)'}
+                    {materialType === 'pdf' && 'Supports PDF files'}
+                    {materialType === 'pptx' && 'Supports PPT, PPTX files'}
+                    {materialType === 'doc' && 'Supports DOC, DOCX, TXT, RTF files'}
+                    {materialType === 'image' && 'Supports JPG, PNG, GIF, WebP'}
+                    {materialType === 'audio' && 'Supports MP3, WAV, OGG'}
+                    {materialType === 'link' && 'Enter the full URL including https://'}
+                  </p>
                 </div>
               </div>
               <DialogFooter>

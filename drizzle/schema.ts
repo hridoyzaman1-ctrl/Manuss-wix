@@ -102,7 +102,7 @@ export const lessonMaterials = mysqlTable("lesson_materials", {
   id: int("id").autoincrement().primaryKey(),
   lessonId: int("lessonId").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
-  type: mysqlEnum("type", ["pdf", "doc", "image", "video", "audio", "link"]).notNull(),
+  type: mysqlEnum("type", ["pdf", "doc", "pptx", "image", "video", "audio", "link"]).notNull(),
   fileUrl: text("fileUrl").notNull(),
   fileName: varchar("fileName", { length: 255 }),
   fileSize: int("fileSize"), // Size in bytes

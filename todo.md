@@ -249,3 +249,9 @@
 
 ## Bug Fixes - Category System
 - [x] Fix SelectItem empty value error in course creation form
+
+## Multiple Materials per Lesson Feature
+- [x] Update lesson form to support multiple file uploads (video, PDF, PPTX, DOC, images)
+- [x] Create UI for managing lesson materials (add, remove, view, delete)
+- [x] Update API to handle multiple materials per lesson (added pptx type)
+- [ ] Display all materials in course player

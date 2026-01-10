@@ -243,7 +243,7 @@ export const appRouter = router({
     addMaterial: adminProcedure.input(z.object({
       lessonId: z.number(),
       title: z.string(),
-      type: z.enum(['pdf', 'doc', 'image', 'video', 'audio', 'link']),
+      type: z.enum(['pdf', 'doc', 'pptx', 'image', 'video', 'audio', 'link']),
       fileUrl: z.string(),
       fileName: z.string().optional(),
       fileSize: z.number().optional(),
