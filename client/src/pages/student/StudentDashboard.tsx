@@ -1,10 +1,13 @@
 import StudentDashboardLayout from "@/components/StudentDashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { BookOpen, Trophy, ClipboardList, Calendar, Video, Bell, BarChart3, Sparkles, AlertTriangle, Megaphone } from "lucide-react";
+import { BookOpen, Trophy, ClipboardList, Calendar, Video, Bell, BarChart3, Sparkles, AlertTriangle, Megaphone, Heart, ArrowRight, ShoppingCart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
+import { toast } from "sonner";
 
 export default function StudentDashboard() {
   const { user } = useAuth();
@@ -13,6 +16,7 @@ export default function StudentDashboard() {
   const { data: notifications } = trpc.notification.getMyNotifications.useQuery({ unreadOnly: true });
   const { data: liveClasses } = trpc.liveClass.getUpcoming.useQuery();
   const { data: announcements } = trpc.announcement.getAll.useQuery({ audience: 'students' });
+  const { data: wishlist, isLoading: wishlistLoading } = trpc.wishlist.getMyWishlist.useQuery();
 
   // Filter urgent announcements
   const urgentAnnouncements = announcements?.filter((a: any) => a.priority === 'urgent' || a.isPinned) || [];
@@ -197,6 +201,27 @@ export default function StudentDashboard() {
             color="pink"
           />
         </div>
+
+        {/* Wishlist Section */}
+        <Card className="bg-white dark:bg-slate-800 border-pink-100 dark:border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+              <Heart className="h-5 w-5 text-pink-500 fill-pink-500" />
+              My Wishlist
+              {wishlist && wishlist.length > 0 && (
+                <span className="ml-2 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 text-xs px-2 py-0.5 rounded-full">
+                  {wishlist.length} courses
+                </span>
+              )}
+            </CardTitle>
+            <CardDescription>
+              Courses you've saved for later - enroll when you're ready!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <WishlistSection wishlist={wishlist} isLoading={wishlistLoading} />
+          </CardContent>
+        </Card>
       </div>
     </StudentDashboardLayout>
   );
@@ -376,5 +401,107 @@ function QuickAction({
         </CardContent>
       </Card>
     </a>
+  );
+}
+
+
+function WishlistSection({ wishlist, isLoading }: { wishlist: any[] | undefined; isLoading: boolean }) {
+  const utils = trpc.useUtils();
+  
+  const removeMutation = trpc.wishlist.remove.useMutation({
+    onSuccess: () => {
+      utils.wishlist.getMyWishlist.invalidate();
+      utils.wishlist.getMyWishlistIds.invalidate();
+      toast.success("Removed from wishlist");
+    },
+    onError: () => {
+      toast.error("Failed to remove from wishlist");
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+            <Skeleton className="h-32 w-full mb-3 rounded-lg" />
+            <Skeleton className="h-4 w-3/4 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!wishlist || wishlist.length === 0) {
+    return (
+      <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+        <Heart className="h-16 w-16 mx-auto mb-4 opacity-30" />
+        <p className="text-lg font-medium">Your wishlist is empty</p>
+        <p className="text-sm mb-4">Browse courses and click the heart icon to save them here!</p>
+        <Link href="/#courses">
+          <Button className="bg-pink-500 hover:bg-pink-600 text-white">
+            Browse Courses
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {wishlist.map((item) => (
+        <div 
+          key={item.wishlistId} 
+          className="group relative p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-300 hover:shadow-md"
+        >
+          {/* Course Image */}
+          <div className="relative h-32 rounded-lg overflow-hidden mb-3">
+            <img
+              src={item.course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
+              alt={item.course.title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
+            
+            {/* Remove from wishlist button */}
+            <button
+              onClick={() => removeMutation.mutate({ courseId: item.courseId })}
+              disabled={removeMutation.isPending}
+              className="absolute top-2 right-2 p-2 bg-white/90 dark:bg-slate-800/90 rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100"
+            >
+              <Heart className="h-4 w-4 fill-current" />
+            </button>
+          </div>
+
+          {/* Course Info */}
+          <h3 className="font-semibold text-slate-900 dark:text-white line-clamp-1 mb-1">
+            {item.course.title}
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
+            {item.course.description || "Explore this comprehensive course."}
+          </p>
+
+          {/* Price and Enroll */}
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-pink-600 dark:text-pink-400">
+              {parseFloat(item.course.price || '0') > 0 ? `৳${item.course.price}` : 'Free'}
+            </span>
+            <Link href={`/student/catalog`}>
+              <Button size="sm" className="bg-pink-500 hover:bg-pink-600 text-white text-xs h-8">
+                <ShoppingCart className="h-3 w-3 mr-1" />
+                Enroll
+              </Button>
+            </Link>
+          </div>
+
+          {/* Added date */}
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2">
+            Added {new Date(item.addedAt).toLocaleDateString()}
+          </p>
+        </div>
+      ))}
+    </div>
   );
 }

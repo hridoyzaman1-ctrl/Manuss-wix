@@ -697,3 +697,17 @@ export const courseSections = mysqlTable("course_sections", {
 
 export type CourseSection = typeof courseSections.$inferSelect;
 export type InsertCourseSection = typeof courseSections.$inferInsert;
+
+
+/**
+ * Course Wishlist - stores user's favorited/wishlisted courses
+ */
+export const courseWishlist = mysqlTable("course_wishlist", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  courseId: int("courseId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CourseWishlistItem = typeof courseWishlist.$inferSelect;
+export type InsertCourseWishlistItem = typeof courseWishlist.$inferInsert;

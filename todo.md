@@ -310,3 +310,10 @@
 - [x] Fix Chrome blocking issue with PDF viewer (using local worker file)
 - [x] Fix urgent news not visible on student dashboard (added announcements query)
 - [x] Redesign AIMVerse section - premium, elegant, modern without gradients
+
+## Wishlist Feature
+- [x] Create wishlist database schema (course_wishlist table with user_id, course_id, created_at)
+- [x] Create wishlist API endpoints (add, remove, toggle, check, getMyWishlist, getMyWishlistIds)
+- [x] Update course cards with functional heart icon that persists state per user
+- [x] Add Wishlist section to student dashboard with course cards and enroll buttons
+- [x] Enable enrollment via payment from wishlist (links to catalog for enrollment)

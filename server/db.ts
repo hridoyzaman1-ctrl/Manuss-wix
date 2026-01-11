@@ -35,6 +35,7 @@ import {
   courseCategories, InsertCourseCategory, CourseCategory,
   courseSubcategories, InsertCourseSubcategory, CourseSubcategory,
   courseSections, InsertCourseSection, CourseSection,
+  courseWishlist, InsertCourseWishlistItem,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 import { nanoid } from 'nanoid';
@@ -1491,4 +1492,73 @@ export async function getCoursesBySection(sectionId: number) {
   return db.select().from(courses)
     .where(and(eq(courses.sectionId, sectionId), eq(courses.status, 'published')))
     .orderBy(desc(courses.createdAt));
+}
+
+
+// ============ WISHLIST HELPERS ============
+
+export async function addToWishlist(userId: number, courseId: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Check if already in wishlist
+  const existing = await db.select().from(courseWishlist)
+    .where(and(eq(courseWishlist.userId, userId), eq(courseWishlist.courseId, courseId)))
+    .limit(1);
+  
+  if (existing.length > 0) {
+    return existing[0].id; // Already in wishlist
+  }
+  
+  const result = await db.insert(courseWishlist).values({ userId, courseId });
+  return result[0].insertId;
+}
+
+export async function removeFromWishlist(userId: number, courseId: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(courseWishlist)
+    .where(and(eq(courseWishlist.userId, userId), eq(courseWishlist.courseId, courseId)));
+}
+
+export async function isInWishlist(userId: number, courseId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const result = await db.select().from(courseWishlist)
+    .where(and(eq(courseWishlist.userId, userId), eq(courseWishlist.courseId, courseId)))
+    .limit(1);
+  
+  return result.length > 0;
+}
+
+export async function getUserWishlist(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get wishlist items with course details
+  const wishlistItems = await db.select({
+    wishlistId: courseWishlist.id,
+    courseId: courseWishlist.courseId,
+    addedAt: courseWishlist.createdAt,
+    course: courses,
+  })
+  .from(courseWishlist)
+  .innerJoin(courses, eq(courseWishlist.courseId, courses.id))
+  .where(eq(courseWishlist.userId, userId))
+  .orderBy(desc(courseWishlist.createdAt));
+  
+  return wishlistItems;
+}
+
+export async function getUserWishlistCourseIds(userId: number): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({ courseId: courseWishlist.courseId })
+    .from(courseWishlist)
+    .where(eq(courseWishlist.userId, userId));
+  
+  return result.map(r => r.courseId);
 }

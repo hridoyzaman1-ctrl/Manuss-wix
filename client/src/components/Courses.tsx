@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Heart, Search, ChevronLeft, ChevronRight, FolderTree, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 
 // Sample courses to always display alongside database courses
 const sampleCourses = [
@@ -85,29 +86,92 @@ const sampleCourses = [
   },
   {
     id: -10,
-    title: "Autism Support - Level 2",
+    title: "ADHD Learning Support",
     category: "Special Needs",
-    thumbnail: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2032&auto=format&fit=crop",
-    price: "3500",
-    description: "Specialized support program for children with Level 2 Autism spectrum."
+    thumbnail: "https://images.unsplash.com/photo-1544776193-352d25ca82cd?q=80&w=2070&auto=format&fit=crop",
+    price: "3200",
+    description: "Specialized learning techniques for children with ADHD to improve focus and retention."
   },
   {
     id: -11,
-    title: "Basic English Grammar",
+    title: "Grammar Mastery",
     category: "Spoken English & Grammar",
-    thumbnail: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=2070&auto=format&fit=crop",
-    price: "1500",
-    description: "Build a strong foundation in English grammar from basics to intermediate."
+    thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=2073&auto=format&fit=crop",
+    price: "1800",
+    description: "Master English grammar with comprehensive lessons and practice exercises."
   },
   {
     id: -12,
-    title: "Music & Dance for Youth",
-    category: "Skills and Creativities",
-    thumbnail: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=2070&auto=format&fit=crop",
-    price: "2000",
-    description: "Express yourself through music and dance with our youth program."
+    title: "Nursery Rhymes & Stories",
+    category: "Tiny Explorers",
+    thumbnail: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?q=80&w=2072&auto=format&fit=crop",
+    price: "1000",
+    description: "Delightful nursery rhymes and storytelling sessions for early childhood development."
   }
 ];
+
+// Wishlist Heart Button Component
+function WishlistButton({ courseId, className = "" }: { courseId: number; className?: string }) {
+  const { user } = useAuth();
+  const utils = trpc.useUtils();
+  
+  // Get wishlist IDs for the current user
+  const { data: wishlistIds = [] } = trpc.wishlist.getMyWishlistIds.useQuery(undefined, {
+    enabled: !!user,
+  });
+  
+  const isWishlisted = wishlistIds.includes(courseId);
+  
+  const toggleMutation = trpc.wishlist.toggle.useMutation({
+    onSuccess: (data) => {
+      utils.wishlist.getMyWishlistIds.invalidate();
+      utils.wishlist.getMyWishlist.invalidate();
+      if (data.isWishlisted) {
+        toast.success("Added to wishlist!");
+      } else {
+        toast.success("Removed from wishlist");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to update wishlist");
+    },
+  });
+  
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!user) {
+      toast.error("Please login to add to wishlist");
+      return;
+    }
+    
+    if (courseId < 0) {
+      toast.error("Sample courses cannot be added to wishlist");
+      return;
+    }
+    
+    toggleMutation.mutate({ courseId });
+  };
+  
+  return (
+    <motion.button
+      className={`p-2 bg-background/90 backdrop-blur-sm rounded-full transition-all duration-300 z-20 ${className} ${
+        isWishlisted 
+          ? 'text-red-500 bg-red-50 dark:bg-red-900/30' 
+          : 'hover:bg-red-500 hover:text-white'
+      }`}
+      whileHover={{ scale: 1.2 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={handleClick}
+      disabled={toggleMutation.isPending}
+    >
+      <Heart 
+        className={`h-4 w-4 transition-all duration-300 ${isWishlisted ? 'fill-current' : ''}`} 
+      />
+    </motion.button>
+  );
+}
 
 export default function Courses() {
   const { t } = useLanguage();
@@ -115,15 +179,17 @@ export default function Courses() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Minimum swipe distance (in px) to trigger navigation
-  const minSwipeDistance = 50;
+  // Fetch categories from database
+  const { data: dbCategories, isLoading: categoriesLoading } = trpc.category.getAll.useQuery();
+  
+  // Fetch courses from database
+  const { data: dbCourses, isLoading: coursesLoading } = trpc.course.getPublished.useQuery();
 
-  // Track window size for responsive carousel
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
     checkMobile();
@@ -131,58 +197,44 @@ export default function Courses() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fetch categories and courses from database
-  const { data: categoryHierarchy, isLoading: categoriesLoading } = trpc.category.getHierarchy.useQuery();
-  const { data: publishedCourses, isLoading: coursesLoading } = trpc.course.getPublished.useQuery();
-
-  // Build category list from database
-  const categories = ["All", ...(categoryHierarchy?.map(c => c.name) || [])];
-  
-  // Combine sample courses with published courses from database
-  const dbCourses = publishedCourses?.map(course => {
-    // Find category name for the course
-    const category = categoryHierarchy?.find(c => c.id === course.categoryId);
-    return {
+  // Combine sample courses with database courses
+  const allCourses = [
+    ...sampleCourses.map(course => ({
       ...course,
-      categoryName: category?.name || course.category || 'Uncategorized'
-    };
-  }) || [];
-  
-  // Always show sample courses + any real courses from database
-  const coursesToShow = [
-    ...sampleCourses.map(c => ({ ...c, categoryName: c.category })),
-    ...dbCourses
+      categoryName: course.category,
+    })),
+    ...(dbCourses || []).map(course => ({
+      ...course,
+      categoryName: (course as any).categoryName || course.category || "Uncategorized",
+    }))
   ];
 
-  const filteredCourses = coursesToShow.filter(course => {
+  // Get unique categories from both sample and database courses
+  const categories = ["All", ...Array.from(new Set([
+    ...sampleCourses.map(c => c.category),
+    ...(dbCategories || []).map(c => c.name),
+  ]))];
+
+  // Filter courses based on category and search
+  const filteredCourses = allCourses.filter(course => {
     const matchesCategory = activeCategory === "All" || course.categoryName === activeCategory;
-    const matchesSearch = course.title?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         (course.description || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  // Calculate visible items based on screen size
-  const visibleItems = isMobile ? 1 : 3;
-  const maxIndex = Math.max(0, filteredCourses.length - visibleItems);
-
-  // Auto-swipe functionality for carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (filteredCourses.length > visibleItems) {
-        setCarouselIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-      }
-    }, 4000); // Auto-scroll every 4 seconds
-    return () => clearInterval(interval);
-  }, [filteredCourses.length, maxIndex, visibleItems]);
+  const handleNext = () => {
+    const maxIndex = Math.max(0, filteredCourses.length - (isMobile ? 1 : 3));
+    setCarouselIndex(prev => Math.min(prev + 1, maxIndex));
+  };
 
   const handlePrev = () => {
-    setCarouselIndex((prev) => Math.max(0, prev - 1));
+    setCarouselIndex(prev => Math.max(prev - 1, 0));
   };
 
-  const handleNext = () => {
-    setCarouselIndex((prev) => Math.min(maxIndex, prev + 1));
-  };
+  // Touch handlers for swipe
+  const minSwipeDistance = 50;
 
-  // Touch swipe handlers
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -197,7 +249,6 @@ export default function Courses() {
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
-    
     if (isLeftSwipe) {
       handleNext();
     } else if (isRightSwipe) {
@@ -313,9 +364,10 @@ export default function Courses() {
                       </div>
 
                       {/* Wishlist Button */}
-                      <button className="absolute top-4 right-4 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:text-red-500 z-20">
-                        <Heart className="h-4 w-4" />
-                      </button>
+                      <WishlistButton 
+                        courseId={course.id} 
+                        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100"
+                      />
                     </div>
 
                     {/* Content */}
@@ -430,14 +482,10 @@ export default function Courses() {
                             {course.categoryName}
                           </div>
                           {/* Animated Heart/Favorite Button */}
-                          <motion.button
-                            className="absolute top-2 right-2 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-500 hover:text-white z-20"
-                            whileHover={{ scale: 1.2 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Heart className="h-4 w-4 transition-all duration-300" />
-                          </motion.button>
+                          <WishlistButton 
+                            courseId={course.id} 
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
+                          />
                         </div>
                         {/* Content - compact */}
                         <div className="p-3">

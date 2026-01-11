@@ -43,6 +43,13 @@
       "when": 1768040366056,
       "tag": "0005_silly_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1768095550728,
+      "tag": "0006_magenta_swordsman",
+      "breakpoints": true
     }
   ]
 }

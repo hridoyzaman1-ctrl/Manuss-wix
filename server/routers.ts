@@ -263,6 +263,51 @@ export const appRouter = router({
     }),
   }),
 
+  // ============ WISHLIST ROUTER ============
+  wishlist: router({
+    add: protectedProcedure.input(z.object({
+      courseId: z.number(),
+    })).mutation(async ({ ctx, input }) => {
+      const id = await db.addToWishlist(ctx.user.id, input.courseId);
+      return { success: true, id };
+    }),
+    
+    remove: protectedProcedure.input(z.object({
+      courseId: z.number(),
+    })).mutation(async ({ ctx, input }) => {
+      await db.removeFromWishlist(ctx.user.id, input.courseId);
+      return { success: true };
+    }),
+    
+    toggle: protectedProcedure.input(z.object({
+      courseId: z.number(),
+    })).mutation(async ({ ctx, input }) => {
+      const isWishlisted = await db.isInWishlist(ctx.user.id, input.courseId);
+      if (isWishlisted) {
+        await db.removeFromWishlist(ctx.user.id, input.courseId);
+        return { success: true, isWishlisted: false };
+      } else {
+        await db.addToWishlist(ctx.user.id, input.courseId);
+        return { success: true, isWishlisted: true };
+      }
+    }),
+    
+    check: protectedProcedure.input(z.object({
+      courseId: z.number(),
+    })).query(async ({ ctx, input }) => {
+      const isWishlisted = await db.isInWishlist(ctx.user.id, input.courseId);
+      return { isWishlisted };
+    }),
+    
+    getMyWishlist: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserWishlist(ctx.user.id);
+    }),
+    
+    getMyWishlistIds: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserWishlistCourseIds(ctx.user.id);
+    }),
+  }),
+
   // ============ ENROLLMENT ROUTER ============
   enrollment: router({
     enroll: protectedProcedure.input(z.object({
