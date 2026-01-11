@@ -287,3 +287,7 @@
 - [ ] Fix create group button functionality
 - [ ] Create student-facing real-time chat interface
 - [ ] Add unread message notification badges to navigation
+
+## Carousel Card Improvements
+- [x] Add Enroll Now button to carousel course cards (View Course button added)
+- [x] Add animated heart/favorite icon with touch/hover animation

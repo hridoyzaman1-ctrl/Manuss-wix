@@ -411,9 +411,11 @@ export default function Courses() {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     {filteredCourses.map((course) => (
-                      <div
+                      <motion.div
                         key={`carousel-${course.id}`}
-                        className="w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0 bg-card border border-border rounded-lg overflow-hidden hover:border-primary transition-all duration-500 hover:shadow-lg"
+                        className="w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0 bg-card border border-border rounded-lg overflow-hidden hover:border-primary transition-all duration-500 hover:shadow-lg group"
+                        whileHover={{ y: -5 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         {/* Image Container - square aspect */}
                         <div className="relative aspect-square overflow-hidden">
@@ -421,12 +423,21 @@ export default function Courses() {
                             src={course.thumbnail || "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2022&auto=format&fit=crop"}
                             alt={course.title}
                             loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
-                          <div className="absolute inset-0 bg-black/20 hover:bg-black/40 transition-colors duration-500"></div>
+                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
                           <div className="absolute top-2 left-2 bg-background/90 backdrop-blur-sm px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded">
                             {course.categoryName}
                           </div>
+                          {/* Animated Heart/Favorite Button */}
+                          <motion.button
+                            className="absolute top-2 right-2 p-2 bg-background/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-500 hover:text-white z-20"
+                            whileHover={{ scale: 1.2 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Heart className="h-4 w-4 transition-all duration-300" />
+                          </motion.button>
                         </div>
                         {/* Content - compact */}
                         <div className="p-3">
@@ -434,14 +445,24 @@ export default function Courses() {
                           <p className="text-muted-foreground text-xs line-clamp-1 mb-2">
                             {course.description || "Explore this course."}
                           </p>
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between mb-3">
                             <span className="font-bold text-primary text-sm">
                               {parseFloat(course.price || '0') > 0 ? `৳${course.price}` : 'Free'}
                             </span>
                             <span className="text-xs text-muted-foreground">{(course as any).totalLessons || 0} Lessons</span>
                           </div>
+                          {/* Enroll Now Button */}
+                          <Link href={user ? "/student/catalog" : "/login"}>
+                            <Button 
+                              className="w-full h-8 text-xs bg-primary hover:bg-primary/90 transition-all duration-300"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {user ? "View Course" : "Enroll Now"}
+                              <ArrowRight className="ml-1 h-3 w-3" />
+                            </Button>
+                          </Link>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </motion.div>
                 </div>
