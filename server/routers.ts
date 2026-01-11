@@ -416,23 +416,39 @@ export const appRouter = router({
 
   // ============ QUIZ ROUTER ============
   quiz: router({
+    // Admin CRUD operations
     create: adminProcedure.input(z.object({
       courseId: z.number().optional(),
       lessonId: z.number().optional(),
       title: z.string(),
       titleBn: z.string().optional(),
       description: z.string().optional(),
+      instructions: z.string().optional(),
       durationMinutes: z.number().optional(),
       passingScore: z.number().optional(),
       totalMarks: z.number().optional(),
       shuffleQuestions: z.boolean().optional(),
       showResults: z.boolean().optional(),
+      showCorrectAnswers: z.boolean().optional(),
       maxAttempts: z.number().optional(),
-      availableFrom: z.date().optional(),
-      availableUntil: z.date().optional(),
+      announcementDate: z.string().optional(),
+      availableFrom: z.string().optional(),
+      availableUntil: z.string().optional(),
+      categoryId: z.number().optional(),
+      subcategoryId: z.number().optional(),
+      sectionId: z.number().optional(),
+      targetClass: z.string().optional(),
+      targetSection: z.string().optional(),
+      allowHandwrittenUpload: z.boolean().optional(),
+      requireHandwrittenUpload: z.boolean().optional(),
+      autoGrade: z.boolean().optional(),
       status: z.enum(['draft', 'published', 'archived']).optional(),
-    })).mutation(async ({ input }) => {
-      const id = await db.createQuiz(input);
+    })).mutation(async ({ ctx, input }) => {
+      const data: any = { ...input, createdBy: ctx.user.id };
+      if (input.announcementDate) data.announcementDate = new Date(input.announcementDate);
+      if (input.availableFrom) data.availableFrom = new Date(input.availableFrom);
+      if (input.availableUntil) data.availableUntil = new Date(input.availableUntil);
+      const id = await db.createQuiz(data);
       return { success: true, id };
     }),
     
@@ -441,17 +457,32 @@ export const appRouter = router({
       title: z.string().optional(),
       titleBn: z.string().optional(),
       description: z.string().optional(),
+      instructions: z.string().optional(),
       durationMinutes: z.number().optional(),
       passingScore: z.number().optional(),
       totalMarks: z.number().optional(),
       shuffleQuestions: z.boolean().optional(),
       showResults: z.boolean().optional(),
+      showCorrectAnswers: z.boolean().optional(),
       maxAttempts: z.number().optional(),
-      availableFrom: z.date().optional(),
-      availableUntil: z.date().optional(),
+      announcementDate: z.string().optional(),
+      availableFrom: z.string().optional(),
+      availableUntil: z.string().optional(),
+      categoryId: z.number().optional(),
+      subcategoryId: z.number().optional(),
+      sectionId: z.number().optional(),
+      targetClass: z.string().optional(),
+      targetSection: z.string().optional(),
+      allowHandwrittenUpload: z.boolean().optional(),
+      requireHandwrittenUpload: z.boolean().optional(),
+      autoGrade: z.boolean().optional(),
       status: z.enum(['draft', 'published', 'archived']).optional(),
     })).mutation(async ({ input }) => {
-      const { id, ...data } = input;
+      const { id, ...inputData } = input;
+      const data: any = { ...inputData };
+      if (input.announcementDate) data.announcementDate = new Date(input.announcementDate);
+      if (input.availableFrom) data.availableFrom = new Date(input.availableFrom);
+      if (input.availableUntil) data.availableUntil = new Date(input.availableUntil);
       await db.updateQuiz(id, data);
       return { success: true };
     }),
@@ -465,8 +496,21 @@ export const appRouter = router({
       return db.getQuizById(input.id);
     }),
     
+    getAll: adminProcedure.input(z.object({
+      status: z.string().optional(),
+      categoryId: z.number().optional(),
+      courseId: z.number().optional(),
+      targetClass: z.string().optional(),
+    }).optional()).query(async ({ input }) => {
+      return db.getAllQuizzes(input);
+    }),
+    
     getByCourse: protectedProcedure.input(z.object({ courseId: z.number() })).query(async ({ input }) => {
       return db.getQuizzesByCourse(input.courseId);
+    }),
+    
+    getWithQuestions: protectedProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      return db.getQuizWithQuestions(input.id);
     }),
     
     // Questions
@@ -474,15 +518,39 @@ export const appRouter = router({
       quizId: z.number(),
       question: z.string(),
       questionBn: z.string().optional(),
-      questionType: z.enum(['mcq', 'true_false', 'short_answer']).optional(),
+      questionType: z.enum(['mcq', 'true_false', 'short_answer', 'long_answer', 'fill_blank']).optional(),
       options: z.any().optional(),
-      correctAnswer: z.string(),
+      correctAnswer: z.string().optional(),
+      answerGuideline: z.string().optional(),
       marks: z.number().optional(),
+      negativeMarks: z.string().optional(),
       explanation: z.string().optional(),
+      imageUrl: z.string().optional(),
       orderIndex: z.number().optional(),
+      isRequired: z.boolean().optional(),
     })).mutation(async ({ input }) => {
       const id = await db.addQuizQuestion(input);
       return { success: true, id };
+    }),
+    
+    updateQuestion: adminProcedure.input(z.object({
+      id: z.number(),
+      question: z.string().optional(),
+      questionBn: z.string().optional(),
+      questionType: z.enum(['mcq', 'true_false', 'short_answer', 'long_answer', 'fill_blank']).optional(),
+      options: z.any().optional(),
+      correctAnswer: z.string().optional(),
+      answerGuideline: z.string().optional(),
+      marks: z.number().optional(),
+      negativeMarks: z.string().optional(),
+      explanation: z.string().optional(),
+      imageUrl: z.string().optional(),
+      orderIndex: z.number().optional(),
+      isRequired: z.boolean().optional(),
+    })).mutation(async ({ input }) => {
+      const { id, ...data } = input;
+      await db.updateQuizQuestion(id, data);
+      return { success: true };
     }),
     
     getQuestions: protectedProcedure.input(z.object({ quizId: z.number() })).query(async ({ input }) => {
@@ -494,13 +562,38 @@ export const appRouter = router({
       return { success: true };
     }),
     
-    // Attempts
+    // Student quiz taking
+    getAvailable: studentProcedure.input(z.object({
+      categoryId: z.number().optional(),
+      courseId: z.number().optional(),
+    }).optional()).query(async ({ ctx, input }) => {
+      return db.getAvailableQuizzesForStudent(ctx.user.id, input);
+    }),
+    
     startAttempt: studentProcedure.input(z.object({ quizId: z.number() })).mutation(async ({ ctx, input }) => {
       const id = await db.startQuizAttempt(input.quizId, ctx.user.id);
       return { success: true, attemptId: id };
     }),
     
     submitAttempt: studentProcedure.input(z.object({
+      attemptId: z.number(),
+      answers: z.record(z.string(), z.string()),
+      handwrittenUploadUrl: z.string().optional(),
+      handwrittenUploadName: z.string().optional(),
+      isAutoSubmitted: z.boolean().optional(),
+    })).mutation(async ({ input }) => {
+      const result = await db.submitQuizAttemptEnhanced(
+        input.attemptId, 
+        input.answers,
+        input.handwrittenUploadUrl,
+        input.handwrittenUploadName,
+        input.isAutoSubmitted
+      );
+      return { success: true, ...result };
+    }),
+    
+    // Legacy submit (for backward compatibility)
+    submitAttemptLegacy: studentProcedure.input(z.object({
       attemptId: z.number(),
       answers: z.any(),
       score: z.number(),
@@ -512,6 +605,36 @@ export const appRouter = router({
     
     getMyAttempts: studentProcedure.input(z.object({ quizId: z.number().optional() }).optional()).query(async ({ ctx, input }) => {
       return db.getQuizAttempts(ctx.user.id, input?.quizId);
+    }),
+    
+    // Admin grading
+    getAttemptsByQuiz: adminProcedure.input(z.object({ quizId: z.number() })).query(async ({ input }) => {
+      return db.getQuizAttemptsByQuiz(input.quizId);
+    }),
+    
+    getAttemptForGrading: adminProcedure.input(z.object({ attemptId: z.number() })).query(async ({ input }) => {
+      return db.getAttemptForGrading(input.attemptId);
+    }),
+    
+    gradeAnswer: adminProcedure.input(z.object({
+      gradeId: z.number(),
+      marksAwarded: z.number(),
+      feedback: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+      await db.gradeAnswer(input.gradeId, input.marksAwarded, input.feedback || null, ctx.user.id);
+      return { success: true };
+    }),
+    
+    finalizeGrading: adminProcedure.input(z.object({
+      attemptId: z.number(),
+      feedback: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+      const result = await db.finalizeAttemptGrading(input.attemptId, input.feedback || null, ctx.user.id);
+      return { success: true, ...result };
+    }),
+    
+    getPendingGrading: adminProcedure.query(async () => {
+      return db.getPendingGradingAttempts();
     }),
   }),
 

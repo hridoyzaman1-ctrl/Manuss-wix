@@ -37,6 +37,9 @@ const AdminLessons = lazy(() => import("@/pages/admin/AdminLessons"));
 const AdminChatGroups = lazy(() => import("@/pages/admin/AdminChatGroups"));
 const AdminProfile = lazy(() => import("@/pages/admin/AdminProfile"));
 const AdminCategories = lazy(() => import("@/pages/admin/AdminCategories"));
+const AdminQuizQuestions = lazy(() => import("@/pages/admin/AdminQuizQuestions"));
+const AdminQuizSubmissions = lazy(() => import("@/pages/admin/AdminQuizSubmissions"));
+const AdminQuizGrading = lazy(() => import("@/pages/admin/AdminQuizGrading"));
 
 // Student pages
 const StudentCourses = lazy(() => import("@/pages/student/StudentCourses"));
@@ -82,8 +85,11 @@ function Router() {
         <Route path={"/admin/users"} component={AdminUsers} />
         <Route path={"/admin/courses"} component={AdminCourses} />
         <Route path={"/admin/enrollments"} component={AdminEnrollments} />
-        <Route path={"/admin/quizzes"} component={AdminQuizzes} />
-        <Route path={"/admin/assignments"} component={AdminAssignments} />
+        <Route path="/admin/quizzes" component={AdminQuizzes} />
+        <Route path="/admin/quiz/:quizId/questions" component={AdminQuizQuestions} />
+        <Route path="/admin/quiz/:quizId/submissions" component={AdminQuizSubmissions} />
+        <Route path="/admin/quiz/:quizId/grade/:attemptId" component={AdminQuizGrading} />
+        <Route path="/admin/assignments" component={AdminAssignments} />
         <Route path={"/admin/announcements"} component={AdminAnnouncements} />
         <Route path={"/admin/lessons"} component={AdminLessons} />
         <Route path={"/admin/events"} component={AdminEvents} />

@@ -181,15 +181,32 @@ export const quizzes = mysqlTable("quizzes", {
   title: varchar("title", { length: 255 }).notNull(),
   titleBn: varchar("titleBn", { length: 255 }),
   description: text("description"),
+  instructions: text("instructions"), // Detailed instructions for students
   durationMinutes: int("durationMinutes").default(30),
   passingScore: int("passingScore").default(60), // Percentage
   totalMarks: int("totalMarks").default(100),
   shuffleQuestions: boolean("shuffleQuestions").default(false),
   showResults: boolean("showResults").default(true),
+  showCorrectAnswers: boolean("showCorrectAnswers").default(false), // Show correct answers after submission
   maxAttempts: int("maxAttempts").default(1),
-  availableFrom: timestamp("availableFrom"),
-  availableUntil: timestamp("availableUntil"),
+  // Scheduling
+  announcementDate: timestamp("announcementDate"), // When quiz is announced to students
+  availableFrom: timestamp("availableFrom"), // When students can start taking the quiz
+  availableUntil: timestamp("availableUntil"), // Deadline
+  // Category/Class/Section filtering
+  categoryId: int("categoryId"), // Course category
+  subcategoryId: int("subcategoryId"), // Subcategory
+  sectionId: int("sectionId"), // Section (class/section)
+  targetClass: varchar("targetClass", { length: 50 }), // e.g., "Class 5", "Class 10"
+  targetSection: varchar("targetSection", { length: 50 }), // e.g., "Section A", "Section B"
+  // Attachment options
+  allowHandwrittenUpload: boolean("allowHandwrittenUpload").default(false), // Allow scanned handwritten docs
+  requireHandwrittenUpload: boolean("requireHandwrittenUpload").default(false), // Require handwritten submission
+  // Grading
+  autoGrade: boolean("autoGrade").default(true), // Auto-grade MCQ
+  gradingStatus: mysqlEnum("gradingStatus", ["pending", "partial", "completed"]).default("pending"),
   status: mysqlEnum("status", ["draft", "published", "archived"]).default("draft"),
+  createdBy: int("createdBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -205,12 +222,16 @@ export const quizQuestions = mysqlTable("quiz_questions", {
   quizId: int("quizId").notNull(),
   question: text("question").notNull(),
   questionBn: text("questionBn"),
-  questionType: mysqlEnum("questionType", ["mcq", "true_false", "short_answer"]).default("mcq"),
+  questionType: mysqlEnum("questionType", ["mcq", "true_false", "short_answer", "long_answer", "fill_blank"]).default("mcq"),
   options: json("options"), // JSON array of options for MCQ
-  correctAnswer: text("correctAnswer").notNull(),
+  correctAnswer: text("correctAnswer"), // For MCQ/true_false - can be null for written answers
+  answerGuideline: text("answerGuideline"), // For manual grading - expected answer points
   marks: int("marks").default(1),
+  negativeMarks: decimal("negativeMarks", { precision: 5, scale: 2 }).default("0"), // Negative marking for wrong MCQ
   explanation: text("explanation"),
+  imageUrl: text("imageUrl"), // Optional image for the question
   orderIndex: int("orderIndex").default(0),
+  isRequired: boolean("isRequired").default(true),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -224,14 +245,26 @@ export const quizAttempts = mysqlTable("quiz_attempts", {
   id: int("id").autoincrement().primaryKey(),
   quizId: int("quizId").notNull(),
   userId: int("userId").notNull(),
-  score: int("score"),
+  score: decimal("score", { precision: 10, scale: 2 }), // Can be decimal for partial marks
   totalMarks: int("totalMarks"),
   percentage: decimal("percentage", { precision: 5, scale: 2 }),
   passed: boolean("passed"),
   answers: json("answers"), // JSON object of question_id: answer
+  // Handwritten document attachment
+  handwrittenUploadUrl: text("handwrittenUploadUrl"), // URL to scanned handwritten document
+  handwrittenUploadName: varchar("handwrittenUploadName", { length: 255 }),
+  // Grading status
+  autoGradedScore: decimal("autoGradedScore", { precision: 10, scale: 2 }), // Score from auto-graded MCQs
+  manualGradedScore: decimal("manualGradedScore", { precision: 10, scale: 2 }), // Score from manually graded questions
+  gradingStatus: mysqlEnum("gradingStatus", ["pending", "auto_graded", "partially_graded", "fully_graded"]).default("pending"),
+  gradedBy: int("gradedBy"), // Admin/teacher who graded
+  gradedAt: timestamp("gradedAt"),
+  feedback: text("feedback"), // Overall feedback from grader
   startedAt: timestamp("startedAt").defaultNow().notNull(),
   completedAt: timestamp("completedAt"),
+  submittedAt: timestamp("submittedAt"), // When student submitted (may differ from completedAt if auto-submitted)
   timeSpentSeconds: int("timeSpentSeconds"),
+  isAutoSubmitted: boolean("isAutoSubmitted").default(false), // Was it auto-submitted due to timer?
 });
 
 export type QuizAttempt = typeof quizAttempts.$inferSelect;
@@ -711,3 +744,26 @@ export const courseWishlist = mysqlTable("course_wishlist", {
 
 export type CourseWishlistItem = typeof courseWishlist.$inferSelect;
 export type InsertCourseWishlistItem = typeof courseWishlist.$inferInsert;
+
+
+/**
+ * Quiz Answer Grades - Individual grades for each question in an attempt
+ * Allows for partial marks and detailed feedback per question
+ */
+export const quizAnswerGrades = mysqlTable("quiz_answer_grades", {
+  id: int("id").autoincrement().primaryKey(),
+  attemptId: int("attemptId").notNull(),
+  questionId: int("questionId").notNull(),
+  studentAnswer: text("studentAnswer"), // The answer given by student
+  isCorrect: boolean("isCorrect"), // For MCQ/true_false
+  marksAwarded: decimal("marksAwarded", { precision: 5, scale: 2 }).default("0"),
+  maxMarks: int("maxMarks").default(1),
+  feedback: text("feedback"), // Feedback for this specific question
+  gradedBy: int("gradedBy"), // Who graded (null if auto-graded)
+  gradedAt: timestamp("gradedAt"),
+  isAutoGraded: boolean("isAutoGraded").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type QuizAnswerGrade = typeof quizAnswerGrades.$inferSelect;
+export type InsertQuizAnswerGrade = typeof quizAnswerGrades.$inferInsert;

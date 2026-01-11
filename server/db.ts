@@ -11,6 +11,7 @@ import {
   quizzes, InsertQuiz, Quiz,
   quizQuestions, InsertQuizQuestion,
   quizAttempts, InsertQuizAttempt,
+  quizAnswerGrades, InsertQuizAnswerGrade,
   assignments, InsertAssignment,
   assignmentSubmissions, InsertAssignmentSubmission,
   attendance, InsertAttendance,
@@ -601,7 +602,7 @@ export async function submitQuizAttempt(attemptId: number, answers: any, score: 
     
     await db.update(quizAttempts).set({
       answers,
-      score,
+      score: score.toString(),
       totalMarks,
       percentage: percentage.toFixed(2),
       passed,
@@ -621,6 +622,310 @@ export async function getQuizAttempts(userId: number, quizId?: number) {
       .orderBy(desc(quizAttempts.startedAt));
   }
   return db.select().from(quizAttempts).where(eq(quizAttempts.userId, userId)).orderBy(desc(quizAttempts.startedAt));
+}
+
+// Get all quizzes for admin management
+export async function getAllQuizzes(filters?: {
+  status?: string;
+  categoryId?: number;
+  courseId?: number;
+  targetClass?: string;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const conditions = [];
+  if (filters?.status) conditions.push(eq(quizzes.status, filters.status as any));
+  if (filters?.categoryId) conditions.push(eq(quizzes.categoryId, filters.categoryId));
+  if (filters?.courseId) conditions.push(eq(quizzes.courseId, filters.courseId));
+  if (filters?.targetClass) conditions.push(eq(quizzes.targetClass, filters.targetClass));
+  
+  if (conditions.length > 0) {
+    return db.select().from(quizzes).where(and(...conditions)).orderBy(desc(quizzes.createdAt));
+  }
+  return db.select().from(quizzes).orderBy(desc(quizzes.createdAt));
+}
+
+// Get quiz with questions for taking
+export async function getQuizWithQuestions(quizId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const quiz = await db.select().from(quizzes).where(eq(quizzes.id, quizId)).limit(1);
+  if (quiz.length === 0) return null;
+  
+  const questions = await db.select().from(quizQuestions)
+    .where(eq(quizQuestions.quizId, quizId))
+    .orderBy(asc(quizQuestions.orderIndex));
+  
+  return { ...quiz[0], questions };
+}
+
+// Update quiz question
+export async function updateQuizQuestion(id: number, data: Partial<InsertQuizQuestion>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(quizQuestions).set(data).where(eq(quizQuestions.id, id));
+}
+
+// Enhanced submit quiz attempt with auto-grading
+export async function submitQuizAttemptEnhanced(
+  attemptId: number, 
+  answers: Record<string, string>, 
+  handwrittenUploadUrl?: string,
+  handwrittenUploadName?: string,
+  isAutoSubmitted?: boolean
+) {
+  const db = await getDb();
+  if (!db) return;
+  
+  const attempt = await db.select().from(quizAttempts).where(eq(quizAttempts.id, attemptId)).limit(1);
+  if (attempt.length === 0) return;
+  
+  const quiz = await getQuizWithQuestions(attempt[0].quizId);
+  if (!quiz) return;
+  
+  let autoGradedScore = 0;
+  let manualGradingNeeded = false;
+  const answerGrades: InsertQuizAnswerGrade[] = [];
+  
+  // Process each question
+  for (const question of quiz.questions) {
+    const studentAnswer = answers[question.id.toString()] || '';
+    const isAutoGradable = ['mcq', 'true_false', 'fill_blank'].includes(question.questionType || 'mcq');
+    
+    if (isAutoGradable && question.correctAnswer) {
+      const isCorrect = studentAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
+      const marksAwarded = isCorrect ? (question.marks || 1) : 0;
+      autoGradedScore += marksAwarded;
+      
+      answerGrades.push({
+        attemptId,
+        questionId: question.id,
+        studentAnswer,
+        isCorrect,
+        marksAwarded: marksAwarded.toString(),
+        maxMarks: question.marks || 1,
+        isAutoGraded: true,
+      });
+    } else {
+      // Manual grading needed for written answers
+      manualGradingNeeded = true;
+      answerGrades.push({
+        attemptId,
+        questionId: question.id,
+        studentAnswer,
+        isCorrect: null,
+        marksAwarded: '0',
+        maxMarks: question.marks || 1,
+        isAutoGraded: false,
+      });
+    }
+  }
+  
+  // Insert answer grades
+  if (answerGrades.length > 0) {
+    await db.insert(quizAnswerGrades).values(answerGrades);
+  }
+  
+  const gradingStatus = manualGradingNeeded ? 'auto_graded' : 'fully_graded';
+  const totalMarks = quiz.totalMarks || 100;
+  const percentage = (autoGradedScore / totalMarks) * 100;
+  const passed = percentage >= (quiz.passingScore || 60);
+  
+  await db.update(quizAttempts).set({
+    answers,
+    autoGradedScore: autoGradedScore.toString(),
+    score: manualGradingNeeded ? null : autoGradedScore.toString(),
+    totalMarks,
+    percentage: manualGradingNeeded ? null : percentage.toFixed(2),
+    passed: manualGradingNeeded ? null : passed,
+    gradingStatus,
+    handwrittenUploadUrl,
+    handwrittenUploadName,
+    isAutoSubmitted: isAutoSubmitted || false,
+    submittedAt: new Date(),
+    completedAt: new Date(),
+    timeSpentSeconds: Math.floor((new Date().getTime() - attempt[0].startedAt.getTime()) / 1000),
+  }).where(eq(quizAttempts.id, attemptId));
+  
+  return { autoGradedScore, manualGradingNeeded, gradingStatus };
+}
+
+// Get all attempts for a quiz (admin view)
+export async function getQuizAttemptsByQuiz(quizId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const attempts = await db.select({
+    attempt: quizAttempts,
+    user: {
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      avatarUrl: users.avatarUrl,
+    }
+  })
+  .from(quizAttempts)
+  .leftJoin(users, eq(quizAttempts.userId, users.id))
+  .where(eq(quizAttempts.quizId, quizId))
+  .orderBy(desc(quizAttempts.submittedAt));
+  
+  return attempts;
+}
+
+// Get attempt with answer grades for grading
+export async function getAttemptForGrading(attemptId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const attempt = await db.select().from(quizAttempts).where(eq(quizAttempts.id, attemptId)).limit(1);
+  if (attempt.length === 0) return null;
+  
+  const quiz = await getQuizWithQuestions(attempt[0].quizId);
+  const grades = await db.select().from(quizAnswerGrades)
+    .where(eq(quizAnswerGrades.attemptId, attemptId))
+    .orderBy(asc(quizAnswerGrades.questionId));
+  
+  const user = await db.select().from(users).where(eq(users.id, attempt[0].userId)).limit(1);
+  
+  return {
+    attempt: attempt[0],
+    quiz,
+    grades,
+    user: user[0] || null,
+  };
+}
+
+// Grade a single answer (manual grading)
+export async function gradeAnswer(
+  gradeId: number, 
+  marksAwarded: number, 
+  feedback: string | null,
+  gradedBy: number
+) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(quizAnswerGrades).set({
+    marksAwarded: marksAwarded.toString(),
+    feedback,
+    gradedBy,
+    gradedAt: new Date(),
+  }).where(eq(quizAnswerGrades.id, gradeId));
+}
+
+// Finalize grading for an attempt
+export async function finalizeAttemptGrading(
+  attemptId: number,
+  feedback: string | null,
+  gradedBy: number
+) {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Calculate total score from all grades
+  const grades = await db.select().from(quizAnswerGrades)
+    .where(eq(quizAnswerGrades.attemptId, attemptId));
+  
+  const totalScore = grades.reduce((sum, g) => sum + parseFloat(g.marksAwarded || '0'), 0);
+  const manualScore = grades
+    .filter(g => !g.isAutoGraded)
+    .reduce((sum, g) => sum + parseFloat(g.marksAwarded || '0'), 0);
+  
+  const attempt = await db.select().from(quizAttempts).where(eq(quizAttempts.id, attemptId)).limit(1);
+  if (attempt.length === 0) return;
+  
+  const quiz = await getQuizById(attempt[0].quizId);
+  const totalMarks = quiz?.totalMarks || 100;
+  const percentage = (totalScore / totalMarks) * 100;
+  const passed = percentage >= (quiz?.passingScore || 60);
+  
+  await db.update(quizAttempts).set({
+    score: totalScore.toString(),
+    manualGradedScore: manualScore.toString(),
+    percentage: percentage.toFixed(2),
+    passed,
+    gradingStatus: 'fully_graded',
+    feedback,
+    gradedBy,
+    gradedAt: new Date(),
+  }).where(eq(quizAttempts.id, attemptId));
+  
+  return { totalScore, percentage, passed };
+}
+
+// Get available quizzes for a student
+export async function getAvailableQuizzesForStudent(userId: number, filters?: {
+  categoryId?: number;
+  courseId?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const now = new Date();
+  const conditions = [
+    eq(quizzes.status, 'published'),
+    or(
+      isNull(quizzes.availableFrom),
+      lte(quizzes.availableFrom, now)
+    ),
+    or(
+      isNull(quizzes.availableUntil),
+      gte(quizzes.availableUntil, now)
+    ),
+  ];
+  
+  if (filters?.categoryId) conditions.push(eq(quizzes.categoryId, filters.categoryId));
+  if (filters?.courseId) conditions.push(eq(quizzes.courseId, filters.courseId));
+  
+  const availableQuizzes = await db.select().from(quizzes)
+    .where(and(...conditions))
+    .orderBy(desc(quizzes.announcementDate), desc(quizzes.createdAt));
+  
+  // Get user's attempts for these quizzes
+  const quizIds = availableQuizzes.map(q => q.id);
+  const userAttempts = quizIds.length > 0 
+    ? await db.select().from(quizAttempts)
+        .where(and(
+          eq(quizAttempts.userId, userId),
+          inArray(quizAttempts.quizId, quizIds)
+        ))
+    : [];
+  
+  // Map attempts to quizzes
+  return availableQuizzes.map(quiz => ({
+    ...quiz,
+    attempts: userAttempts.filter(a => a.quizId === quiz.id),
+    canAttempt: userAttempts.filter(a => a.quizId === quiz.id).length < (quiz.maxAttempts || 1),
+  }));
+}
+
+// Get pending grading for admin
+export async function getPendingGradingAttempts() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select({
+    attempt: quizAttempts,
+    quiz: quizzes,
+    user: {
+      id: users.id,
+      name: users.name,
+      email: users.email,
+    }
+  })
+  .from(quizAttempts)
+  .leftJoin(quizzes, eq(quizAttempts.quizId, quizzes.id))
+  .leftJoin(users, eq(quizAttempts.userId, users.id))
+  .where(
+    or(
+      eq(quizAttempts.gradingStatus, 'pending'),
+      eq(quizAttempts.gradingStatus, 'auto_graded'),
+      eq(quizAttempts.gradingStatus, 'partially_graded')
+    )
+  )
+  .orderBy(asc(quizAttempts.submittedAt));
 }
 
 // ============ ASSIGNMENT HELPERS ============

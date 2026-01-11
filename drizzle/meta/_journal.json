@@ -50,6 +50,13 @@
       "when": 1768095550728,
       "tag": "0006_magenta_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1768097697792,
+      "tag": "0007_long_argent",
+      "breakpoints": true
     }
   ]
 }

@@ -68,7 +68,7 @@ export default function StudentQuizzes() {
             {allQuizzes.map((quiz) => {
               const attempt = getAttemptStatus(quiz.id);
               const passed = attempt && attempt.score !== null && attempt.totalMarks !== null
-                ? (attempt.score / attempt.totalMarks) * 100 >= (quiz.passingScore || 50)
+                ? (parseFloat(String(attempt.score)) / attempt.totalMarks) * 100 >= (quiz.passingScore || 50)
                 : false;
               
               return (
@@ -118,7 +118,7 @@ export default function StudentQuizzes() {
                       <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                         <p className="text-sm text-slate-500 dark:text-slate-400">Best Score</p>
                         <p className="text-xl font-bold text-slate-900 dark:text-white">
-                          {Math.round((attempt.score / attempt.totalMarks) * 100)}%
+                          {Math.round((parseFloat(String(attempt.score)) / attempt.totalMarks) * 100)}%
                           <span className="text-sm font-normal text-slate-500 ml-2">
                             ({attempt.score}/{attempt.totalMarks})
                           </span>

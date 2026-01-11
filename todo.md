@@ -317,3 +317,17 @@
 - [x] Update course cards with functional heart icon that persists state per user
 - [x] Add Wishlist section to student dashboard with course cards and enroll buttons
 - [x] Enable enrollment via payment from wishlist (links to catalog for enrollment)
+
+## Complete Quiz Management System
+- [x] Update database schema for enhanced quiz system (question types, scheduling, attachments)
+- [x] Create quiz API endpoints for admin CRUD operations
+- [x] Build Admin Quiz Management dashboard with list/create/edit/delete
+- [x] Create quiz question builder with MCQ and written question types
+- [x] Add quiz scheduling with announcement date/time
+- [x] Add category, class, section filtering for quizzes
+- [x] Add option for scanned handwritten document attachment
+- [x] Build student quiz taking interface with countdown timer
+- [x] Implement auto-submit when timer expires
+- [x] Implement auto-grading for MCQ questions
+- [x] Create manual grading interface for written answers
+- [x] Display quiz results with score breakdown

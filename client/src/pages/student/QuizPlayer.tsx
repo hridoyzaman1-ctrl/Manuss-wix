@@ -6,7 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
-import { Clock, AlertTriangle, CheckCircle, XCircle, ArrowLeft, ArrowRight, Flag } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle, XCircle, ArrowLeft, ArrowRight, Flag, Upload, FileText, X } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useLocation } from "wouter";
@@ -53,7 +54,11 @@ export default function QuizPlayer() {
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [handwrittenFile, setHandwrittenFile] = useState<File | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [handwrittenUploadUrl, setHandwrittenUploadUrl] = useState<string | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { data: quiz, isLoading: quizLoading } = trpc.quiz.getById.useQuery(
     { id: parseInt(quizId || "0") },
@@ -177,11 +182,18 @@ export default function QuizPlayer() {
     const percentage = totalMarks > 0 ? Math.round((score / totalMarks) * 100) : 0;
     const passed = percentage >= (quiz?.passingScore || 50);
     
+    // Convert answers to string record format
+    const answersRecord: Record<string, string> = {};
+    Object.entries(answers).forEach(([key, value]) => {
+      answersRecord[key.toString()] = value;
+    });
+    
     await submitAttemptMutation.mutateAsync({
       attemptId,
-      answers,
-      score,
-      totalMarks
+      answers: answersRecord,
+      handwrittenUploadUrl: handwrittenUploadUrl || undefined,
+      handwrittenUploadName: handwrittenFile?.name || undefined,
+      isAutoSubmitted: autoSubmit,
     });
     
     setQuizResult({
@@ -204,6 +216,59 @@ export default function QuizPlayer() {
   const answeredCount = Object.keys(answers).length;
   const totalQuestions = questions?.length || 0;
   const progressPercent = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Please upload a PDF or image file (JPG, PNG)');
+      return;
+    }
+    
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size must be less than 10MB');
+      return;
+    }
+    
+    setHandwrittenFile(file);
+    setUploadingFile(true);
+    
+    try {
+      // Create form data and upload
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const data = await response.json();
+      setHandwrittenUploadUrl(data.url);
+      toast.success('File uploaded successfully!');
+    } catch (error) {
+      toast.error('Failed to upload file. Please try again.');
+      setHandwrittenFile(null);
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+  const removeUploadedFile = () => {
+    setHandwrittenFile(null);
+    setHandwrittenUploadUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   if (quizLoading) {
     return (
@@ -356,6 +421,9 @@ export default function QuizPlayer() {
                       <li>• Quiz will auto-submit when time runs out</li>
                       <li>• Make sure you have a stable internet connection</li>
                       <li>• You can flag questions to review later</li>
+                      {quiz.allowHandwrittenUpload && (
+                        <li>• You can attach a scanned handwritten document</li>
+                      )}
                     </ul>
                   </div>
                 </div>
@@ -488,6 +556,25 @@ export default function QuizPlayer() {
                     </div>
                   ))}
                 </RadioGroup>
+              ) : currentQuestion.questionType === 'long_answer' ? (
+                <Textarea
+                  value={answers[currentQuestion.id] || ""}
+                  onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
+                  placeholder="Write your detailed answer here..."
+                  rows={8}
+                  className="w-full p-4 border rounded-lg dark:bg-slate-700 dark:border-slate-600 resize-y"
+                />
+              ) : currentQuestion.questionType === 'fill_blank' ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Fill in the blank:</p>
+                  <input
+                    type="text"
+                    value={answers[currentQuestion.id] || ""}
+                    onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
+                    placeholder="Your answer..."
+                    className="w-full p-4 border rounded-lg dark:bg-slate-700 dark:border-slate-600"
+                  />
+                </div>
               ) : (
                 <input
                   type="text"
@@ -552,6 +639,57 @@ export default function QuizPlayer() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Handwritten Upload Section */}
+        {quiz.allowHandwrittenUpload && (
+          <Card className="bg-white dark:bg-slate-800 border-blue-100 dark:border-slate-700">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Attach Handwritten Document
+              </CardTitle>
+              <CardDescription>
+                Upload a scanned copy of your handwritten answers (PDF or Image, max 10MB)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {handwrittenFile ? (
+                <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-8 w-8 text-emerald-600" />
+                    <div>
+                      <p className="font-medium text-emerald-700 dark:text-emerald-300">{handwrittenFile.name}</p>
+                      <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                        {(handwrittenFile.size / 1024 / 1024).toFixed(2)} MB
+                        {uploadingFile && ' - Uploading...'}
+                        {handwrittenUploadUrl && ' - Uploaded ✓'}
+                      </p>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={removeUploadedFile} disabled={uploadingFile}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div 
+                  className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-10 w-10 mx-auto text-slate-400 mb-3" />
+                  <p className="text-slate-600 dark:text-slate-400">Click to upload or drag and drop</p>
+                  <p className="text-sm text-slate-500 mt-1">PDF, JPG, PNG (max 10MB)</p>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Submit Confirmation Dialog */}
         <AlertDialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
