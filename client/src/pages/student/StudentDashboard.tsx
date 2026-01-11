@@ -1,7 +1,7 @@
 import StudentDashboardLayout from "@/components/StudentDashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { BookOpen, Trophy, ClipboardList, Calendar, Video, Bell, BarChart3, Sparkles } from "lucide-react";
+import { BookOpen, Trophy, ClipboardList, Calendar, Video, Bell, BarChart3, Sparkles, AlertTriangle, Megaphone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -12,10 +12,67 @@ export default function StudentDashboard() {
   const { data: enrollments } = trpc.enrollment.getMyEnrollments.useQuery();
   const { data: notifications } = trpc.notification.getMyNotifications.useQuery({ unreadOnly: true });
   const { data: liveClasses } = trpc.liveClass.getUpcoming.useQuery();
+  const { data: announcements } = trpc.announcement.getAll.useQuery({ audience: 'students' });
+
+  // Filter urgent announcements
+  const urgentAnnouncements = announcements?.filter((a: any) => a.priority === 'urgent' || a.isPinned) || [];
 
   return (
     <StudentDashboardLayout>
       <div className="space-y-8">
+        {/* Urgent Announcements Banner */}
+        {urgentAnnouncements.length > 0 && (
+          <div className="space-y-3">
+            {urgentAnnouncements.map((announcement: any) => (
+              <div
+                key={announcement.id}
+                className={`rounded-xl p-4 border-l-4 ${
+                  announcement.priority === 'urgent'
+                    ? 'bg-red-50 dark:bg-red-900/20 border-red-500'
+                    : 'bg-amber-50 dark:bg-amber-900/20 border-amber-500'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`p-2 rounded-lg ${
+                    announcement.priority === 'urgent'
+                      ? 'bg-red-100 dark:bg-red-900/30'
+                      : 'bg-amber-100 dark:bg-amber-900/30'
+                  }`}>
+                    {announcement.priority === 'urgent' ? (
+                      <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                    ) : (
+                      <Megaphone className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className={`font-semibold ${
+                        announcement.priority === 'urgent'
+                          ? 'text-red-800 dark:text-red-300'
+                          : 'text-amber-800 dark:text-amber-300'
+                      }`}>
+                        {announcement.title}
+                      </h3>
+                      {announcement.priority === 'urgent' && (
+                        <span className="px-2 py-0.5 text-xs font-medium bg-red-500 text-white rounded-full">
+                          URGENT
+                        </span>
+                      )}
+                    </div>
+                    <p className={`text-sm mt-1 ${
+                      announcement.priority === 'urgent'
+                        ? 'text-red-700 dark:text-red-400'
+                        : 'text-amber-700 dark:text-amber-400'
+                    }`}>
+                      {announcement.content}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Welcome Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white">
           <h1 className="text-2xl font-bold">

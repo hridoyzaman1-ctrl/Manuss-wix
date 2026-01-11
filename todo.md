@@ -305,3 +305,8 @@
 - [x] Add download option
 - [x] Add print option
 - [x] Add dark mode support
+
+## Bug Fixes & Improvements
+- [x] Fix Chrome blocking issue with PDF viewer (using local worker file)
+- [x] Fix urgent news not visible on student dashboard (added announcements query)
+- [x] Redesign AIMVerse section - premium, elegant, modern without gradients

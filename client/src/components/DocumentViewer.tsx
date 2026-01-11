@@ -29,8 +29,9 @@ import { Input } from "./ui/input";
 import { Slider } from "./ui/slider";
 import { cn } from "@/lib/utils";
 
-// Set up PDF.js worker - use unpkg for better compatibility
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Set up PDF.js worker - copy worker to public folder for local serving
+// This avoids Chrome blocking external scripts
+pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
 
 interface DocumentViewerProps {
   url: string;
