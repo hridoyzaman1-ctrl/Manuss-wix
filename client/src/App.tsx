@@ -62,6 +62,9 @@ const StudentMessages = lazy(() => import("@/pages/student/StudentMessages"));
 const ParentLinkChild = lazy(() => import("@/pages/parent/ParentLinkChild"));
 const ParentProgress = lazy(() => import("@/pages/parent/ParentProgress"));
 
+// Utility pages
+const DocumentViewerDemo = lazy(() => import("@/pages/DocumentViewerDemo"));
+
 function Router() {
   return (
     <Suspense fallback={<DashboardLayoutSkeleton />}>
@@ -72,6 +75,7 @@ function Router() {
         <Route path={"/auth"}>{() => { window.location.href = '/login'; return null; }}</Route>
         <Route path={"/login"} component={Login} />
         <Route path={"/signup"} component={Signup} />
+        <Route path={"/document-viewer"} component={DocumentViewerDemo} />
         
         {/* Admin routes */}
         <Route path={"/admin"} component={AdminDashboard} />
