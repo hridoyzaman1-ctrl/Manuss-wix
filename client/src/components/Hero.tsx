@@ -180,7 +180,7 @@ export default function Hero() {
               </span>
             </h1>
 
-            <Link href="/auth">
+            <Link href="/signup">
               <Button
                 asChild
                 variant="outline"

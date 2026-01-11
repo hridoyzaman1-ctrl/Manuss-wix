@@ -69,7 +69,7 @@ function Router() {
         {/* Public routes */}
         <Route path={"/"} component={Home} />
         <Route path={"/ai-voice"} component={AIVoicePage} />
-        <Route path={"/auth"} component={Auth} />
+        <Route path={"/auth"}>{() => { window.location.href = '/login'; return null; }}</Route>
         <Route path={"/login"} component={Login} />
         <Route path={"/signup"} component={Signup} />
         

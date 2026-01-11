@@ -281,3 +281,9 @@
 - [x] Add pre-made avatar selection option (12 DiceBear avatars)
 - [x] Database already stores avatarUrl
 - [x] Applied to admin and student profiles
+
+## Real-time Chat System
+- [x] Fix: Login/Signup buttons not working - form submission not triggering (was redirecting to old /auth page)
+- [ ] Fix create group button functionality
+- [ ] Create student-facing real-time chat interface
+- [ ] Add unread message notification badges to navigation

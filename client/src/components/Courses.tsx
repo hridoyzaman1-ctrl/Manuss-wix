@@ -346,7 +346,7 @@ export default function Courses() {
                           </Button>
                         </div>
 
-                        <Link href={user ? "/student/catalog" : "/auth"}>
+                        <Link href={user ? "/student/catalog" : "/login"}>
                           <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02] font-medium tracking-wide shadow-sm hover:shadow-md">
                             <span>{user ? "Browse & Enroll" : (t("courses.enroll") || "Enroll Now")}</span>
                           </Button>
@@ -362,7 +362,7 @@ export default function Courses() {
             )}
 
             <div className="flex justify-center mb-16">
-              <Link href={user ? "/student/catalog" : "/auth"}>
+              <Link href={user ? "/student/catalog" : "/login"}>
                 <Button
                   variant="outline"
                   className="rounded-none border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 sm:px-12 py-5 sm:py-7 text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] font-medium transition-all duration-300 hover-magnetic touch-manipulation active:scale-95"
